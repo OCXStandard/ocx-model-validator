@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC08_nast.3docx -->
+<ocx:LugPlateRef xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" localRef="nplcid359" ocx:GUIDRef="908a9bd3-02dc-46ac-b099-164b77406f18" ocx:refType="ocx:Plate">
+    <ocx:ConnectionLength numericvalue="0.149" unit="Um"/>
+    <ocx:DistanceAbove numericvalue="0.02955" unit="Um"/>
+</ocx:LugPlateRef>

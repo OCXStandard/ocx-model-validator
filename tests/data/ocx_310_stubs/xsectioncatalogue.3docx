@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC03_ae3d.3docx -->
+<ocx:XSectionCatalogue xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID94" name="Undefined">
+    <ocx:BarSection id="ID95" name="BulbFlat200X10" ocx:GUIDRef="{141AFD6E-1970-4F7C-9189-161F963F89DC}">
+        <ocx:BulbFlat>
+            <ocx:Height numericvalue="200.0" unit="u2"/>
+            <ocx:WebThickness numericvalue="10.0" unit="u2"/>
+        </ocx:BulbFlat>
+    </ocx:BarSection>
+    <ocx:BarSection id="ID96" name="FlatBar200X10" ocx:GUIDRef="{5F7C4A85-E39F-470D-928D-7692896E838A}">
+        <ocx:FlatBar>
+            <ocx:Height numericvalue="200.0" unit="u2"/>
+            <ocx:Width numericvalue="10.0" unit="u2"/>
+        </ocx:FlatBar>
+    </ocx:BarSection>
+    <ocx:BarSection id="ID97" name="IBar190X200X6X10" ocx:GUIDRef="{69D8A22E-0716-4A63-BE56-A432386F0382}">
+        <ocx:IBar>
+            <ocx:Height numericvalue="190.0" unit="u2"/>
+            <ocx:Width numericvalue="200.0" unit="u2"/>
+            <ocx:WebThickness numericvalue="6.5" unit="u2"/>
+            <ocx:FlangeThickness numericvalue="10.0" unit="u2"/>
+        </ocx:IBar>
+    </ocx:BarSection>
+    <ocx:BarSection id="ID98" name="LBar200X100X10X12" ocx:GUIDRef="{1C1565BF-D02C-45F5-BF78-7DE883A7CD04}">
+        <ocx:LBar>
+            <ocx:Height numericvalue="200.0" unit="u2"/>
+            <ocx:Width numericvalue="100.0" unit="u2"/>
+            <ocx:WebThickness numericvalue="10.0" unit="u2"/>
+            <ocx:FlangeThickness numericvalue="12.0" unit="u2"/>
+        </ocx:LBar>
+    </ocx:BarSection>
+    <ocx:BarSection id="ID99" name="RectangularTube100X200X10" ocx:GUIDRef="{51FFCC7C-8D86-459E-B148-3A0F3F2CE996}">
+        <ocx:RectangularTube>
+            <ocx:Height numericvalue="100.0" unit="u2"/>
+            <ocx:Width numericvalue="200.0" unit="u2"/>
+            <ocx:Thickness numericvalue="10.0" unit="u2"/>
+        </ocx:RectangularTube>
+    </ocx:BarSection>
+    <ocx:BarSection id="ID100" name="TBar200X100X10X12" ocx:GUIDRef="{E9BA34F2-F0BC-47EE-804B-4CEA486C314A}">
+        <ocx:TBar>
+            <ocx:Height numericvalue="200.0" unit="u2"/>
+            <ocx:Width numericvalue="100.0" unit="u2"/>
+            <ocx:WebThickness numericvalue="10.0" unit="u2"/>
+            <ocx:FlangeThickness numericvalue="12.0" unit="u2"/>
+        </ocx:TBar>
+    </ocx:BarSection>
+    <ocx:BarSection id="ID101" name="Tube200X200X10" ocx:GUIDRef="{E6D77379-5F83-4F52-B28B-09884F95CB55}">
+        <ocx:Tube>
+            <ocx:Diameter numericvalue="200.0" unit="u2"/>
+            <ocx:Thickness numericvalue="10.0" unit="u2"/>
+        </ocx:Tube>
+    </ocx:BarSection>
+</ocx:XSectionCatalogue>

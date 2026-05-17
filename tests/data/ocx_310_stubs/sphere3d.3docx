@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR03_TC10_psav.3docx -->
+<ocx:Sphere3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="sphr3d_25155" ocx:GUIDRef="83a93d51-d399-4f33-b1ea-1cecbf1d5e55">
+    <ocx:Origin coordinates="15000.0 6000.0 1000.0" unit="u_milliMetres"/>
+    <ocx:Radius numericvalue="1000.0" unit="u_milliMetres"/>
+</ocx:Sphere3D>

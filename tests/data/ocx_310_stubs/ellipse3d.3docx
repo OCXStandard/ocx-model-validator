@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR03_TC10_psav.3docx -->
+<ocx:Ellipse3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="lps3d_25431" ocx:GUIDRef="85408feb-f6bb-43ec-b777-74e27b90107e" is2D="false">
+    <ocx:CurveLength numericvalue="3966.3598973128082" unit="u_milliMetres"/>
+    <ocx:Center coordinates="30000.0 -3000.0 1000.0" unit="u_milliMetres"/>
+    <ocx:MajorDiameter numericvalue="750.0" unit="u_milliMetres"/>
+    <ocx:MinorDiameter numericvalue="500.0" unit="u_milliMetres"/>
+    <ocx:MajorAxis direction="0.0 1.0 0.0"/>
+    <ocx:MinorAxis direction="0.0 0.0 1.0"/>
+</ocx:Ellipse3D>

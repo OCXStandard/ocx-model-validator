@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC03_ae3d.3docx -->
+<ocx:TraceLine xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd">
+    <ocx:CompositeCurve3D id="ID71" is2D="false">
+        <ocx:CurveLength numericvalue="9999.999999999996" unit="u2"/>
+        <ocx:Line3D id="ID72" is2D="false">
+            <ocx:CurveLength numericvalue="9999.999999999996" unit="u2"/>
+            <ocx:StartPoint coordinates="0.0 1000.0 3.183231456205249E-12" unit="u2"/>
+            <ocx:EndPoint coordinates="0.0 1000.0 10000.0" unit="u2"/>
+        </ocx:Line3D>
+    </ocx:CompositeCurve3D>
+</ocx:TraceLine>

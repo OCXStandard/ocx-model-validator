@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr04_tc04a_ai3dx.3docx -->
+<ocx:ZRefPlanes xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" isMainSystem="true">
+    <ocx:RefPlane id="Z.12000" name="Z.12000" ocx:GUIDRef="c9e93e0e-d7e9-475f-a1ad-e2075ea9dfa2" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="12.0" unit="Um"/>
+    </ocx:RefPlane>
+</ocx:ZRefPlanes>

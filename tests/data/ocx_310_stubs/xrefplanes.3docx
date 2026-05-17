@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_ae3d.3docx -->
+<ocx:XRefPlanes xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" isMainSystem="true" isReversed="false">
+    <ocx:RefPlane id="ID3" name="F0" ocx:GUIDRef="{496CBB24-D8BF-4722-94E2-875182F8BE70}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="0.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID4" name="F1" ocx:GUIDRef="{D1F94F9F-954A-4499-8EDC-262FAECC4733}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="750.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID5" name="F2" ocx:GUIDRef="{B36AF500-6072-460B-A0CA-B04CA7DFF1B0}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="1500.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID6" name="F3" ocx:GUIDRef="{2EB5805B-A1B9-46DE-91B8-8DBEB5150096}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="2250.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID7" name="F4" ocx:GUIDRef="{B57B3320-1456-4F8E-B5FD-F02B4ED73074}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="3000.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID8" name="F5" ocx:GUIDRef="{0CB24302-10ED-4948-9BD6-774C5B65B2C5}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="3750.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID9" name="F6" ocx:GUIDRef="{111ECC3E-4362-4BB4-85E8-F60B9A7C6A22}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="4500.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID10" name="F7" ocx:GUIDRef="{0AB1D26B-0E2F-4784-81CE-082DB7B10738}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="5250.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID11" name="F8" ocx:GUIDRef="{0E714082-FD60-4A07-8FD3-5296EF71947A}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="6000.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID12" name="F9" ocx:GUIDRef="{F6B78D29-9CFC-4D8E-80AB-E1F25863D244}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="6750.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID13" name="F10" ocx:GUIDRef="{FA141558-C08D-4DA2-B530-12670564F370}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="7500.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID14" name="F11" ocx:GUIDRef="{A35A83C8-40D6-49CD-B15A-FE1154CD0371}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="8250.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID15" name="F12" ocx:GUIDRef="{F5DF15F9-B3A2-438D-9BE4-FA40A456F05F}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="9000.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID16" name="F13" ocx:GUIDRef="{A6E9B4CD-B212-4011-8BB8-98D58BAC3390}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="9750.0" unit="u2"/>
+    </ocx:RefPlane>
+</ocx:XRefPlanes>

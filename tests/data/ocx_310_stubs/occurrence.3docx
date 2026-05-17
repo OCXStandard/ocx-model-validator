@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC08_nast.3docx -->
+<ocx:Occurrence xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="nplcid1222" name="LBH_WT_S" type="Main object">
+    <ocx:PlateRef localRef="nplcid14" ocx:GUIDRef="7f2422b4-a848-79da-99ab-0fab9a435ba3" ocx:refType="ocx:Plate"/>
+    <ocx:StiffenerRef localRef="nplcid15" ocx:GUIDRef="ea02ffff-1a64-4953-5e83-8255a3e3df8e" ocx:refType="ocx:Stiffener"/>
+    <ocx:StiffenerRef localRef="nplcid16" ocx:GUIDRef="73214f70-9ceb-fd82-bc7c-2df113ac9c70" ocx:refType="ocx:Stiffener"/>
+    <ocx:StiffenerRef localRef="nplcid17" ocx:GUIDRef="092e06ed-12a7-cb7a-ada5-94f80d1e444a" ocx:refType="ocx:Stiffener"/>
+    <ocx:StiffenerRef localRef="nplcid18" ocx:GUIDRef="53797d0a-a8fe-08ea-3999-bebfaf34d958" ocx:refType="ocx:Stiffener"/>
+    <ocx:StiffenerRef localRef="nplcid19" ocx:GUIDRef="a8652f27-5410-ab21-3519-502e52905107" ocx:refType="ocx:Stiffener"/>
+    <ocx:StiffenerRef localRef="nplcid20" ocx:GUIDRef="2981d7d5-1c8a-6cf3-8b50-9e5421cac800" ocx:refType="ocx:Stiffener"/>
+</ocx:Occurrence>

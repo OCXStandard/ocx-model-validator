@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr04_tc04a_ai3dx.3docx -->
+<ocx:Aluminium xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" id="nplcid21" name="Aluminum" ocx:GUIDRef="7fbdad58-a6a9-4df3-a74c-45968ae1f405" alloyDesignation="6061-T6">
+    <ocx:Density numericvalue="2700.0" unit="UKgOverm3"/>
+    <ocx:YoungsModulus numericvalue="69000000000.0" unit="UNOverm2"/>
+    <ocx:PoissonRatio numericvalue="0.33" unit="UDimless"/>
+    <ocx:UnweldedYieldStrength numericvalue="276000000.0" unit="UNOverm2"/>
+    <ocx:WeldedYieldStrength numericvalue="110000000.0" unit="UNOverm2"/>
+    <ocx:UnweldedTensileStrength numericvalue="310000000.0" unit="UNOverm2"/>
+    <ocx:WeldedTensileStrength numericvalue="165000000.0" unit="UNOverm2"/>
+</ocx:Aluminium>

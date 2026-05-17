@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC06_ae3d.3docx -->
+<ocx:Hole2D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID83" name="HO1500X1000" ocx:GUIDRef="{8b93426a-257b-4f91-89d1-f8dd0b15fdcf}">
+    <ocx:Contour>
+        <ocx:CircumArc3D id="ID85" is2D="true">
+            <ocx:CurveLength numericvalue="1570.7963267948965" unit="u2"/>
+            <ocx:StartPoint coordinates="250.0 500.0 0.0" unit="u2"/>
+            <ocx:IntermediatePoint coordinates="750.0 0.0 0.0" unit="u2"/>
+            <ocx:EndPoint coordinates="250.0 -500.0 0.0" unit="u2"/>
+        </ocx:CircumArc3D>
+        <ocx:CircumArc3D id="ID87" is2D="true">
+            <ocx:CurveLength numericvalue="1570.7963267948965" unit="u2"/>
+            <ocx:StartPoint coordinates="-250.0 -500.0 0.0" unit="u2"/>
+            <ocx:IntermediatePoint coordinates="-750.0 0.0 0.0" unit="u2"/>
+            <ocx:EndPoint coordinates="-250.0 500.0 0.0" unit="u2"/>
+        </ocx:CircumArc3D>
+        <ocx:Line3D id="ID84" is2D="true">
+            <ocx:CurveLength numericvalue="500.0" unit="u2"/>
+            <ocx:StartPoint coordinates="-250.0 500.0 0.0" unit="u2"/>
+            <ocx:EndPoint coordinates="250.0 500.0 0.0" unit="u2"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="ID86" is2D="true">
+            <ocx:CurveLength numericvalue="500.0" unit="u2"/>
+            <ocx:StartPoint coordinates="250.0 -500.0 0.0" unit="u2"/>
+            <ocx:EndPoint coordinates="-250.0 -500.0 0.0" unit="u2"/>
+        </ocx:Line3D>
+    </ocx:Contour>
+</ocx:Hole2D>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC08_ae3d.3docx -->
+<ocx:DoubleBracket xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd">
+    <ocx:ConnectedBracketRef localRef="ID69" ocx:GUIDRef="{f468edd8-e0a1-4277-9a65-b1757e5b5b04}" ocx:refType="ocx:Bracket" ocx:position="Far side"/>
+    <ocx:ConnectedBracketRef localRef="ID139" ocx:GUIDRef="{f8b49a34-b199-4840-894a-95a7a46cf1d1}" ocx:refType="ocx:Bracket" ocx:position="Near side"/>
+</ocx:DoubleBracket>

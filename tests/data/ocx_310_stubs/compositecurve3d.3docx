@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_cadhu.3docx -->
+<ocx:CompositeCurve3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="_1panel1part1composite" is2D="false">
+    <ocx:CurveLength numericvalue="40.0" unit="uMeter"/>
+    <ocx:Line3D id="_1panel1part1compositeline0" is2D="false">
+        <ocx:CurveLength numericvalue="10.0" unit="uMeter"/>
+        <ocx:StartPoint coordinates="10.0 -0.0 0.0" unit="uMeter"/>
+        <ocx:EndPoint coordinates="0.0 -0.0 0.0" unit="uMeter"/>
+    </ocx:Line3D>
+    <ocx:Line3D id="_1panel1part1compositeline1" is2D="false">
+        <ocx:CurveLength numericvalue="10.0" unit="uMeter"/>
+        <ocx:StartPoint coordinates="0.0 -0.0 0.0" unit="uMeter"/>
+        <ocx:EndPoint coordinates="0.0 10.0 0.0" unit="uMeter"/>
+    </ocx:Line3D>
+    <ocx:Line3D id="_1panel1part1compositeline2" is2D="false">
+        <ocx:CurveLength numericvalue="10.0" unit="uMeter"/>
+        <ocx:StartPoint coordinates="0.0 10.0 0.0" unit="uMeter"/>
+        <ocx:EndPoint coordinates="10.0 10.0 0.0" unit="uMeter"/>
+    </ocx:Line3D>
+    <ocx:Line3D id="_1panel1part1compositeline3" is2D="false">
+        <ocx:CurveLength numericvalue="10.0" unit="uMeter"/>
+        <ocx:StartPoint coordinates="10.0 10.0 0.0" unit="uMeter"/>
+        <ocx:EndPoint coordinates="10.0 -0.0 0.0" unit="uMeter"/>
+    </ocx:Line3D>
+</ocx:CompositeCurve3D>

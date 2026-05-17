@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_ae3d.3docx -->
+<ocx:LimitedBy xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd">
+    <ocx:FreeEdgeCurve3D id="ID48" ocx:GUIDRef="{2621C560-D8B1-4A58-BEB3-DD88EFE42229}" is2D="false" isUVSpace="false">
+        <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+        <ocx:Line3D id="ID49" is2D="false">
+            <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+            <ocx:StartPoint coordinates="-2.9103830456733704E-11 0.0 0.0" unit="u2"/>
+            <ocx:EndPoint coordinates="9999.99999999997 0.0 0.0" unit="u2"/>
+        </ocx:Line3D>
+    </ocx:FreeEdgeCurve3D>
+    <ocx:FreeEdgeCurve3D id="ID50" ocx:GUIDRef="{86E450D9-AD9B-41E5-B0B0-6066BEA0393F}" is2D="false" isUVSpace="false">
+        <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+        <ocx:Line3D id="ID51" is2D="false">
+            <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+            <ocx:StartPoint coordinates="10000.0 10000.0 0.0" unit="u2"/>
+            <ocx:EndPoint coordinates="0.0 10000.0 0.0" unit="u2"/>
+        </ocx:Line3D>
+    </ocx:FreeEdgeCurve3D>
+    <ocx:FreeEdgeCurve3D id="ID52" ocx:GUIDRef="{D6D65C45-539E-477E-B5A4-0819EBBF9F22}" is2D="false" isUVSpace="false">
+        <ocx:CurveLength numericvalue="10000.000000000116" unit="u2"/>
+        <ocx:Line3D id="ID53" is2D="false">
+            <ocx:CurveLength numericvalue="10000.000000000116" unit="u2"/>
+            <ocx:StartPoint coordinates="-1.4551915228366852E-11 10000.000000000044 0.0" unit="u2"/>
+            <ocx:EndPoint coordinates="-1.4551915228366852E-11 -7.275957614183426E-11 0.0" unit="u2"/>
+        </ocx:Line3D>
+    </ocx:FreeEdgeCurve3D>
+    <ocx:FreeEdgeCurve3D id="ID54" ocx:GUIDRef="{7D3C5932-0653-4661-9302-5960B54BC8D7}" is2D="false" isUVSpace="false">
+        <ocx:CurveLength numericvalue="10000.000000000116" unit="u2"/>
+        <ocx:Line3D id="ID55" is2D="false">
+            <ocx:CurveLength numericvalue="10000.000000000116" unit="u2"/>
+            <ocx:StartPoint coordinates="10000.0 -6.548361852765083E-11 0.0" unit="u2"/>
+            <ocx:EndPoint coordinates="10000.0 10000.000000000051 0.0" unit="u2"/>
+        </ocx:Line3D>
+    </ocx:FreeEdgeCurve3D>
+</ocx:LimitedBy>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC06_psav.3docx -->
+<ocx:InnerContour xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd">
+    <ocx:CircumArc3D id="crcmrc3d_14117" name="curve part 1" ocx:GUIDRef="1aa19029-8210-4d7a-8f48-e4a245bd333e" is2D="false">
+        <ocx:CurveLength numericvalue="785.3981633974482" unit="u_milliMetres"/>
+        <ocx:StartPoint coordinates="1500.0 1750.0 0.0" unit="u_milliMetres"/>
+        <ocx:IntermediatePoint coordinates="2000.0 1250.0 0.0" unit="u_milliMetres"/>
+        <ocx:EndPoint coordinates="1500.0 750.0 0.0" unit="u_milliMetres"/>
+    </ocx:CircumArc3D>
+    <ocx:CircumArc3D id="crcmrc3d_14119" name="curve part 3" ocx:GUIDRef="dc92bd4e-bdca-45ba-a9de-5a4503bff84d" is2D="false">
+        <ocx:CurveLength numericvalue="785.3981633974482" unit="u_milliMetres"/>
+        <ocx:StartPoint coordinates="1000.0 750.0 0.0" unit="u_milliMetres"/>
+        <ocx:IntermediatePoint coordinates="500.0 1250.0 0.0" unit="u_milliMetres"/>
+        <ocx:EndPoint coordinates="1000.0 1750.0 0.0" unit="u_milliMetres"/>
+    </ocx:CircumArc3D>
+    <ocx:Line3D id="ln3d_14116" name="curve part 0" ocx:GUIDRef="c84159f6-f918-408c-aec5-ece9e8d43738" is2D="false">
+        <ocx:CurveLength numericvalue="500.0" unit="u_milliMetres"/>
+        <ocx:StartPoint coordinates="1000.0 1750.0 0.0" unit="u_milliMetres"/>
+        <ocx:EndPoint coordinates="1500.0 1750.0 0.0" unit="u_milliMetres"/>
+    </ocx:Line3D>
+    <ocx:Line3D id="ln3d_14118" name="curve part 2" ocx:GUIDRef="3f8b72f3-7ccd-4b83-ae59-4b2e416e73cf" is2D="false">
+        <ocx:CurveLength numericvalue="500.0" unit="u_milliMetres"/>
+        <ocx:StartPoint coordinates="1500.0 750.0 0.0" unit="u_milliMetres"/>
+        <ocx:EndPoint coordinates="1000.0 750.0 0.0" unit="u_milliMetres"/>
+    </ocx:Line3D>
+</ocx:InnerContour>

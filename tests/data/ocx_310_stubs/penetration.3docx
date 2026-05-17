@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC08_ae3d.3docx -->
+<ocx:Penetration xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID214">
+    <ocx:DoubleBracket>
+        <ocx:ConnectedBracketRef localRef="ID69" ocx:GUIDRef="{f468edd8-e0a1-4277-9a65-b1757e5b5b04}" ocx:refType="ocx:Bracket" ocx:position="Far side"/>
+        <ocx:ConnectedBracketRef localRef="ID139" ocx:GUIDRef="{f8b49a34-b199-4840-894a-95a7a46cf1d1}" ocx:refType="ocx:Bracket" ocx:position="Near side"/>
+    </ocx:DoubleBracket>
+    <ocx:Point3D coordinates="1199.9999999999998 2218.3848295655603 1306.000206304439" unit="u2"/>
+    <ocx:SlotParameters asymmetric="true" ocx:slotType="Open">
+        <ocx:Height numericvalue="250.0" unit="u2"/>
+        <ocx:Width numericvalue="103.0" unit="u2"/>
+        <ocx:UpperRadius numericvalue="30.0" unit="u2"/>
+        <ocx:ConnectionLength numericvalue="140.0" unit="u2"/>
+        <ocx:LowerRadius numericvalue="20.0" unit="u2"/>
+    </ocx:SlotParameters>
+</ocx:Penetration>

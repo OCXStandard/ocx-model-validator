@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC04_ae3d.3docx -->
+<ocx:NURBSSurface xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID52">
+    <ocx:FaceBoundaryCurve isUVspace="false">
+        <ocx:NURBS3D id="ID53" is2D="false">
+            <ocx:CurveLength numericvalue="11680.804818328625" unit="u2"/>
+            <ocx:NURBSproperties degree="2" numCtrlPts="3" numKnots="6" form="Open" isRational="true"/>
+            <ocx:KnotVector value="5.115104821965352 5.115104821965352 5.115104821965352 6.283185307179586 6.283185307179586 6.283185307179586"/>
+            <ocx:ControlPtList>
+                <ocx:ControlPoint coordinates="59999.99999999999 10000.000000000002 9200.0" unit="u2" weight="1.0"/>
+                <ocx:ControlPoint coordinates="60000.00000000002 10000.0 2590.4169439707503" unit="u2" weight="0.8342416792648608"/>
+                <ocx:ControlPoint coordinates="60000.0 3919.183588453089 9.599231273739835E-13" unit="u2" weight="1.0"/>
+            </ocx:ControlPtList>
+        </ocx:NURBS3D>
+        <ocx:NURBS3D id="ID54" is2D="false">
+            <ocx:CurveLength numericvalue="60000.0" unit="u2"/>
+            <ocx:NURBSproperties degree="1" numCtrlPts="2" numKnots="4" form="Open" isRational="false"/>
+            <ocx:KnotVector value="0.0 0.0 1.0 1.0"/>
+            <ocx:ControlPtList>
+                <ocx:ControlPoint coordinates="60000.0 3919.1835884530865 0.0" unit="u2" weight="1.0"/>
+                <ocx:ControlPoint coordinates="0.0 3919.1835884530865 0.0" unit="u2" weight="1.0"/>
+            </ocx:ControlPtList>
+        </ocx:NURBS3D>
+        <ocx:NURBS3D id="ID55" is2D="false">
+            <ocx:CurveLength numericvalue="11680.80481832864" unit="u2"/>
+            <ocx:NURBSproperties degree="2" numCtrlPts="3" numKnots="6" form="Open" isRational="true"/>
+            <ocx:KnotVector value="0.0 0.0 0.0 1.1680804852142341 1.1680804852142341 1.1680804852142341"/>
+            <ocx:ControlPtList>
+                <ocx:ControlPoint coordinates="0.0 3919.183588453087 0.0" unit="u2" weight="1.0"/>
+                <ocx:ControlPoint coordinates="3.124580925628529E-11 9999.999999999998 2590.416943970746" unit="u2" weight="0.8342416792648606"/>
+                <ocx:ControlPoint coordinates="-8.35654360378327E-12 10000.0 9200.000000000002" unit="u2" weight="1.0"/>
+            </ocx:ControlPtList>
+        </ocx:NURBS3D>
+        <ocx:NURBS3D id="ID56" is2D="false">
+            <ocx:CurveLength numericvalue="60000.0" unit="u2"/>
+            <ocx:NURBSproperties degree="1" numCtrlPts="2" numKnots="4" form="Open" isRational="false"/>
+            <ocx:KnotVector value="0.0 0.0 1.0 1.0"/>
+            <ocx:ControlPtList>
+                <ocx:ControlPoint coordinates="0.0 10000.0 9200.0" unit="u2" weight="1.0"/>
+                <ocx:ControlPoint coordinates="60000.0 10000.0 9200.0" unit="u2" weight="1.0"/>
+            </ocx:ControlPtList>
+        </ocx:NURBS3D>
+    </ocx:FaceBoundaryCurve>
+    <ocx:U_NURBSproperties degree="1" numCtrlPts="2" numKnots="4" form="Open" isRational="true"/>
+    <ocx:UknotVector value="0.08334722175927474 0.08334722175927474 0.9166527782407253 0.9166527782407253"/>
+    <ocx:V_NURBSproperties degree="2" numCtrlPts="3" numKnots="6" form="Open" isRational="true"/>
+    <ocx:VknotVector value="0.0 0.0 0.0 0.18345745441521488 0.18345745441521488 0.18345745441521488"/>
+    <ocx:ControlPtList>
+        <ocx:ControlPoint coordinates="60000.000000000015 3919.1835884531165 9.094947017729282E-12" unit="u2" weight="1.0"/>
+        <ocx:ControlPoint coordinates="60000.000000000015 10000.000000000018 2590.4169439707634" unit="u2" weight="0.834241679264861"/>
+        <ocx:ControlPoint coordinates="60000.000000000015 10000.000000000018 9200.000000000011" unit="u2" weight="1.0"/>
+        <ocx:ControlPoint coordinates="-1.1823431123048067E-11 3919.183588453089 1.8189894035458565E-12" unit="u2" weight="1.0"/>
+        <ocx:ControlPoint coordinates="-1.3821474183961181E-11 9999.999999999989 2590.416943970749" unit="u2" weight="0.834241679264861"/>
+        <ocx:ControlPoint coordinates="-1.4604543941296513E-11 9999.999999999996 9199.999999999993" unit="u2" weight="1.0"/>
+    </ocx:ControlPtList>
+</ocx:NURBSSurface>

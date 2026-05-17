@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_ae3d.3docx -->
+<ocx:Line3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID49" is2D="false">
+    <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+    <ocx:StartPoint coordinates="-2.9103830456733704E-11 0.0 0.0" unit="u2"/>
+    <ocx:EndPoint coordinates="9999.99999999997 0.0 0.0" unit="u2"/>
+</ocx:Line3D>

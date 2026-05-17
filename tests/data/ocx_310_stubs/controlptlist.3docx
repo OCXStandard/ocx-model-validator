@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_ae3d.3docx -->
+<ocx:ControlPtList xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd">
+    <ocx:ControlPoint coordinates="10000.0 10000.0 0.0" unit="u2" weight="1.0"/>
+    <ocx:ControlPoint coordinates="0.0 10000.0 0.0" unit="u2" weight="1.0"/>
+    <ocx:ControlPoint coordinates="-1.4551915228366852E-11 -7.275957614183426E-11 0.0" unit="u2" weight="1.0"/>
+    <ocx:ControlPoint coordinates="9999.99999999997 0.0 0.0" unit="u2" weight="1.0"/>
+    <ocx:ControlPoint coordinates="10000.0 10000.000000000051 0.0" unit="u2" weight="1.0"/>
+</ocx:ControlPtList>

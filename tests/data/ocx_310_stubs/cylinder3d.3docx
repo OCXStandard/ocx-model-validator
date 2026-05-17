@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR03_TC10_psav.3docx -->
+<ocx:Cylinder3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="cylndr3d_25156" name="cyl" ocx:GUIDRef="fbcac004-da2c-45e9-9e71-35fb36b5a746">
+    <ocx:FaceBoundaryCurve isUVspace="false">
+        <ocx:CircumCircle3D id="crcmcrcl3d_25157" name="aft" ocx:GUIDRef="7613b5fc-27df-4192-be69-95d809376512" is2D="false">
+            <ocx:CurveLength numericvalue="6283.185307179586" unit="u_milliMetres"/>
+            <ocx:Positions>
+                <ocx:Point3D coordinates="20000.0 6000.0 2000.0" unit="u_milliMetres"/>
+                <ocx:Point3D coordinates="20000.0 6000.0 0.0" unit="u_milliMetres"/>
+                <ocx:Point3D coordinates="20000.0 5000.0 1000.0" unit="u_milliMetres"/>
+            </ocx:Positions>
+        </ocx:CircumCircle3D>
+        <ocx:CircumCircle3D id="crcmcrcl3d_25158" name="fore" ocx:GUIDRef="24203c94-c20c-4e2b-844c-4e0a16b7328e" is2D="false">
+            <ocx:CurveLength numericvalue="6283.185307179586" unit="u_milliMetres"/>
+            <ocx:Positions>
+                <ocx:Point3D coordinates="20500.0 6000.0 2000.0" unit="u_milliMetres"/>
+                <ocx:Point3D coordinates="20500.0 6000.0 0.0" unit="u_milliMetres"/>
+                <ocx:Point3D coordinates="20500.0 5000.0 1000.0" unit="u_milliMetres"/>
+            </ocx:Positions>
+        </ocx:CircumCircle3D>
+    </ocx:FaceBoundaryCurve>
+    <ocx:Origin coordinates="20000.0 6000.0 1000.0" unit="u_milliMetres"/>
+    <ocx:Axis direction="1.0 0.0 0.0"/>
+    <ocx:Radius numericvalue="1000.0" unit="u_milliMetres"/>
+    <ocx:Height numericvalue="500.0" unit="u_milliMetres"/>
+</ocx:Cylinder3D>

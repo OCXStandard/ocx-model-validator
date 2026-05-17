@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr04_tc13_cadhu.3docx -->
+<ocx:RectangularMickeyMouseEars xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" id="_ch241-fixed23-800x2000x50x10definition">
+    <ocx:Height numericvalue="2.0" unit="uMeter"/>
+    <ocx:Width numericvalue="0.8" unit="uMeter"/>
+    <ocx:Radius numericvalue="0.05" unit="uMeter"/>
+    <ocx:Displacement numericvalue="0.01" unit="uMeter"/>
+</ocx:RectangularMickeyMouseEars>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_ae3d.3docx -->
+<ocx:Material xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID72" name="GradeA" ocx:grade="A" ocx:GUIDRef="{20882DD9-9BFE-4F1A-8C01-15AED90C6204}">
+    <ocx:Density numericvalue="7850.0" unit="u7"/>
+    <ocx:YoungsModulus numericvalue="210000.0" unit="u4"/>
+    <ocx:PoissonRatio numericvalue="0.3" unit="u6"/>
+    <ocx:YieldStress numericvalue="207.0" unit="u4"/>
+    <ocx:UltimateStress numericvalue="331.0" unit="u4"/>
+</ocx:Material>

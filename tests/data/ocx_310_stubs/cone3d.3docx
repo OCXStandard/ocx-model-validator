@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR03_TC10_psav.3docx -->
+<ocx:Cone3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="cn3d_25159" name="Cornet" ocx:GUIDRef="a3688315-a035-4ae4-8326-4ad33516b66e">
+    <ocx:Description>a sample cone</ocx:Description>
+    <ocx:FaceBoundaryCurve isUVspace="false">
+        <ocx:Circle3D id="crcl3d_25160" ocx:GUIDRef="59a9a059-d8e9-43ac-b682-b357da78ce67" is2D="false">
+            <ocx:CurveLength numericvalue="6283.185307179586" unit="u_milliMetres"/>
+            <ocx:Diameter numericvalue="2000.0" unit="u_milliMetres"/>
+            <ocx:Center coordinates="25000.0 6000.0 1000.0" unit="u_milliMetres"/>
+            <ocx:Normal direction="1.0 0.0 0.0"/>
+        </ocx:Circle3D>
+        <ocx:Circle3D id="crcl3d_25161" ocx:GUIDRef="38a6eb5a-0630-4c1a-818e-90e13fe12946" is2D="false">
+            <ocx:CurveLength numericvalue="3141.592653589793" unit="u_milliMetres"/>
+            <ocx:Diameter numericvalue="1000.0" unit="u_milliMetres"/>
+            <ocx:Center coordinates="25500.0 6000.0 1000.0" unit="u_milliMetres"/>
+            <ocx:Normal direction="1.0 0.0 0.0"/>
+        </ocx:Circle3D>
+    </ocx:FaceBoundaryCurve>
+    <ocx:Origin coordinates="25000.0 6000.0 1000.0" unit="u_milliMetres"/>
+    <ocx:Tip coordinates="25500.0 6000.0 1000.0" unit="u_milliMetres"/>
+    <ocx:BaseRadius numericvalue="1000.0" unit="u_milliMetres"/>
+    <ocx:TipRadius numericvalue="500.0" unit="u_milliMetres"/>
+</ocx:Cone3D>

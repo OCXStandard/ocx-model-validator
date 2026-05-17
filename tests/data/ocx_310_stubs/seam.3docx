@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC04_cadhu.3docx -->
+<ocx:Seam xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="_hullgroup1_layer-01_gr1_DS_3SB" ocx:GUIDRef="A1B96636-C12F-4446-A2F3-1A91F435916E">
+    <ocx:Description>
+            1_DS_3
+          </ocx:Description>
+    <ocx:TraceLine>
+        <ocx:CompositeCurve3D id="_hullgroup1_layer-01_gr1_DS_3SBcomposite" is2D="false">
+            <ocx:CurveLength numericvalue="9.0" unit="uMeter"/>
+            <ocx:NURBS3D id="_hullgroup1_layer-01_gr1_DS_3SBcompositenurbs0" is2D="false">
+                <ocx:CurveLength numericvalue="9.0" unit="uMeter"/>
+                <ocx:NURBSproperties degree="1" numCtrlPts="2" numKnots="4" form="Open" isRational="true"/>
+                <ocx:KnotVector value="2.1 2.1 3.0 3.0"/>
+                <ocx:ControlPtList>
+                    <ocx:ControlPoint coordinates="9.0 -0.0 0.0" unit="uMeter" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="0.0 -0.0 0.0" unit="uMeter" weight="1.0"/>
+                </ocx:ControlPtList>
+            </ocx:NURBS3D>
+        </ocx:CompositeCurve3D>
+    </ocx:TraceLine>
+</ocx:Seam>

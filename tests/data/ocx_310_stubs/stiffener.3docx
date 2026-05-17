@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC03_ae3d.3docx -->
+<ocx:Stiffener xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID70" ocx:GUIDRef="{96FB85B8-89BF-4E67-9EB7-68FEC3AC4717}">
+    <ocx:PhysicalProperties>
+        <ocx:DryWeight numericvalue="157.0" unit="u8"/>
+        <ocx:CenterOfGravity coordinates="100.00000000000728 1005.0 5000.0" unit="u2"/>
+    </ocx:PhysicalProperties>
+    <ocx:TraceLine>
+        <ocx:CompositeCurve3D id="ID71" is2D="false">
+            <ocx:CurveLength numericvalue="9999.999999999996" unit="u2"/>
+            <ocx:Line3D id="ID72" is2D="false">
+                <ocx:CurveLength numericvalue="9999.999999999996" unit="u2"/>
+                <ocx:StartPoint coordinates="0.0 1000.0 3.183231456205249E-12" unit="u2"/>
+                <ocx:EndPoint coordinates="0.0 1000.0 10000.0" unit="u2"/>
+            </ocx:Line3D>
+        </ocx:CompositeCurve3D>
+    </ocx:TraceLine>
+    <ocx:MaterialRef localRef="ID93" ocx:GUIDRef="{20882DD9-9BFE-4F1A-8C01-15AED90C6204}" ocx:refType="ocx:Material"/>
+    <ocx:SectionRef localRef="ID96" ocx:GUIDRef="{5F7C4A85-E39F-470D-928D-7692896E838A}" ocx:refType="ocx:BarSection">
+        <ocx:OffsetU numericvalue="0.0" unit="u2"/>
+        <ocx:OffsetV numericvalue="0.0" unit="u2"/>
+    </ocx:SectionRef>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="1.0 6.123233995736765E-17 -0.0"/>
+        <ocx:FlangeDirection direction="-6.123233995736765E-17 1.0 0.0"/>
+        <ocx:Position coordinates="0.0 1000.0 3.183231456205249E-12" unit="u2"/>
+    </ocx:Inclination>
+</ocx:Stiffener>

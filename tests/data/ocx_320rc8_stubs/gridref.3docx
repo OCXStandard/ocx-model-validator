@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr04_tc04a_ai3dx.3docx -->
+<ocx:GridRef xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" localRef="F.0" ocx:GUIDRef="11709539-f366-4bca-971f-4c39df6cb5a7" ocx:refType="ocx:ReferencePlane">
+    <ocx:ContourBounds>
+        <ocx:ContourStart coordinates="0.0 0.0 0.0" unit="Um"/>
+        <ocx:ContourEnd coordinates="0.0 10.0 12.0" unit="Um"/>
+    </ocx:ContourBounds>
+    <ocx:Offset numericvalue="0.0" unit="Um"/>
+    <ocx:OffsetDirection direction="0.0 0.0 0.0"/>
+</ocx:GridRef>

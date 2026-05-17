@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR03_TC10_nast.3docx -->
+<ocx:Circle3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="nplcid476" ocx:GUIDRef="e40b5163-4c95-4d3b-9402-ae5270159a99" is2D="true">
+    <ocx:CurveLength numericvalue="0.0" unit="Um"/>
+    <ocx:Diameter numericvalue="1.0" unit="Um"/>
+    <ocx:Center coordinates="0.0 0.0 0.0" unit="Um"/>
+    <ocx:Normal direction="0.0 0.0 1.0"/>
+</ocx:Circle3D>

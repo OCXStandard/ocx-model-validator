@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC03_ae3d.3docx -->
+<ocx:BarSection xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID95" name="BulbFlat200X10" ocx:GUIDRef="{141AFD6E-1970-4F7C-9189-161F963F89DC}">
+    <ocx:BulbFlat>
+        <ocx:Height numericvalue="200.0" unit="u2"/>
+        <ocx:WebThickness numericvalue="10.0" unit="u2"/>
+    </ocx:BulbFlat>
+</ocx:BarSection>

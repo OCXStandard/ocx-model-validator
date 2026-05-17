@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC03_ae3d.3docx -->
+<ocx:RectangularTube xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd">
+    <ocx:Height numericvalue="100.0" unit="u2"/>
+    <ocx:Width numericvalue="200.0" unit="u2"/>
+    <ocx:Thickness numericvalue="10.0" unit="u2"/>
+</ocx:RectangularTube>

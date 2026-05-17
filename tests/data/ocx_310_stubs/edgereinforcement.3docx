@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC05_ae3d.3docx -->
+<ocx:EdgeReinforcement xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID65" ocx:GUIDRef="{2e025c96-f7fc-44c7-a2a0-fd2fab27ba4b}">
+    <ocx:PhysicalProperties>
+        <ocx:DryWeight numericvalue="70.18537266002791" unit="u8"/>
+        <ocx:CenterOfGravity coordinates="1778.2695101854363 1778.1973187801088 1.9444257759460015E-08" unit="u2"/>
+    </ocx:PhysicalProperties>
+    <ocx:SectionRef localRef="ID72" ocx:GUIDRef="{5487cfde-c20a-4672-b163-ec277dd45fe2}" ocx:refType="ocx:BarSection">
+        <ocx:OffsetU numericvalue="0.0" unit="u2"/>
+        <ocx:OffsetV numericvalue="-105.0" unit="u2"/>
+    </ocx:SectionRef>
+    <ocx:MaterialRef localRef="ID70" ocx:GUIDRef="{ac2a762d-b18b-4b99-bfd3-2ddd1c5f0dd0}" ocx:refType="ocx:Material"/>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 -0.0 1.0"/>
+        <ocx:FlangeDirection direction="1.0 -0.0 -0.0"/>
+        <ocx:Position coordinates="2500.0 -3.623767952376511E-13 0.0" unit="u2"/>
+    </ocx:Inclination>
+    <ocx:EdgeCurveRef localRef="ID48" ocx:GUIDRef="{aa3f5102-83a9-49e4-93e0-1a08547ec639}" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:TraceLine>
+        <ocx:CompositeCurve3D id="ID66" is2D="false">
+            <ocx:CurveLength numericvalue="4463.495361128962" unit="u2"/>
+            <ocx:NURBS3D id="ID67" is2D="false">
+                <ocx:CurveLength numericvalue="4463.495361128962" unit="u2"/>
+                <ocx:NURBSproperties degree="3" numCtrlPts="10" numKnots="14" form="Open" isRational="true"/>
+                <ocx:KnotVector value="0.0 0.0 0.0 0.0 1250.00066304741 1250.00066304741 1250.00066304741 3213.496071541005 3213.496071541005 3213.496071541005 4463.496071540991 4463.496071540991 4463.496071540991 4463.496071540991"/>
+                <ocx:ControlPtList>
+                    <ocx:ControlPoint coordinates="2500.0 -3.623767952376511E-13 0.0" unit="u2" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="2500.0 416.66666666666896 0.0" unit="u2" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="2499.9999999999986 833.3333333333386 0.0" unit="u2" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="2499.9999999999854 1250.000000000008 0.0" unit="u2" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="2499.9999999999563 1982.2330470336342 0.0" unit="u2" weight="0.804737854124366"/>
+                    <ocx:ControlPoint coordinates="1982.233047033631 2499.999999999999 0.0" unit="u2" weight="0.804737854124366"/>
+                    <ocx:ControlPoint coordinates="1250.0 2500.0 0.0" unit="u2" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="833.3333333333381 2500.0 0.0" unit="u2" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="416.6666666666764 2500.0 0.0" unit="u2" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="1.454480980100925E-11 2500.0 0.0" unit="u2" weight="1.0"/>
+                </ocx:ControlPtList>
+            </ocx:NURBS3D>
+        </ocx:CompositeCurve3D>
+    </ocx:TraceLine>
+</ocx:EdgeReinforcement>

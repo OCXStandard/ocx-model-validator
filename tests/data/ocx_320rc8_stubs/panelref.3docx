@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr04_tc08_ai3dx.3docx -->
+<ocx:PanelRef xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" localRef="nplcid15" ocx:GUIDRef="914b6732-c486-44ca-b9c4-9e824addf61f" ocx:refType="ocx:Panel">
+    <ocx:ContourBounds>
+        <ocx:ContourStart coordinates="0.0 3.0 1.2" unit="Um"/>
+        <ocx:ContourEnd coordinates="0.0 -3.0 1.2" unit="Um"/>
+    </ocx:ContourBounds>
+    <ocx:Offset numericvalue="0.0" unit="Um"/>
+    <ocx:OffsetDirection direction="0.0 0.0 0.0"/>
+</ocx:PanelRef>

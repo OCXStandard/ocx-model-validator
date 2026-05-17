@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_ae3d.3docx -->
+<ocx:NURBS3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID69" is2D="false">
+    <ocx:CurveLength numericvalue="40000.00000000011" unit="u2"/>
+    <ocx:NURBSproperties degree="1" numCtrlPts="5" numKnots="7" form="Open" isRational="false"/>
+    <ocx:KnotVector value="0.0 0.0 10000.0 20000.000000000073 30000.00000000006 40000.00000000011 40000.00000000011"/>
+    <ocx:ControlPtList>
+        <ocx:ControlPoint coordinates="10000.0 10000.0 0.0" unit="u2" weight="1.0"/>
+        <ocx:ControlPoint coordinates="0.0 10000.0 0.0" unit="u2" weight="1.0"/>
+        <ocx:ControlPoint coordinates="-1.4551915228366852E-11 -7.275957614183426E-11 0.0" unit="u2" weight="1.0"/>
+        <ocx:ControlPoint coordinates="9999.99999999997 0.0 0.0" unit="u2" weight="1.0"/>
+        <ocx:ControlPoint coordinates="10000.0 10000.000000000051 0.0" unit="u2" weight="1.0"/>
+    </ocx:ControlPtList>
+</ocx:NURBS3D>

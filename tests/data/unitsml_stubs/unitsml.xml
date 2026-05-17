@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_ae3d.3docx -->
+<unitsml:UnitsML xmlns:unitsml="urn:oasis:names:tc:unitsml:schema:xsd:UnitsMLSchema_lite-0.9.18">
+    <unitsml:UnitSet>
+        <unitsml:Unit xml:id="u1" dimensionURL="ID1">
+            <unitsml:UnitName xml:lang="en-us">meter</unitsml:UnitName>
+            <unitsml:UnitSymbol type="m"/>
+        </unitsml:Unit>
+        <unitsml:Unit xml:id="u2" dimensionURL="ID2">
+            <unitsml:UnitName xml:lang="en-us">millimeter</unitsml:UnitName>
+            <unitsml:UnitSymbol type="mm"/>
+            <unitsml:RootUnits>
+                <unitsml:EnumeratedRootUnit unit="meter" prefix="m" powerNumerator="1"/>
+            </unitsml:RootUnits>
+        </unitsml:Unit>
+        <unitsml:Unit xml:id="u3" dimensionURL="ID3">
+            <unitsml:UnitName xml:lang="en-us">knot</unitsml:UnitName>
+            <unitsml:UnitSymbol type="kn"/>
+            <unitsml:RootUnits>
+                <unitsml:EnumeratedRootUnit unit="knot" powerNumerator="1"/>
+            </unitsml:RootUnits>
+        </unitsml:Unit>
+        <unitsml:Unit xml:id="u4" dimensionURL="ID4">
+            <unitsml:UnitName xml:lang="en-us">megapascal</unitsml:UnitName>
+            <unitsml:UnitSymbol type="MPa"/>
+            <unitsml:RootUnits>
+                <unitsml:EnumeratedRootUnit unit="pascal" prefix="M" powerNumerator="1"/>
+            </unitsml:RootUnits>
+        </unitsml:Unit>
+        <unitsml:Unit xml:id="u5" dimensionURL="ID5">
+            <unitsml:UnitName xml:lang="en-us">area</unitsml:UnitName>
+            <unitsml:UnitSymbol type="A"/>
+            <unitsml:RootUnits>
+                <unitsml:EnumeratedRootUnit unit="meter" powerNumerator="2"/>
+            </unitsml:RootUnits>
+        </unitsml:Unit>
+        <unitsml:Unit xml:id="u6" dimensionURL="ID6">
+            <unitsml:UnitName xml:lang="en-us">nondimensional</unitsml:UnitName>
+        </unitsml:Unit>
+        <unitsml:Unit xml:id="u7" dimensionURL="ID7">
+            <unitsml:UnitName xml:lang="en-us">kilo gram per cubic meter</unitsml:UnitName>
+            <unitsml:UnitSymbol type="kg/m3"/>
+            <unitsml:RootUnits>
+                <unitsml:EnumeratedRootUnit unit="gram" prefix="k" powerNumerator="1"/>
+                <unitsml:EnumeratedRootUnit unit="meter" powerNumerator="-3"/>
+            </unitsml:RootUnits>
+        </unitsml:Unit>
+        <unitsml:Unit xml:id="u8" dimensionURL="ID8">
+            <unitsml:UnitName xml:lang="en-us">kg</unitsml:UnitName>
+            <unitsml:UnitSymbol type="kg"/>
+        </unitsml:Unit>
+        <unitsml:Unit xml:id="u9" dimensionURL="ID9">
+            <unitsml:UnitName xml:lang="en-us">angle</unitsml:UnitName>
+            <unitsml:UnitSymbol type="rad"/>
+            <unitsml:RootUnits>
+                <unitsml:EnumeratedRootUnit unit="radian" powerNumerator="1"/>
+            </unitsml:RootUnits>
+        </unitsml:Unit>
+        <unitsml:Unit xml:id="u10" dimensionURL="ID10">
+            <unitsml:UnitName xml:lang="en-us">volume</unitsml:UnitName>
+            <unitsml:UnitSymbol type="m3"/>
+            <unitsml:RootUnits>
+                <unitsml:EnumeratedRootUnit unit="meter" powerNumerator="3"/>
+            </unitsml:RootUnits>
+        </unitsml:Unit>
+    </unitsml:UnitSet>
+    <unitsml:DimensionSet>
+        <unitsml:Dimension xml:id="ID_F" dimensionless="false">
+            <unitsml:Length symbol="L" powerNumerator="1"/>
+            <unitsml:Mass symbol="M" powerNumerator="1"/>
+            <unitsml:Time symbol="T" powerNumerator="1"/>
+            <unitsml:ElectricCurrent symbol="I" powerNumerator="1"/>
+            <unitsml:AmountOfSubstance symbol="N" powerNumerator="1"/>
+            <unitsml:LuminousIntensity symbol="J" powerNumerator="1"/>
+        </unitsml:Dimension>
+        <unitsml:Dimension xml:id="ID_T" dimensionless="true"/>
+    </unitsml:DimensionSet>
+</unitsml:UnitsML>

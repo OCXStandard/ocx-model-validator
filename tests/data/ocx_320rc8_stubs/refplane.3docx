@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr04_tc04a_ai3dx.3docx -->
+<ocx:RefPlane xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" id="F.0" name="Frame.0" ocx:GUIDRef="11709539-f366-4bca-971f-4c39df6cb5a7" displayGrid="true">
+    <ocx:ReferenceLocation numericvalue="0.0" unit="Um"/>
+</ocx:RefPlane>

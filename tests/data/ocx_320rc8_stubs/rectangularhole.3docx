@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr04_tc13_cadhu.3docx -->
+<ocx:RectangularHole xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" id="_ch241-fixed6-1000x700definition">
+    <ocx:Height numericvalue="1.0" unit="uMeter"/>
+    <ocx:Width numericvalue="0.7" unit="uMeter"/>
+    <ocx:FilletRadius numericvalue="0.0" unit="uMeter"/>
+</ocx:RectangularHole>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR03_TC10_psav.3docx -->
+<ocx:Positions xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd">
+    <ocx:Point3D coordinates="20000.0 6000.0 2000.0" unit="u_milliMetres"/>
+    <ocx:Point3D coordinates="20000.0 6000.0 0.0" unit="u_milliMetres"/>
+    <ocx:Point3D coordinates="20000.0 5000.0 1000.0" unit="u_milliMetres"/>
+</ocx:Positions>

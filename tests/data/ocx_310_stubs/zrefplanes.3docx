@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_ae3d.3docx -->
+<ocx:ZRefPlanes xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" isMainSystem="true">
+    <ocx:RefPlane id="ID42" name="D0" ocx:GUIDRef="{2DACAF39-2D48-46B6-A041-F90577BE237D}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="0.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID43" name="D1" ocx:GUIDRef="{B8883994-40D1-40E8-8A2D-86D684D8C030}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="1500.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID44" name="D2" ocx:GUIDRef="{8A3F2FE7-222B-443B-BD08-50BE103B445F}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="6000.0" unit="u2"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="ID45" name="D3" ocx:GUIDRef="{A5694853-A845-4ABE-8271-13425FB5A218}" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="9900.0" unit="u2"/>
+    </ocx:RefPlane>
+</ocx:ZRefPlanes>

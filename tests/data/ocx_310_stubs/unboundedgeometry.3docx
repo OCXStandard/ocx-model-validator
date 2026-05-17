@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_ae3d.3docx -->
+<ocx:UnboundedGeometry xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd">
+    <ocx:Plane3D id="ID47">
+        <ocx:Origin coordinates="0.0 0.0 0.0" unit="u2"/>
+        <ocx:Normal direction="0.0 0.0 1.0"/>
+    </ocx:Plane3D>
+</ocx:UnboundedGeometry>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR03_TC10_psav.3docx -->
+<ocx:PolyLine3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="plyln3d_25352" ocx:GUIDRef="291d700b-9486-422c-8305-350862fa90db" is2D="false" isClosed="false">
+    <ocx:CurveLength numericvalue="2118.033988749895" unit="u_milliMetres"/>
+    <ocx:Point3D coordinates="10000.0 2000.0 1000.0" unit="u_milliMetres"/>
+    <ocx:Point3D coordinates="10000.0 3000.0 1000.0" unit="u_milliMetres"/>
+    <ocx:Point3D coordinates="10000.0 4000.0 1500.0" unit="u_milliMetres"/>
+</ocx:PolyLine3D>

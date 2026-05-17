@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr04_tc08_ai3dx.3docx -->
+<ocx:Bracket xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" id="nplcid90" name="Bracket_10" ocx:GUIDRef="8433aed0-a244-419d-9242-cabb9d554c28">
+    <ocx:MassProperties>
+        <ocx:MouldedDryWeight numericvalue="4.43525" unit="UKg"/>
+        <ocx:MouldedCenterOfGravity coordinates="1.0861357 0.0 1.5318732" unit="Um"/>
+    </ocx:MassProperties>
+    <ocx:BracketParameters ocx:hasEdgeReinforcement="false">
+        <ocx:ArmLengthU numericvalue="0.3" unit="Um"/>
+        <ocx:ArmLengthV numericvalue="0.27" unit="Um"/>
+        <ocx:UDirection direction="-1.0 0.0 0.0"/>
+        <ocx:VDirection direction="0.0 0.0 1.0"/>
+        <ocx:Origin coordinates="1.2 0.0 1.42" unit="Um"/>
+        <ocx:Unose numericvalue="0.1" unit="Um"/>
+        <ocx:Vnose numericvalue="0.025" unit="Um"/>
+        <ocx:FeatureCope>
+            <ocx:CopeRadius numericvalue="0.0" unit="Um"/>
+            <ocx:CopeLength numericvalue="0.0" unit="Um"/>
+            <ocx:CopeHeight numericvalue="0.0" unit="Um"/>
+        </ocx:FeatureCope>
+    </ocx:BracketParameters>
+    <ocx:PlateMaterial localRef="nplcid91" ocx:GUIDRef="7c8e02c9-109f-48f5-a753-682137fa4599" ocx:refType="ocx:Material">
+        <ocx:Thickness numericvalue="0.01" unit="Um"/>
+    </ocx:PlateMaterial>
+    <ocx:OuterContour>
+        <ocx:Line3D id="nplcid92" is2D="false">
+            <ocx:CurveLength numericvalue="0.3" unit="Um"/>
+            <ocx:StartPoint coordinates="0.9 0.0 1.42" unit="Um"/>
+            <ocx:EndPoint coordinates="1.2 0.0 1.42" unit="Um"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="nplcid93" is2D="false">
+            <ocx:CurveLength numericvalue="0.025" unit="Um"/>
+            <ocx:StartPoint coordinates="0.9 0.0 1.42" unit="Um"/>
+            <ocx:EndPoint coordinates="0.9 0.0 1.445" unit="Um"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="nplcid94" is2D="false">
+            <ocx:CurveLength numericvalue="0.3162673" unit="Um"/>
+            <ocx:StartPoint coordinates="1.1 0.0 1.69" unit="Um"/>
+            <ocx:EndPoint coordinates="0.9 0.0 1.445" unit="Um"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="nplcid95" is2D="false">
+            <ocx:CurveLength numericvalue="0.1" unit="Um"/>
+            <ocx:StartPoint coordinates="1.2 0.0 1.69" unit="Um"/>
+            <ocx:EndPoint coordinates="1.1 0.0 1.69" unit="Um"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="nplcid96" is2D="false">
+            <ocx:CurveLength numericvalue="0.27" unit="Um"/>
+            <ocx:StartPoint coordinates="1.2 0.0 1.42" unit="Um"/>
+            <ocx:EndPoint coordinates="1.2 0.0 1.69" unit="Um"/>
+        </ocx:Line3D>
+    </ocx:OuterContour>
+    <ocx:LimitedBy>
+        <ocx:StiffenerRef localRef="nplcid41" ocx:GUIDRef="8c3b7713-b803-404d-9dd2-ff42c1dd6773" ocx:refType="ocx:Stiffener">
+            <ocx:ContourBounds>
+                <ocx:ContourStart coordinates="0.0 0.0 0.0" unit="Um"/>
+                <ocx:ContourEnd coordinates="0.0 0.0 0.0" unit="Um"/>
+            </ocx:ContourBounds>
+            <ocx:Offset numericvalue="0.0" unit="Um"/>
+            <ocx:OffsetDirection direction="0.0 0.0 0.0"/>
+        </ocx:StiffenerRef>
+        <ocx:PanelRef localRef="nplcid25" ocx:GUIDRef="ba2c8839-4462-47fd-bbb9-811657daef85" ocx:refType="ocx:Panel">
+            <ocx:ContourBounds>
+                <ocx:ContourStart coordinates="1.2 0.0 1.42" unit="Um"/>
+                <ocx:ContourEnd coordinates="1.2 0.0 1.69" unit="Um"/>
+            </ocx:ContourBounds>
+            <ocx:Offset numericvalue="0.0" unit="Um"/>
+            <ocx:OffsetDirection direction="0.0 0.0 0.0"/>
+        </ocx:PanelRef>
+    </ocx:LimitedBy>
+</ocx:Bracket>

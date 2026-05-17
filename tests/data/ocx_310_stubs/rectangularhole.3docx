@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC06_ai3dx.3docx -->
+<ocx:RectangularHole xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="nplcid30">
+    <ocx:Height numericvalue="1.5" unit="Um"/>
+    <ocx:Width numericvalue="1.0" unit="Um"/>
+    <ocx:FilletRadius numericvalue="0.5" unit="Um"/>
+</ocx:RectangularHole>

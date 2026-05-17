@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC08_ae3d.3docx -->
+<ocx:ConnectionConfiguration xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID213">
+    <ocx:WebStiffener>
+        <ocx:WebStiffenerRef localRef="ID929" ocx:GUIDRef="{d66b4257-71af-4716-990a-2bc5de3a7d33}" ocx:refType="ocx:Stiffener"/>
+    </ocx:WebStiffener>
+    <ocx:PlateRef localRef="ID821" ocx:GUIDRef="{feb2231c-eedc-4aff-bb57-a7fa16dc854f}" ocx:refType="ocx:Plate"/>
+    <ocx:Point3D coordinates="5.820766091346741E-11 2250.0 1200.0" unit="u2"/>
+</ocx:ConnectionConfiguration>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr04_tc08_ai3dx.3docx -->
+<ocx:Pillar xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" id="nplcid1552" name="Plr-F.6-L.0-Face Plate_5-Face Plate_3-PIPE_160.0x6.0-Steel A" ocx:GUIDRef="2ad9e6f1-17a3-4899-be81-e84f5b3e6b8e">
+    <ocx:MassProperties>
+        <ocx:MouldedDryWeight numericvalue="45.5771" unit="UKg"/>
+        <ocx:MouldedCenterOfGravity coordinates="3.6 0.0 2.7" unit="Um"/>
+    </ocx:MassProperties>
+    <ocx:MaterialRef localRef="nplcid91" ocx:GUIDRef="7c8e02c9-109f-48f5-a753-682137fa4599" ocx:refType="ocx:Material"/>
+    <ocx:SectionRef localRef="nplcid1555" ocx:GUIDRef="b145268d-fc05-4044-a8f3-29be16bc9eb1" ocx:refType="ocx:BarSection">
+        <ocx:OffsetU numericvalue="-0.08" unit="Um"/>
+        <ocx:OffsetV numericvalue="0.0" unit="Um"/>
+    </ocx:SectionRef>
+    <ocx:TraceLine>
+        <ocx:CompositeCurve3D id="nplcid1553" ocx:GUIDRef="459cc803-6b52-4d56-ab6f-31756a473cec" is2D="false">
+            <ocx:CurveLength numericvalue="2.0" unit="Um"/>
+            <ocx:Line3D id="nplcid1554" is2D="false">
+                <ocx:CurveLength numericvalue="2.0" unit="Um"/>
+                <ocx:StartPoint coordinates="3.6 0.0 3.7" unit="Um"/>
+                <ocx:EndPoint coordinates="3.6 0.0 1.7" unit="Um"/>
+            </ocx:Line3D>
+        </ocx:CompositeCurve3D>
+    </ocx:TraceLine>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="1.0 0.0 0.0"/>
+        <ocx:FlangeDirection direction="0.0 1.0 0.0"/>
+        <ocx:Position coordinates="3.6 0.0 2.7" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:LimitedBy>
+        <ocx:StiffenerRef localRef="nplcid89" ocx:GUIDRef="c8a6fa7c-747b-4585-972e-e2eeb4200fa8" ocx:refType="ocx:Stiffener">
+            <ocx:ContourBounds>
+                <ocx:ContourStart coordinates="0.0 0.0 0.0" unit="Um"/>
+                <ocx:ContourEnd coordinates="0.0 0.0 0.0" unit="Um"/>
+            </ocx:ContourBounds>
+            <ocx:Offset numericvalue="0.0" unit="Um"/>
+            <ocx:OffsetDirection direction="0.0 0.0 0.0"/>
+        </ocx:StiffenerRef>
+        <ocx:StiffenerRef localRef="nplcid87" ocx:GUIDRef="0acc8ccb-216e-4b68-a089-0a2d7973bc88" ocx:refType="ocx:Stiffener">
+            <ocx:ContourBounds>
+                <ocx:ContourStart coordinates="0.0 0.0 0.0" unit="Um"/>
+                <ocx:ContourEnd coordinates="0.0 0.0 0.0" unit="Um"/>
+            </ocx:ContourBounds>
+            <ocx:Offset numericvalue="0.0" unit="Um"/>
+            <ocx:OffsetDirection direction="0.0 0.0 0.0"/>
+        </ocx:StiffenerRef>
+    </ocx:LimitedBy>
+</ocx:Pillar>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_ae3d.3docx -->
+<unitsml:Dimension xmlns:unitsml="urn:oasis:names:tc:unitsml:schema:xsd:UnitsMLSchema_lite-0.9.18" xml:id="ID_F" dimensionless="false">
+    <unitsml:Length symbol="L" powerNumerator="1"/>
+    <unitsml:Mass symbol="M" powerNumerator="1"/>
+    <unitsml:Time symbol="T" powerNumerator="1"/>
+    <unitsml:ElectricCurrent symbol="I" powerNumerator="1"/>
+    <unitsml:AmountOfSubstance symbol="N" powerNumerator="1"/>
+    <unitsml:LuminousIntensity symbol="J" powerNumerator="1"/>
+</unitsml:Dimension>

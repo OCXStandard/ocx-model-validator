@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC06_cadhu.3docx -->
+<ocx:SymmetricalHole xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="_ch241-fixed2-1500x1000definition">
+    <ocx:Height numericvalue="1.5" unit="uMeter"/>
+    <ocx:Width numericvalue="1.0" unit="uMeter"/>
+</ocx:SymmetricalHole>

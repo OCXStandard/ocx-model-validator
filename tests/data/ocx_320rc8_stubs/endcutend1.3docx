@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr04_tc08_ai3dx.3docx -->
+<ocx:EndCutEnd1 xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" id="nplcid1299" name="HP02.5" symmetricFlange="false" sniped="true">
+    <ocx:CutbackDistance numericvalue="0.0" unit="Um"/>
+    <ocx:WebCutBackAngle numericvalue="0.0" unit="URad"/>
+    <ocx:WebNoseHeight numericvalue="0.0" unit="Um"/>
+    <ocx:FlangeCutBackAngle numericvalue="30.0" unit="URad"/>
+    <ocx:FlangeNoseHeight numericvalue="20.0" unit="Um"/>
+</ocx:EndCutEnd1>

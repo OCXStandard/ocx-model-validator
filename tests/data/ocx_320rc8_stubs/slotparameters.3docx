@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr04_tc08_ai3dx.3docx -->
+<ocx:SlotParameters xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" asymmetric="false" ocx:slotType="Open">
+    <ocx:Height numericvalue="0.22" unit="Um"/>
+    <ocx:Width numericvalue="0.012" unit="Um"/>
+    <ocx:UpperRadius numericvalue="0.02" unit="Um"/>
+    <ocx:LowerRadius numericvalue="0.02" unit="Um"/>
+    <ocx:LugPlateRef localRef="nplcid1088" ocx:GUIDRef="649c32db-041a-4dab-870f-5e68dbf43d25" ocx:refType="ocx:Plate">
+        <ocx:ConnectionLength numericvalue="50.0" unit="Um"/>
+        <ocx:DistanceAbove numericvalue="10.0" unit="Um"/>
+    </ocx:LugPlateRef>
+</ocx:SlotParameters>

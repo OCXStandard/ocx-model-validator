@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_ae3d.3docx -->
+<ocx:OuterContour xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd">
+    <ocx:Line3D id="ID57" is2D="false">
+        <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+        <ocx:StartPoint coordinates="10000.0 10000.0 0.0" unit="u2"/>
+        <ocx:EndPoint coordinates="0.0 10000.0 0.0" unit="u2"/>
+    </ocx:Line3D>
+    <ocx:Line3D id="ID58" is2D="false">
+        <ocx:CurveLength numericvalue="10000.000000000073" unit="u2"/>
+        <ocx:StartPoint coordinates="0.0 10000.0 0.0" unit="u2"/>
+        <ocx:EndPoint coordinates="-1.4551915228366852E-11 -7.275957614183426E-11 0.0" unit="u2"/>
+    </ocx:Line3D>
+    <ocx:Line3D id="ID59" is2D="false">
+        <ocx:CurveLength numericvalue="9999.999999999985" unit="u2"/>
+        <ocx:StartPoint coordinates="-1.4551915228366852E-11 -7.275957614183426E-11 0.0" unit="u2"/>
+        <ocx:EndPoint coordinates="9999.99999999997 0.0 0.0" unit="u2"/>
+    </ocx:Line3D>
+    <ocx:Line3D id="ID60" is2D="false">
+        <ocx:CurveLength numericvalue="10000.000000000051" unit="u2"/>
+        <ocx:StartPoint coordinates="9999.99999999997 0.0 0.0" unit="u2"/>
+        <ocx:EndPoint coordinates="10000.0 10000.000000000051 0.0" unit="u2"/>
+    </ocx:Line3D>
+</ocx:OuterContour>

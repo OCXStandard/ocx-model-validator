@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_ae3d.3docx -->
+<ocx:Panel xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID46" name="Model01" ocx:GUIDRef="{60F98A9C-6FAF-4731-A7C0-13B07BD4BBC1}" ocx:functionType="DECK" ocx:tightness="WaterTight">
+    <ocx:UnboundedGeometry>
+        <ocx:Plane3D id="ID47">
+            <ocx:Origin coordinates="0.0 0.0 0.0" unit="u2"/>
+            <ocx:Normal direction="0.0 0.0 1.0"/>
+        </ocx:Plane3D>
+    </ocx:UnboundedGeometry>
+    <ocx:LimitedBy>
+        <ocx:FreeEdgeCurve3D id="ID48" ocx:GUIDRef="{2621C560-D8B1-4A58-BEB3-DD88EFE42229}" is2D="false" isUVSpace="false">
+            <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+            <ocx:Line3D id="ID49" is2D="false">
+                <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+                <ocx:StartPoint coordinates="-2.9103830456733704E-11 0.0 0.0" unit="u2"/>
+                <ocx:EndPoint coordinates="9999.99999999997 0.0 0.0" unit="u2"/>
+            </ocx:Line3D>
+        </ocx:FreeEdgeCurve3D>
+        <ocx:FreeEdgeCurve3D id="ID50" ocx:GUIDRef="{86E450D9-AD9B-41E5-B0B0-6066BEA0393F}" is2D="false" isUVSpace="false">
+            <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+            <ocx:Line3D id="ID51" is2D="false">
+                <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+                <ocx:StartPoint coordinates="10000.0 10000.0 0.0" unit="u2"/>
+                <ocx:EndPoint coordinates="0.0 10000.0 0.0" unit="u2"/>
+            </ocx:Line3D>
+        </ocx:FreeEdgeCurve3D>
+        <ocx:FreeEdgeCurve3D id="ID52" ocx:GUIDRef="{D6D65C45-539E-477E-B5A4-0819EBBF9F22}" is2D="false" isUVSpace="false">
+            <ocx:CurveLength numericvalue="10000.000000000116" unit="u2"/>
+            <ocx:Line3D id="ID53" is2D="false">
+                <ocx:CurveLength numericvalue="10000.000000000116" unit="u2"/>
+                <ocx:StartPoint coordinates="-1.4551915228366852E-11 10000.000000000044 0.0" unit="u2"/>
+                <ocx:EndPoint coordinates="-1.4551915228366852E-11 -7.275957614183426E-11 0.0" unit="u2"/>
+            </ocx:Line3D>
+        </ocx:FreeEdgeCurve3D>
+        <ocx:FreeEdgeCurve3D id="ID54" ocx:GUIDRef="{7D3C5932-0653-4661-9302-5960B54BC8D7}" is2D="false" isUVSpace="false">
+            <ocx:CurveLength numericvalue="10000.000000000116" unit="u2"/>
+            <ocx:Line3D id="ID55" is2D="false">
+                <ocx:CurveLength numericvalue="10000.000000000116" unit="u2"/>
+                <ocx:StartPoint coordinates="10000.0 -6.548361852765083E-11 0.0" unit="u2"/>
+                <ocx:EndPoint coordinates="10000.0 10000.000000000051 0.0" unit="u2"/>
+            </ocx:Line3D>
+        </ocx:FreeEdgeCurve3D>
+    </ocx:LimitedBy>
+    <ocx:ComposedOf>
+        <ocx:Plate id="ID56" ocx:GUIDRef="{C07B7006-B9D8-4E19-A263-A5BEC2194A24}">
+            <ocx:PhysicalProperties>
+                <ocx:DryWeight numericvalue="7850.000000000023" unit="u8"/>
+                <ocx:CenterOfGravity coordinates="4999.999999999983 4999.999999999983 0.0" unit="u2"/>
+            </ocx:PhysicalProperties>
+            <ocx:NetArea numericvalue="100000000.0000003" unit="u2"/>
+            <ocx:OuterContour>
+                <ocx:Line3D id="ID57" is2D="false">
+                    <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+                    <ocx:StartPoint coordinates="10000.0 10000.0 0.0" unit="u2"/>
+                    <ocx:EndPoint coordinates="0.0 10000.0 0.0" unit="u2"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="ID58" is2D="false">
+                    <ocx:CurveLength numericvalue="10000.000000000073" unit="u2"/>
+                    <ocx:StartPoint coordinates="0.0 10000.0 0.0" unit="u2"/>
+                    <ocx:EndPoint coordinates="-1.4551915228366852E-11 -7.275957614183426E-11 0.0" unit="u2"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="ID59" is2D="false">
+                    <ocx:CurveLength numericvalue="9999.999999999985" unit="u2"/>
+                    <ocx:StartPoint coordinates="-1.4551915228366852E-11 -7.275957614183426E-11 0.0" unit="u2"/>
+                    <ocx:EndPoint coordinates="9999.99999999997 0.0 0.0" unit="u2"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="ID60" is2D="false">
+                    <ocx:CurveLength numericvalue="10000.000000000051" unit="u2"/>
+                    <ocx:StartPoint coordinates="9999.99999999997 0.0 0.0" unit="u2"/>
+                    <ocx:EndPoint coordinates="10000.0 10000.000000000051 0.0" unit="u2"/>
+                </ocx:Line3D>
+            </ocx:OuterContour>
+            <ocx:PlateMaterial localRef="ID72" ocx:GUIDRef="{20882DD9-9BFE-4F1A-8C01-15AED90C6204}" ocx:refType="ocx:Material">
+                <ocx:Thickness numericvalue="10.0" unit="u2"/>
+            </ocx:PlateMaterial>
+            <ocx:LimitedBy>
+                <ocx:FreeEdgeCurve3D id="ID61" ocx:GUIDRef="{2621C560-D8B1-4A58-BEB3-DD88EFE42229}" is2D="false" isUVSpace="false">
+                    <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+                    <ocx:Line3D id="ID62" is2D="false">
+                        <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+                        <ocx:StartPoint coordinates="-2.9103830456733704E-11 0.0 0.0" unit="u2"/>
+                        <ocx:EndPoint coordinates="9999.99999999997 0.0 0.0" unit="u2"/>
+                    </ocx:Line3D>
+                </ocx:FreeEdgeCurve3D>
+                <ocx:FreeEdgeCurve3D id="ID63" ocx:GUIDRef="{86E450D9-AD9B-41E5-B0B0-6066BEA0393F}" is2D="false" isUVSpace="false">
+                    <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+                    <ocx:Line3D id="ID64" is2D="false">
+                        <ocx:CurveLength numericvalue="10000.0" unit="u2"/>
+                        <ocx:StartPoint coordinates="10000.0 10000.0 0.0" unit="u2"/>
+                        <ocx:EndPoint coordinates="0.0 10000.0 0.0" unit="u2"/>
+                    </ocx:Line3D>
+                </ocx:FreeEdgeCurve3D>
+                <ocx:FreeEdgeCurve3D id="ID65" ocx:GUIDRef="{D6D65C45-539E-477E-B5A4-0819EBBF9F22}" is2D="false" isUVSpace="false">
+                    <ocx:CurveLength numericvalue="10000.000000000116" unit="u2"/>
+                    <ocx:Line3D id="ID66" is2D="false">
+                        <ocx:CurveLength numericvalue="10000.000000000116" unit="u2"/>
+                        <ocx:StartPoint coordinates="-1.4551915228366852E-11 10000.000000000044 0.0" unit="u2"/>
+                        <ocx:EndPoint coordinates="-1.4551915228366852E-11 -7.275957614183426E-11 0.0" unit="u2"/>
+                    </ocx:Line3D>
+                </ocx:FreeEdgeCurve3D>
+                <ocx:FreeEdgeCurve3D id="ID67" ocx:GUIDRef="{7D3C5932-0653-4661-9302-5960B54BC8D7}" is2D="false" isUVSpace="false">
+                    <ocx:CurveLength numericvalue="10000.000000000116" unit="u2"/>
+                    <ocx:Line3D id="ID68" is2D="false">
+                        <ocx:CurveLength numericvalue="10000.000000000116" unit="u2"/>
+                        <ocx:StartPoint coordinates="10000.0 -6.548361852765083E-11 0.0" unit="u2"/>
+                        <ocx:EndPoint coordinates="10000.0 10000.000000000051 0.0" unit="u2"/>
+                    </ocx:Line3D>
+                </ocx:FreeEdgeCurve3D>
+            </ocx:LimitedBy>
+            <ocx:Offset numericvalue="0.0" unit="u2"/>
+        </ocx:Plate>
+    </ocx:ComposedOf>
+    <ocx:OuterContour>
+        <ocx:NURBS3D id="ID69" is2D="false">
+            <ocx:CurveLength numericvalue="40000.00000000011" unit="u2"/>
+            <ocx:NURBSproperties degree="1" numCtrlPts="5" numKnots="7" form="Open" isRational="false"/>
+            <ocx:KnotVector value="0.0 0.0 10000.0 20000.000000000073 30000.00000000006 40000.00000000011 40000.00000000011"/>
+            <ocx:ControlPtList>
+                <ocx:ControlPoint coordinates="10000.0 10000.0 0.0" unit="u2" weight="1.0"/>
+                <ocx:ControlPoint coordinates="0.0 10000.0 0.0" unit="u2" weight="1.0"/>
+                <ocx:ControlPoint coordinates="-1.4551915228366852E-11 -7.275957614183426E-11 0.0" unit="u2" weight="1.0"/>
+                <ocx:ControlPoint coordinates="9999.99999999997 0.0 0.0" unit="u2" weight="1.0"/>
+                <ocx:ControlPoint coordinates="10000.0 10000.000000000051 0.0" unit="u2" weight="1.0"/>
+            </ocx:ControlPtList>
+        </ocx:NURBS3D>
+    </ocx:OuterContour>
+</ocx:Panel>

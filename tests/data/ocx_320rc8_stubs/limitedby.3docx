@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr04_tc04a_ai3dx.3docx -->
+<ocx:LimitedBy xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd">
+    <ocx:GridRef localRef="F.0" ocx:GUIDRef="11709539-f366-4bca-971f-4c39df6cb5a7" ocx:refType="ocx:ReferencePlane">
+        <ocx:ContourBounds>
+            <ocx:ContourStart coordinates="0.0 0.0 0.0" unit="Um"/>
+            <ocx:ContourEnd coordinates="0.0 10.0 12.0" unit="Um"/>
+        </ocx:ContourBounds>
+        <ocx:Offset numericvalue="0.0" unit="Um"/>
+        <ocx:OffsetDirection direction="0.0 0.0 0.0"/>
+    </ocx:GridRef>
+    <ocx:GridRef localRef="X.9000" ocx:GUIDRef="3e38798b-aeed-4e6c-af54-da59139354a9" ocx:refType="ocx:ReferencePlane">
+        <ocx:ContourBounds>
+            <ocx:ContourStart coordinates="9.0 0.0 0.0" unit="Um"/>
+            <ocx:ContourEnd coordinates="9.0 10.0 12.0" unit="Um"/>
+        </ocx:ContourBounds>
+        <ocx:Offset numericvalue="0.0" unit="Um"/>
+        <ocx:OffsetDirection direction="0.0 0.0 0.0"/>
+    </ocx:GridRef>
+    <ocx:GridRef localRef="Z.12000" ocx:GUIDRef="c9e93e0e-d7e9-475f-a1ad-e2075ea9dfa2" ocx:refType="ocx:ReferencePlane">
+        <ocx:ContourBounds>
+            <ocx:ContourStart coordinates="9.0 10.0 12.0" unit="Um"/>
+            <ocx:ContourEnd coordinates="0.0 10.0 12.0" unit="Um"/>
+        </ocx:ContourBounds>
+        <ocx:Offset numericvalue="0.0" unit="Um"/>
+        <ocx:OffsetDirection direction="0.0 0.0 0.0"/>
+    </ocx:GridRef>
+    <ocx:GridRef localRef="L.0" ocx:GUIDRef="e61cd68c-8955-4c75-8ba3-61e4e5bd2b04" ocx:refType="ocx:ReferencePlane">
+        <ocx:ContourBounds>
+            <ocx:ContourStart coordinates="9.0 0.0 0.0" unit="Um"/>
+            <ocx:ContourEnd coordinates="0.0 0.0 0.0" unit="Um"/>
+        </ocx:ContourBounds>
+        <ocx:Offset numericvalue="0.0" unit="Um"/>
+        <ocx:OffsetDirection direction="0.0 0.0 0.0"/>
+    </ocx:GridRef>
+</ocx:LimitedBy>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC04_cadhu.3docx -->
+<ocx:SectionOuterShape xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd">
+    <ocx:CompositeCurve3D id="_ch241-437-DT190X200X6.5X10contourcomposite" is2D="false">
+        <ocx:CurveLength numericvalue="1.162314" unit="uMeter"/>
+        <ocx:Line3D id="_ch241-437-DT190X200X6.5X10contourcompositeline0" is2D="false">
+            <ocx:CurveLength numericvalue="0.10325" unit="uMeter"/>
+            <ocx:StartPoint coordinates="5.0 0.0 -0.01" unit="uMeter"/>
+            <ocx:EndPoint coordinates="5.10325 0.0 -0.01" unit="uMeter"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="_ch241-437-DT190X200X6.5X10contourcompositeline1" is2D="false">
+            <ocx:CurveLength numericvalue="0.01" unit="uMeter"/>
+            <ocx:StartPoint coordinates="5.10325 0.0 -0.01" unit="uMeter"/>
+            <ocx:EndPoint coordinates="5.10325 1E-05 -0.02" unit="uMeter"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="_ch241-437-DT190X200X6.5X10contourcompositeline2" is2D="false">
+            <ocx:CurveLength numericvalue="0.09475" unit="uMeter"/>
+            <ocx:StartPoint coordinates="5.10325 1E-05 -0.02" unit="uMeter"/>
+            <ocx:EndPoint coordinates="5.0085 1E-05 -0.02" unit="uMeter"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="_ch241-437-DT190X200X6.5X10contourcompositeline4" is2D="false">
+            <ocx:CurveLength numericvalue="0.166" unit="uMeter"/>
+            <ocx:StartPoint coordinates="5.0065 1.2E-05 -0.022" unit="uMeter"/>
+            <ocx:EndPoint coordinates="5.0065 0.000175 -0.188" unit="uMeter"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="_ch241-437-DT190X200X6.5X10contourcompositeline6" is2D="false">
+            <ocx:CurveLength numericvalue="0.09475" unit="uMeter"/>
+            <ocx:StartPoint coordinates="5.0085 0.000177 -0.19" unit="uMeter"/>
+            <ocx:EndPoint coordinates="5.10325 0.000177 -0.19" unit="uMeter"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="_ch241-437-DT190X200X6.5X10contourcompositeline7" is2D="false">
+            <ocx:CurveLength numericvalue="0.01" unit="uMeter"/>
+            <ocx:StartPoint coordinates="5.10325 0.000177 -0.19" unit="uMeter"/>
+            <ocx:EndPoint coordinates="5.10325 0.000187 -0.2" unit="uMeter"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="_ch241-437-DT190X200X6.5X10contourcompositeline8" is2D="false">
+            <ocx:CurveLength numericvalue="0.2" unit="uMeter"/>
+            <ocx:StartPoint coordinates="5.10325 0.000187 -0.2" unit="uMeter"/>
+            <ocx:EndPoint coordinates="4.90325 0.000187 -0.2" unit="uMeter"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="_ch241-437-DT190X200X6.5X10contourcompositeline9" is2D="false">
+            <ocx:CurveLength numericvalue="0.01" unit="uMeter"/>
+            <ocx:StartPoint coordinates="4.90325 0.000187 -0.2" unit="uMeter"/>
+            <ocx:EndPoint coordinates="4.90325 0.000177 -0.19" unit="uMeter"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="_ch241-437-DT190X200X6.5X10contourcompositeline10" is2D="false">
+            <ocx:CurveLength numericvalue="0.09475" unit="uMeter"/>
+            <ocx:StartPoint coordinates="4.90325 0.000177 -0.19" unit="uMeter"/>
+            <ocx:EndPoint coordinates="4.998 0.000177 -0.19" unit="uMeter"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="_ch241-437-DT190X200X6.5X10contourcompositeline12" is2D="false">
+            <ocx:CurveLength numericvalue="0.166" unit="uMeter"/>
+            <ocx:StartPoint coordinates="5.0 0.000175 -0.188" unit="uMeter"/>
+            <ocx:EndPoint coordinates="5.0 1.2E-05 -0.022" unit="uMeter"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="_ch241-437-DT190X200X6.5X10contourcompositeline14" is2D="false">
+            <ocx:CurveLength numericvalue="0.09475" unit="uMeter"/>
+            <ocx:StartPoint coordinates="4.998 1E-05 -0.02" unit="uMeter"/>
+            <ocx:EndPoint coordinates="4.90325 1E-05 -0.02" unit="uMeter"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="_ch241-437-DT190X200X6.5X10contourcompositeline15" is2D="false">
+            <ocx:CurveLength numericvalue="0.01" unit="uMeter"/>
+            <ocx:StartPoint coordinates="4.90325 1E-05 -0.02" unit="uMeter"/>
+            <ocx:EndPoint coordinates="4.90325 0.0 -0.01" unit="uMeter"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="_ch241-437-DT190X200X6.5X10contourcompositeline16" is2D="false">
+            <ocx:CurveLength numericvalue="0.09675" unit="uMeter"/>
+            <ocx:StartPoint coordinates="4.90325 0.0 -0.01" unit="uMeter"/>
+            <ocx:EndPoint coordinates="5.0 0.0 -0.01" unit="uMeter"/>
+        </ocx:Line3D>
+        <ocx:CircumArc3D id="_ch241-437-DT190X200X6.5X10contourcompositearc3" is2D="false">
+            <ocx:CurveLength numericvalue="0.003142" unit="uMeter"/>
+            <ocx:StartPoint coordinates="5.0085 1E-05 -0.02" unit="uMeter"/>
+            <ocx:IntermediatePoint coordinates="5.007086 1E-05 -0.020586" unit="uMeter"/>
+            <ocx:EndPoint coordinates="5.0065 1.2E-05 -0.022" unit="uMeter"/>
+        </ocx:CircumArc3D>
+        <ocx:CircumArc3D id="_ch241-437-DT190X200X6.5X10contourcompositearc5" is2D="false">
+            <ocx:CurveLength numericvalue="0.003142" unit="uMeter"/>
+            <ocx:StartPoint coordinates="5.0065 0.000175 -0.188" unit="uMeter"/>
+            <ocx:IntermediatePoint coordinates="5.007086 0.000176 -0.189414" unit="uMeter"/>
+            <ocx:EndPoint coordinates="5.0085 0.000177 -0.19" unit="uMeter"/>
+        </ocx:CircumArc3D>
+        <ocx:CircumArc3D id="_ch241-437-DT190X200X6.5X10contourcompositearc11" is2D="false">
+            <ocx:CurveLength numericvalue="0.003142" unit="uMeter"/>
+            <ocx:StartPoint coordinates="4.998 0.000177 -0.19" unit="uMeter"/>
+            <ocx:IntermediatePoint coordinates="4.999414 0.000176 -0.189414" unit="uMeter"/>
+            <ocx:EndPoint coordinates="5.0 0.000175 -0.188" unit="uMeter"/>
+        </ocx:CircumArc3D>
+        <ocx:CircumArc3D id="_ch241-437-DT190X200X6.5X10contourcompositearc13" is2D="false">
+            <ocx:CurveLength numericvalue="0.003142" unit="uMeter"/>
+            <ocx:StartPoint coordinates="5.0 1.2E-05 -0.022" unit="uMeter"/>
+            <ocx:IntermediatePoint coordinates="4.999414 1E-05 -0.020586" unit="uMeter"/>
+            <ocx:EndPoint coordinates="4.998 1E-05 -0.02" unit="uMeter"/>
+        </ocx:CircumArc3D>
+    </ocx:CompositeCurve3D>
+</ocx:SectionOuterShape>

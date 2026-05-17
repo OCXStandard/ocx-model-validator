@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC08_nast.3docx -->
+<ocx:WebStiffenerWithSingleBracket xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd">
+    <ocx:ConnectedBracketRef localRef="nplcid50" ocx:GUIDRef="1f443cb1-6737-e8c2-3971-beb7373c983b" ocx:refType="ocx:Bracket" ocx:position="Near side"/>
+    <ocx:WebStiffenerRef localRef="nplcid40" ocx:GUIDRef="cffcf072-51e6-929c-3dcc-e4de550561ca" ocx:refType="ocx:Stiffener"/>
+</ocx:WebStiffenerWithSingleBracket>

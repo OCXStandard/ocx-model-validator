@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC08_ae3d.3docx -->
+<ocx:Pillar xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID583" ocx:GUIDRef="{e557ed2a-6aae-431a-9dfa-849943b22f21}">
+    <ocx:PhysicalProperties>
+        <ocx:DryWeight numericvalue="45.027562831411245" unit="u8"/>
+        <ocx:CenterOfGravity coordinates="3600.0 0.0 2699.999999999942" unit="u2"/>
+    </ocx:PhysicalProperties>
+    <ocx:MaterialRef localRef="ID984" ocx:GUIDRef="{781cfa71-830b-4b91-84d4-08dc6ce79747}" ocx:refType="ocx:Material"/>
+    <ocx:SectionRef localRef="ID988" ocx:GUIDRef="{a2e56e26-2026-4071-bff5-c617e9314a94}" ocx:refType="ocx:BarSection">
+        <ocx:OffsetU numericvalue="-80.0" unit="u2"/>
+        <ocx:OffsetV numericvalue="-80.0" unit="u2"/>
+    </ocx:SectionRef>
+    <ocx:TraceLine>
+        <ocx:CompositeCurve3D id="ID584" is2D="false">
+            <ocx:CurveLength numericvalue="1976.0" unit="u2"/>
+            <ocx:Line3D id="ID585" is2D="false">
+                <ocx:CurveLength numericvalue="1976.0" unit="u2"/>
+                <ocx:StartPoint coordinates="3600.0 0.0 3687.999999999942" unit="u2"/>
+                <ocx:EndPoint coordinates="3600.0 0.0 1711.9999999999418" unit="u2"/>
+            </ocx:Line3D>
+        </ocx:CompositeCurve3D>
+    </ocx:TraceLine>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 1.0 0.0"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="3600.0 0.0 3687.999999999942" unit="u2"/>
+    </ocx:Inclination>
+</ocx:Pillar>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC03_ae3d.3docx -->
+<ocx:Inclination xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd">
+    <ocx:WebDirection direction="1.0 6.123233995736765E-17 -0.0"/>
+    <ocx:FlangeDirection direction="-6.123233995736765E-17 1.0 0.0"/>
+    <ocx:Position coordinates="0.0 1000.0 3.183231456205249E-12" unit="u2"/>
+</ocx:Inclination>

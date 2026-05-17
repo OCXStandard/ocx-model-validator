@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC08_ae3d.3docx -->
+<ocx:Bracket xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" id="ID69" ocx:GUIDRef="{f468edd8-e0a1-4277-9a65-b1757e5b5b04}">
+    <ocx:PhysicalProperties>
+        <ocx:DryWeight numericvalue="3.1792499999999997" unit="u8"/>
+        <ocx:CenterOfGravity coordinates="1089.9999999999902 2250.000000000029 1519.9999999999998" unit="u2"/>
+    </ocx:PhysicalProperties>
+    <ocx:BracketParameters ocx:hasEdgeReinforcement="false">
+        <ocx:ArmLengthU numericvalue="0.0" unit="u2"/>
+        <ocx:ArmLengthV numericvalue="0.0" unit="u2"/>
+        <ocx:UDirection direction="-1.0 0.0 0.0"/>
+        <ocx:VDirection direction="0.0 0.0 1.0"/>
+        <ocx:Origin coordinates="1200.0 2250.0 1420.0" unit="u2"/>
+    </ocx:BracketParameters>
+    <ocx:PlateMaterial localRef="ID984" ocx:GUIDRef="{781cfa71-830b-4b91-84d4-08dc6ce79747}" ocx:refType="ocx:Material">
+        <ocx:Thickness numericvalue="10.0" unit="u2"/>
+    </ocx:PlateMaterial>
+    <ocx:Offset numericvalue="0.0" unit="u2"/>
+    <ocx:OuterContour>
+        <ocx:Line3D id="ID70" is2D="false">
+            <ocx:CurveLength numericvalue="270.0" unit="u2"/>
+            <ocx:StartPoint coordinates="1190.0 2250.000000000029 1700.0" unit="u2"/>
+            <ocx:EndPoint coordinates="1189.9999999999854 2250.000000000029 1430.0" unit="u2"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="ID71" is2D="false">
+            <ocx:CurveLength numericvalue="300.0" unit="u2"/>
+            <ocx:StartPoint coordinates="1189.9999999999854 2250.000000000029 1430.0" unit="u2"/>
+            <ocx:EndPoint coordinates="889.9999999999854 2250.000000000029 1430.0" unit="u2"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="ID72" is2D="false">
+            <ocx:CurveLength numericvalue="403.6087214122221" unit="u2"/>
+            <ocx:StartPoint coordinates="889.9999999999854 2250.000000000029 1430.0" unit="u2"/>
+            <ocx:EndPoint coordinates="1190.0 2250.000000000029 1700.0" unit="u2"/>
+        </ocx:Line3D>
+    </ocx:OuterContour>
+    <ocx:UnboundedGeometry>
+        <ocx:Plane3D id="ID73">
+            <ocx:Origin coordinates="1200.0 2250.0 1420.0" unit="u2"/>
+            <ocx:Normal direction="0.0 1.0 -0.0"/>
+        </ocx:Plane3D>
+    </ocx:UnboundedGeometry>
+</ocx:Bracket>

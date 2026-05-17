@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC06_ae3d.3docx -->
+<ocx:CutBy xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd">
+    <ocx:Hole2DContour id="ID76" ocx:GUIDRef="{7c925dbe-0307-4785-947f-903849c744ac}">
+        <ocx:HoleRef localRef="ID83" ocx:GUIDRef="{8b93426a-257b-4f91-89d1-f8dd0b15fdcf}" ocx:refType="ocx:Hole2D"/>
+        <ocx:Transformation>
+            <ocx:Origin coordinates="1250.0000000000002 1250.0000000000005 0.0" unit="u2"/>
+            <ocx:PrimaryAxis direction="1.0 2.2737367544323206E-13 0.0"/>
+            <ocx:SecondaryAxis direction="-2.2737367544323206E-13 1.0 0.0"/>
+        </ocx:Transformation>
+    </ocx:Hole2DContour>
+</ocx:CutBy>

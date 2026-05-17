@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr04_tc04a_ai3dx.3docx -->
+<ocx:PrincipalParticulars xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" ocx:freeboardType="A">
+    <ocx:Lpp numericvalue="10.0" unit="Um"/>
+    <ocx:RuleLength numericvalue="10.0" unit="Um"/>
+    <ocx:BlockCoefficient numericvalue="0.0" unit="UDimless"/>
+    <ocx:FP_Pos numericvalue="10.0" unit="Um"/>
+    <ocx:MouldedBreadth numericvalue="10.0" unit="Um"/>
+    <ocx:MouldedDepth numericvalue="NaN" unit="Um"/>
+    <ocx:ScantlingDraught numericvalue="1.0" unit="Um"/>
+    <ocx:DesignSpeed numericvalue="0.0" unit="UKnots"/>
+    <ocx:FreeboardLength numericvalue="NaN" unit="Um"/>
+</ocx:PrincipalParticulars>

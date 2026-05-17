@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR02_TC01_ae3d.3docx -->
+<ocx:PrincipalParticulars xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V310//OCX_Schema.xsd" ocx:freeboardType="A">
+    <ocx:Lpp numericvalue="70000.0" unit="u2"/>
+    <ocx:RuleLength numericvalue="0.0" unit="u2"/>
+    <ocx:BlockCoefficient numericvalue="0.0" unit="u6"/>
+    <ocx:FP_Pos numericvalue="0.0" unit="u2"/>
+    <ocx:MouldedBreadth numericvalue="20000.0" unit="u2"/>
+    <ocx:MouldedDepth numericvalue="12000.0" unit="u2"/>
+    <ocx:ScantlingDraught numericvalue="8000.0" unit="u2"/>
+    <ocx:DesignSpeed numericvalue="0.0" unit="u2"/>
+    <ocx:FreeboardLength numericvalue="0.0" unit="u2"/>
+    <ocx:NormalBallastDraught numericvalue="0.0" unit="u2"/>
+    <ocx:HeavyBallastDraught numericvalue="0.0" unit="u2"/>
+    <ocx:SlammingDraughtEmptyFP numericvalue="0.0" unit="u2"/>
+    <ocx:SlammingDraughtFullFP numericvalue="0.0" unit="u2"/>
+</ocx:PrincipalParticulars>
