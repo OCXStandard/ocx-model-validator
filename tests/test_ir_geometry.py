@@ -56,36 +56,40 @@ def test_line3d_construction():
 
 def test_circle3d_defaults():
     c = IrCircle3D(curve_length=None)
-    assert c.center is None and c.radius is None and c.normal is None
+    assert c.center is None and c.diameter is None and c.normal is None
 
 
 def test_polyline_and_composite_default_to_empty_lists():
     pl = IrPolyLine3D(curve_length=None)
     cc = IrCompositeCurve3D(curve_length=None)
     assert pl.vertices == [] and cc.segments == []
+    assert pl.is_closed is False
     assert pl.vertices is not IrPolyLine3D(curve_length=None).vertices  # no shared default
 
 
 def test_circumarc_ellipse_nurbs_curves_construct():
-    assert IrCircumArc3D(curve_length=None).middle is None
+    assert IrCircumArc3D(curve_length=None).intermediate is None
     assert IrEllipse3D(curve_length=None).major_axis is None
+    assert IrEllipse3D(curve_length=None).normal is None
     n = IrNurbs3D(curve_length=None, degree=2)
     assert n.degree == 2 and n.knot_vector == [] and n.control_points == []
+    assert n.is_rational is False
 
 
 def test_surface_subclasses_construct():
     assert isinstance(IrPlane3D(), IrSurface3D)
-    assert IrPlane3D().id is None
-    assert IrSphere3D().radius is None
-    assert IrCone3D().half_angle is None
-    assert IrCylinder3D().axis is None
-    assert IrExtrudedSurface().base_curve is None
+    assert IrPlane3D().id is None and IrPlane3D().udirection is None
+    assert IrSphere3D().radius is None and IrSphere3D().origin is None
+    assert IrCone3D().tip_radius is None and IrCone3D().base_radius is None
+    assert IrCylinder3D().axis is None and IrCylinder3D().height is None
+    assert IrExtrudedSurface().base_curve is None and IrExtrudedSurface().sweep is None
     assert IrNurbsSurface().control_points == []
 
 
 def test_reference_geometry_construct():
     cs = IrCoordinateSystem(id="cs1")
-    assert cs.name is None and cs.origin is None
+    assert cs.name is None and cs.local_origin is None
+    assert cs.is_global is False and cs.x_ref_plane_ids == []
     rp = IrRefPlane(id="rp1")
     assert rp.reference_plane is None
     surf = IrSurface(id="s1")

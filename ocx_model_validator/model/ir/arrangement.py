@@ -40,8 +40,7 @@ class IrLiquidCargo:
     compartment_ref: Ref | None = None
     cargo_type: str | None = None
     density: Quantity | None = None
-    filling_height: Quantity | None = None
-    permeability: Quantity | None = None
+    carriage_pressure: Quantity | None = None
 
 
 @dataclass
@@ -51,7 +50,9 @@ class IrGaseousCargo:
     guidref: str | None = None
     compartment_ref: Ref | None = None
     cargo_type: str | None = None
+    density: Quantity | None = None
     carriage_pressure: Quantity | None = None
+    liquid_state: bool = False
 
 
 @dataclass
@@ -62,7 +63,7 @@ class IrBulkCargo:
     compartment_ref: Ref | None = None
     cargo_type: str | None = None
     stowage_factor: Quantity | None = None
-    stowage_height: Quantity | None = None
+    permeability: Quantity | None = None
     angle_of_repose: Quantity | None = None
 
 
@@ -83,9 +84,16 @@ class IrUnitCargo:
 class IrOccurrence:
     id: str
     name: str | None = None
-    guidref: str | None = None
-    definition_ref: Ref | None = None
-    transformation: dict | None = None  # raw geometry transform
+    type_value: str | None = None
+    plate_ref: Ref | None = None
+    stiffener_ref: Ref | None = None
+    seam_ref: Ref | None = None
+    bracket_ref: Ref | None = None
+    pillar_ref: Ref | None = None
+    hole_contour_ref: Ref | None = None
+    edge_reinforcement_ref: Ref | None = None
+    lug_plate_ref: Ref | None = None
+    connected_bracket_ref: Ref | None = None
 
 
 @dataclass
@@ -93,7 +101,7 @@ class IrOccurrenceGroup:
     """Can nest IrOccurrenceGroup and IrOccurrence at any depth."""
     id: str
     name: str | None = None
-    guidref: str | None = None
+    type_value: str | None = None
     children: list[IrOccurrenceGroup | IrOccurrence] = field(default_factory=list)
 
 
@@ -102,4 +110,5 @@ class IrDesignView:
     id: str
     name: str | None = None
     guidref: str | None = None
+    vessel_ref: Ref | None = None
     children: list[IrOccurrenceGroup | IrOccurrence] = field(default_factory=list)

@@ -14,7 +14,7 @@ from ocx_model_validator.model.ir.base import (
 )
 from ocx_model_validator.model.ir.geometry import (
     IrCoordinateSystem,
-    IrPoint3D,
+    IrCurve3D,
     IrRefPlane,
     IrSurface,
     IrSurfaceCollection,
@@ -42,6 +42,7 @@ from ocx_model_validator.model.ir.metadata import (
     IrPrincipalParticulars,
     IrShipDesignation,
     IrStatutoryData,
+    IrTonnageData,
 )
 
 
@@ -93,8 +94,8 @@ class IrStiffener:
     dry_weight: Quantity | None = None
     cog: IrCog | None = None
     function_type: str | None = None
-    end_cut_start: IrEndCut | None = None
-    end_cut_end: IrEndCut | None = None
+    end_cut_end1: IrEndCut | None = None
+    end_cut_end2: IrEndCut | None = None
     penetrations: list[IrPenetration] = field(default_factory=list)
 
 
@@ -131,43 +132,42 @@ class IrEdgeReinforcement:
 
 @dataclass
 class IrSeam:
-    """Weld/connection line that limits plates."""
+    """Weld/connection line produced by Panel.split_by; carries its trace curve."""
     id: str
     name: str | None = None
     guidref: str | None = None
-    plate_refs: list[Ref] = field(default_factory=list)
-    material_ref: Ref | None = None
-    section_ref: Ref | None = None
-    dry_weight: Quantity | None = None
-    cog: IrCog | None = None
-    function_type: str | None = None
+    trace_line: IrCurve3D | None = None
 
 
 @dataclass
 class IrMember:
-    """Structural beam/column element."""
+    """Structural member element (physical-properties + external geometry ref).
+
+    No reachable vessel-tree source exists in OCX 3.1.0, so the builder leaves
+    ``IrVessel.members`` empty; the type is kept aligned for forward schemas.
+    """
     id: str
     parent_ref: ParentRef
     name: str | None = None
     guidref: str | None = None
-    material_ref: Ref | None = None
-    section_ref: Ref | None = None
-    start_point: IrPoint3D | None = None
-    end_point: IrPoint3D | None = None
     dry_weight: Quantity | None = None
-    cog: IrPoint3D | None = None  # 3D point, not IrCog
-    function_type: str | None = None
+    cog: IrCog | None = None
+    external_geometry_ref: Ref | None = None
 
 
 @dataclass(frozen=True)
 class IrEndCut:
     """Stiffener end detailing (one instance per stiffener end)."""
+    id: str | None = None
+    name: str | None = None
+    cutback_distance: Quantity | None = None
+    web_cut_back_angle: Quantity | None = None
+    web_nose_height: Quantity | None = None
+    flange_cut_back_angle: Quantity | None = None
+    flange_nose_height: Quantity | None = None
+    symmetric_flange: bool = False
     sniped: bool = False
-    cope_height: Quantity | None = None
-    cope_length: Quantity | None = None
-    cope_radius: Quantity | None = None
-    flange_cutback_angle: Quantity | None = None
-    web_cutback_angle: Quantity | None = None
+    feature_cope: "IrFeatureCope | None" = None
 
 
 @dataclass(frozen=True)
@@ -363,6 +363,7 @@ class IrVessel:
     builder_info: IrBuilderInformation | None = None
     principal_particulars: IrPrincipalParticulars | None = None
     statutory_data: IrStatutoryData | None = None
+    tonnage_data: IrTonnageData | None = None
 
     # --- integrity report populated by builder ---
     duplicate_ids: list[str] = field(default_factory=list)

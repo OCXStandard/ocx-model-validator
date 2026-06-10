@@ -47,11 +47,11 @@ def test_typed_metadata_fields_default_none():
 
 def test_typed_metadata_assignment():
     v = IrVessel(id="v1")
-    v.ship_designation = IrShipDesignation(vessel_name="MV Test")
+    v.ship_designation = IrShipDesignation(ship_name="MV Test")
     v.principal_particulars = IrPrincipalParticulars()
     v.statutory_data = IrStatutoryData()
-    v.builder_info = IrBuilderInformation(builder_name="Yard X")
-    assert v.ship_designation.vessel_name == "MV Test"
+    v.builder_info = IrBuilderInformation(yard="Yard X")
+    assert v.ship_designation.ship_name == "MV Test"
     assert isinstance(v.builder_info, IrBuilderInformation)
 
 

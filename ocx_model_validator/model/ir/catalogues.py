@@ -37,6 +37,7 @@ class IrHole2D:
     name: str | None = None
     guidref: str | None = None
     contour: IrCurve3D | None = None
+    parametric: dict | None = None
 
 
 @dataclass

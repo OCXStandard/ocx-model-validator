@@ -13,14 +13,14 @@ from ocx_model_validator.model.ir import (
 
 def test_ship_designation_defaults():
     s = IrShipDesignation()
-    assert s.vessel_name is None and s.imo_number is None
-    s2 = IrShipDesignation(vessel_name="MV Test", imo_number="1234567")
-    assert s2.vessel_name == "MV Test" and s2.imo_number == "1234567"
+    assert s.ship_name is None and s.number_imo is None
+    s2 = IrShipDesignation(ship_name="MV Test", number_imo="1234567")
+    assert s2.ship_name == "MV Test" and s2.number_imo == "1234567"
 
 
 def test_tonnage_data_defaults():
     t = IrTonnageData()
-    assert t.gross_tonnage is None and t.net_tonnage is None
+    assert t.tonnage is None and t.dead_weight is None
 
 
 def test_principal_particulars_fields():
@@ -30,13 +30,12 @@ def test_principal_particulars_fields():
     assert pp.block_coefficient is None
 
 
-def test_statutory_data_holds_tonnage():
-    st = IrStatutoryData(tonnage_data=IrTonnageData(gross_tonnage=Quantity(50000.0, "")))
-    assert st.tonnage_data.gross_tonnage == Quantity(50000.0, "")
-    assert st.freeboard_type is None
+def test_statutory_data_fields():
+    st = IrStatutoryData(port_registration="Oslo", flag_state="NO")
+    assert st.port_registration == "Oslo" and st.flag_state == "NO"
 
 
 def test_builder_information_defaults():
-    b = IrBuilderInformation(builder_name="Yard X")
-    assert b.builder_name == "Yard X"
-    assert b.yard_number is None and b.delivery_date is None
+    b = IrBuilderInformation(yard="Yard X")
+    assert b.yard == "Yard X"
+    assert b.designer is None and b.year_of_build is None

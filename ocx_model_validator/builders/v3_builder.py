@@ -45,6 +45,44 @@ from ocx_model_validator.model.ir import (
     Ref, IrOctagonSection, IrSquareSection, IrUSection, IrISection, IrZSection, IrHalfRoundSection, IrHexagonSection,
 )
 from ocx_model_validator.model.units import build_unit_registry
+from ocx_model_validator.model.ir import (
+    IrBuilderInformation,
+    IrBulkCargo,
+    IrCircle3D,
+    IrCircumArc3D,
+    IrCompositeCurve3D,
+    IrCone3D,
+    IrCoordinateSystem,
+    IrCylinder3D,
+    IrDesignView,
+    IrEllipse3D,
+    IrEndCut,
+    IrExtrudedSurface,
+    IrFeatureCope,
+    IrGaseousCargo,
+    IrHole2D,
+    IrHoleShapeCatalogue,
+    IrLine3D,
+    IrLiquidCargo,
+    IrNurbs3D,
+    IrNurbsSurface,
+    IrOccurrence,
+    IrOccurrenceGroup,
+    IrPlane3D,
+    IrPoint3D,
+    IrPolyLine3D,
+    IrPrincipalParticulars,
+    IrRefPlane,
+    IrSeam,
+    IrShipDesignation,
+    IrSphere3D,
+    IrStatutoryData,
+    IrSurface,
+    IrSurfaceCollection,
+    IrTonnageData,
+    IrUnitCargo,
+    IrVector3D,
+)
 from .base import IOcxBuilder, MetaData
 
 
@@ -133,11 +171,22 @@ class OcxV3Builder(IOcxBuilder):
             self._build_compartments(arrangement, ir)
             self._build_physical_spaces(arrangement, ir)
 
-        # --- vessel metadata ---
-        ir.ship_designation = self._build_ship_designation(vessel_raw)
-        ir.classification = self._build_classification(vessel_raw)
-        ir.builder_info = self._build_builder_info(vessel_raw)
-        ir.principal_particulars = self._build_principal_particulars(vessel_raw)
+        # --- geometry: coordinate system + reference surfaces ---
+        self._build_coordinate_system(getattr(vessel_raw, "coordinate_system", None), ir)
+        self._build_reference_surfaces(getattr(vessel_raw, "reference_surfaces", None), ir)
+
+        # --- design view (product/occurrence tree) ---
+        self._build_design_view(getattr(vessel_raw, "design_view", None), ir)
+
+        # --- hole-shape catalogue (root- or vessel-level) ---
+        self._build_hole_catalogue(
+            getattr(root, "hole_shape_catalogue", None)
+            or getattr(vessel_raw, "hole_shape_catalogue", None),
+            ir,
+        )
+
+        # --- vessel metadata (typed) ---
+        self._build_metadata(vessel_raw, ir)
 
         # --- integrity checks ---
         self._check_integrity(ir)
@@ -232,6 +281,380 @@ class OcxV3Builder(IOcxBuilder):
             logger.warning(f"Duplicate id detected: {obj_id!r}")
         else:
             ir_dict[obj_id] = obj
+
+    @staticmethod
+    def _pt(elem) -> IrPoint3D | None:
+        """Build an IrPoint3D from an OCX Point3D (coordinates list + unit)."""
+        if elem is None:
+            return None
+        coords = list(getattr(elem, "coordinates", None) or [])
+        x, y, z = (coords + [0.0, 0.0, 0.0])[:3]
+        try:
+            return IrPoint3D(x=float(x), y=float(y), z=float(z),
+                             unit=str(getattr(elem, "unit", None) or ""))
+        except (TypeError, ValueError):
+            return None
+
+    @staticmethod
+    def _vec(elem) -> IrVector3D | None:
+        """Build an IrVector3D from an OCX Vector3D (direction list)."""
+        if elem is None:
+            return None
+        d = list(getattr(elem, "direction", None) or [])
+        x, y, z = (d + [0.0, 0.0, 0.0])[:3]
+        try:
+            return IrVector3D(x=float(x), y=float(y), z=float(z))
+        except (TypeError, ValueError):
+            return None
+
+    # ------------------------------------------------------------------
+    # Geometry — curves and surfaces
+    # ------------------------------------------------------------------
+
+    def _build_curve(self, elem):
+        """Dispatch a raw OCX curve element to its IR curve type."""
+        if elem is None:
+            return None
+        name = type(elem).__name__.lower()
+        cl = self._qty(getattr(elem, "curve_length", None))
+        cid = getattr(elem, "id", None)
+        if "compositecurve" in name:
+            segs = []
+            for attr in ("line3_d", "poly_line3_d", "circum_arc3_d",
+                         "circle3_d", "ellipse3_d", "nurbs3_d"):
+                for seg in getattr(elem, attr, None) or []:
+                    built = self._build_curve(seg)
+                    if built is not None:
+                        segs.append(built)
+            return IrCompositeCurve3D(curve_length=cl, id=cid, segments=segs)
+        if "polyline" in name:
+            verts = [self._pt(p) for p in getattr(elem, "point3_d", None) or []]
+            return IrPolyLine3D(curve_length=cl, id=cid,
+                                vertices=[v for v in verts if v],
+                                is_closed=bool(getattr(elem, "is_closed", False)))
+        if "circumarc" in name:
+            return IrCircumArc3D(curve_length=cl, id=cid,
+                                 start=self._pt(getattr(elem, "start_point", None)),
+                                 intermediate=self._pt(getattr(elem, "intermediate_point", None)),
+                                 end=self._pt(getattr(elem, "end_point", None)))
+        if "circle" in name:
+            return IrCircle3D(curve_length=cl, id=cid,
+                              center=self._pt(getattr(elem, "center", None)),
+                              diameter=self._qty(getattr(elem, "diameter", None)),
+                              normal=self._vec(getattr(elem, "normal", None)))
+        if "ellipse" in name:
+            return IrEllipse3D(curve_length=cl, id=cid,
+                               center=self._pt(getattr(elem, "center", None)),
+                               major_diameter=self._qty(getattr(elem, "major_diameter", None)),
+                               minor_diameter=self._qty(getattr(elem, "minor_diameter", None)),
+                               major_axis=self._vec(getattr(elem, "major_axis", None)),
+                               minor_axis=self._vec(getattr(elem, "minor_axis", None)),
+                               normal=self._vec(getattr(elem, "normal", None)))
+        if "nurbs" in name:
+            props = getattr(elem, "nurbsproperties", None)
+            kv = getattr(elem, "knot_vector", None)
+            cpl = getattr(elem, "control_pt_list", None)
+            pts = []
+            if cpl is not None:
+                pts = [self._pt(p) for p in getattr(cpl, "control_point", None) or []]
+            form = getattr(props, "form", None) if props else None
+            return IrNurbs3D(curve_length=cl, id=cid,
+                             degree=getattr(props, "degree", None) if props else None,
+                             knot_vector=list(getattr(kv, "value", None) or []) if kv else [],
+                             control_points=[p for p in pts if p],
+                             is_rational=bool(getattr(props, "is_rational", False)) if props else False,
+                             form=getattr(form, "value", None) if form is not None else None)
+        if "line3d" in name:
+            return IrLine3D(curve_length=cl, id=cid,
+                            start=self._pt(getattr(elem, "start_point", None)),
+                            end=self._pt(getattr(elem, "end_point", None)))
+        logger.debug("Unknown curve type: {}", type(elem).__name__)
+        return None
+
+    def _build_surface(self, elem):
+        """Dispatch a raw OCX surface element to its IR surface type."""
+        if elem is None:
+            return None
+        name = type(elem).__name__.lower()
+        sid = getattr(elem, "id", None)
+        if "plane" in name:
+            return IrPlane3D(id=sid, origin=self._pt(getattr(elem, "origin", None)),
+                             normal=self._vec(getattr(elem, "normal", None)),
+                             udirection=self._vec(getattr(elem, "udirection", None)))
+        if "sphere" in name:
+            return IrSphere3D(id=sid, origin=self._pt(getattr(elem, "origin", None)),
+                              radius=self._qty(getattr(elem, "radius", None)))
+        if "cone" in name:
+            return IrCone3D(id=sid, origin=self._pt(getattr(elem, "origin", None)),
+                            tip=self._pt(getattr(elem, "tip", None)),
+                            base_radius=self._qty(getattr(elem, "base_radius", None)),
+                            tip_radius=self._qty(getattr(elem, "tip_radius", None)))
+        if "cylinder" in name:
+            return IrCylinder3D(id=sid, origin=self._pt(getattr(elem, "origin", None)),
+                                axis=self._vec(getattr(elem, "axis", None)),
+                                radius=self._qty(getattr(elem, "radius", None)),
+                                height=self._qty(getattr(elem, "height", None)))
+        if "extruded" in name:
+            return IrExtrudedSurface(
+                id=sid,
+                base_curve=self._build_curve(getattr(elem, "base_curve", None)),
+                sweep=self._vec(getattr(elem, "sweep", None)),
+                sweep_curve=self._build_curve(getattr(elem, "sweep_curve", None)),
+                face_boundary_curve=self._build_curve(getattr(elem, "face_boundary_curve", None)))
+        if "nurbssurface" in name or "nurbs" in name:
+            return IrNurbsSurface(id=sid)
+        logger.debug("Unknown surface type: {}", type(elem).__name__)
+        return None
+
+    # ------------------------------------------------------------------
+    # Reference surfaces and coordinate system
+    # ------------------------------------------------------------------
+
+    _SURFACE_ATTRS = ("plane3_d", "nurbssurface", "extruded_surface",
+                      "sphere3_d", "cone3_d", "cylinder3_d")
+
+    def _build_reference_surfaces(self, rs, ir: IrVessel) -> None:
+        if rs is None:
+            return
+        for attr in self._SURFACE_ATTRS:
+            for elem in getattr(rs, attr, None) or []:
+                geom = self._build_surface(elem)
+                sid = getattr(elem, "id", None) or getattr(elem, "guidref", None)
+                if sid is None:
+                    continue
+                self._register(ir.surfaces, sid, IrSurface(
+                    id=sid, name=getattr(elem, "name", None),
+                    guidref=getattr(elem, "guidref", None), geometry=geom), ir.duplicate_ids)
+        for coll in getattr(rs, "surface_collection", None) or []:
+            cid = getattr(coll, "id", None)
+            if cid is None:
+                continue
+            members = []
+            for attr in self._SURFACE_ATTRS:
+                for elem in getattr(coll, attr, None) or []:
+                    members.append(IrSurface(id=getattr(elem, "id", None),
+                                             geometry=self._build_surface(elem)))
+            self._register(ir.surface_collections, cid, IrSurfaceCollection(
+                id=cid, name=getattr(coll, "name", None), surfaces=members), ir.duplicate_ids)
+
+    def _build_coordinate_system(self, cs, ir: IrVessel) -> None:
+        if cs is None:
+            return
+        cid = getattr(cs, "id", None) or "CoordinateSystem"
+
+        def _plane_ids(group):
+            ids = []
+            if group is None:
+                return ids
+            for rp in getattr(group, "ref_plane", None) or []:
+                rid = getattr(rp, "id", None)
+                if rid:
+                    ids.append(rid)
+                    self._register(ir.ref_planes, rid,
+                                   IrRefPlane(id=rid, name=getattr(rp, "name", None)),
+                                   ir.duplicate_ids)
+            return ids
+
+        local = getattr(cs, "local_cartesian", None)
+        origin = self._pt(getattr(local, "origin", None)) if local else None
+        self._register(ir.coordinate_systems, cid, IrCoordinateSystem(
+            id=cid, name=getattr(cs, "name", None),
+            is_global=bool(getattr(cs, "is_global", False)),
+            local_origin=origin,
+            x_ref_plane_ids=_plane_ids(getattr(cs, "xref_planes", None)),
+            y_ref_plane_ids=_plane_ids(getattr(cs, "yref_planes", None)),
+            z_ref_plane_ids=_plane_ids(getattr(cs, "zref_planes", None))), ir.duplicate_ids)
+
+    # ------------------------------------------------------------------
+    # End cuts, seams, cargoes, design view, hole catalogue
+    # ------------------------------------------------------------------
+
+    def _build_end_cut(self, ec) -> IrEndCut | None:
+        if ec is None:
+            return None
+        fc = getattr(ec, "feature_cope", None)
+        cope = None
+        if fc is not None:
+            cope = IrFeatureCope(id=getattr(fc, "id", None) or "",
+                                 name=getattr(fc, "name", None))
+        return IrEndCut(
+            id=getattr(ec, "id", None), name=getattr(ec, "name", None),
+            cutback_distance=self._qty(getattr(ec, "cutback_distance", None)),
+            web_cut_back_angle=self._qty(getattr(ec, "web_cut_back_angle", None)),
+            web_nose_height=self._qty(getattr(ec, "web_nose_height", None)),
+            flange_cut_back_angle=self._qty(getattr(ec, "flange_cut_back_angle", None)),
+            flange_nose_height=self._qty(getattr(ec, "flange_nose_height", None)),
+            symmetric_flange=bool(getattr(ec, "symmetric_flange", False)),
+            sniped=bool(getattr(ec, "sniped", False)),
+            feature_cope=cope)
+
+    def _build_seams_for_panel(self, panel_raw, ir: IrVessel) -> list[str]:
+        """Extract seams from Panel.split_by; register and return their ids."""
+        seam_ids: list[str] = []
+        split = getattr(panel_raw, "split_by", None)
+        if split is None:
+            return seam_ids
+        for seam in getattr(split, "seam", None) or []:
+            sid = getattr(seam, "id", None)
+            if sid is None:
+                continue
+            tl = getattr(seam, "trace_line", None)
+            curve = self._build_curve(getattr(tl, "composite_curve3_d", None)) if tl else None
+            self._register(ir.seams, sid, IrSeam(
+                id=sid, name=getattr(seam, "name", None),
+                guidref=getattr(seam, "guidref", None), trace_line=curve), ir.duplicate_ids)
+            seam_ids.append(sid)
+        return seam_ids
+
+    def _build_cargoes_for_compartment(self, comp, ir: IrVessel) -> None:
+        cid = getattr(comp, "id", None)
+        ref = Ref(local_ref=cid or "", guidref=getattr(comp, "guidref", None))
+        for i, lc in enumerate(getattr(comp, "liquid_cargo", None) or []):
+            cargo_id = f"{cid}/liquid/{i}"
+            self._register(ir.liquid_cargoes, cargo_id, IrLiquidCargo(
+                id=cargo_id, compartment_ref=ref,
+                cargo_type=self._enum(getattr(lc, "liquid_cargo_type", None)),
+                density=self._qty(getattr(lc, "density", None)),
+                carriage_pressure=self._qty(getattr(lc, "carriage_pressure", None))), ir.duplicate_ids)
+        for i, gc in enumerate(getattr(comp, "gaseous_cargo", None) or []):
+            cargo_id = f"{cid}/gas/{i}"
+            self._register(ir.gaseous_cargoes, cargo_id, IrGaseousCargo(
+                id=cargo_id, compartment_ref=ref,
+                cargo_type=self._enum(getattr(gc, "liquid_cargo_type", None)),
+                density=self._qty(getattr(gc, "density", None)),
+                carriage_pressure=self._qty(getattr(gc, "carriage_pressure", None)),
+                liquid_state=bool(getattr(gc, "liquid_state", False))), ir.duplicate_ids)
+        for i, bc in enumerate(getattr(comp, "bulk_cargo", None) or []):
+            cargo_id = f"{cid}/bulk/{i}"
+            self._register(ir.bulk_cargoes, cargo_id, IrBulkCargo(
+                id=cargo_id, compartment_ref=ref,
+                cargo_type=self._enum(getattr(bc, "bulk_cargo_type", None)),
+                stowage_factor=self._qty(getattr(bc, "stowage_factor", None)),
+                permeability=self._qty(getattr(bc, "permeability", None)),
+                angle_of_repose=self._qty(getattr(bc, "angle_of_repose", None))), ir.duplicate_ids)
+        for i, uc in enumerate(getattr(comp, "unit_cargo", None) or []):
+            cargo_id = f"{cid}/unit/{i}"
+            self._register(ir.unit_cargoes, cargo_id, IrUnitCargo(
+                id=cargo_id, compartment_ref=ref,
+                cargo_type=self._enum(getattr(uc, "unit_cargo_type", None))), ir.duplicate_ids)
+
+    _OCC_REF_ATTRS = ("plate_ref", "stiffener_ref", "seam_ref", "bracket_ref",
+                      "pillar_ref", "hole_contour_ref", "edge_reinforcement_ref",
+                      "lug_plate_ref", "connected_bracket_ref")
+
+    def _build_occurrence(self, occ) -> IrOccurrence:
+        kwargs = {attr: self._ref(getattr(occ, attr, None)) for attr in self._OCC_REF_ATTRS}
+        return IrOccurrence(id=getattr(occ, "id", None) or "",
+                            name=getattr(occ, "name", None),
+                            type_value=getattr(occ, "type_value", None), **kwargs)
+
+    def _build_occurrence_group(self, grp) -> IrOccurrenceGroup:
+        children: list = []
+        for sub in getattr(grp, "occurrence_group", None) or []:
+            children.append(self._build_occurrence_group(sub))
+        for occ in getattr(grp, "occurrence", None) or []:
+            children.append(self._build_occurrence(occ))
+        return IrOccurrenceGroup(id=getattr(grp, "id", None) or "",
+                                 name=getattr(grp, "name", None),
+                                 type_value=getattr(grp, "type_value", None),
+                                 children=children)
+
+    def _build_design_view(self, dv, ir: IrVessel) -> None:
+        if dv is None:
+            return
+        children: list = []
+        for grp in getattr(dv, "occurrence_group", None) or []:
+            children.append(self._build_occurrence_group(grp))
+        for occ in getattr(dv, "occurrence", None) or []:
+            children.append(self._build_occurrence(occ))
+        did = getattr(dv, "id", None) or "DesignView"
+        self._register(ir.design_views, did, IrDesignView(
+            id=did, name=getattr(dv, "name", None),
+            vessel_ref=self._ref(getattr(dv, "vessel_ref", None)),
+            children=children), ir.duplicate_ids)
+
+    _CONTOUR_ATTRS = ("composite_curve3_d", "poly_line3_d", "circle3_d",
+                      "ellipse3_d", "circum_arc3_d", "line3_d", "nurbs3_d")
+
+    def _build_hole_catalogue(self, cat, ir: IrVessel) -> None:
+        if cat is None:
+            return
+        holes: dict = {}
+        for h in getattr(cat, "hole2_d", None) or []:
+            hid = getattr(h, "id", None)
+            if hid is None:
+                continue
+            contour = getattr(h, "contour", None)
+            curve = None
+            if contour is not None:
+                for attr in self._CONTOUR_ATTRS:
+                    val = getattr(contour, attr, None)
+                    target = val[0] if isinstance(val, list) and val else val
+                    if target is not None:
+                        curve = self._build_curve(target)
+                        if curve is not None:
+                            break
+            parametric = None
+            for attr in ("rectangular_hole", "super_elliptical",
+                         "symmetrical_hole", "parametric_circle"):
+                if getattr(h, attr, None) is not None:
+                    parametric = {"variant": attr}
+                    break
+            holes[hid] = IrHole2D(id=hid, name=getattr(h, "name", None),
+                                  guidref=getattr(h, "guidref", None),
+                                  contour=curve, parametric=parametric)
+        ir.hole_shape_catalogue = IrHoleShapeCatalogue(
+            id=getattr(cat, "id", None) or "HoleShapeCatalogue",
+            name=getattr(cat, "name", None), holes=holes)
+
+    def _build_metadata(self, vessel_raw, ir: IrVessel) -> None:
+        sd = getattr(vessel_raw, "ship_designation", None)
+        if sd is not None:
+            ir.ship_designation = IrShipDesignation(
+                ship_name=getattr(sd, "ship_name", None),
+                call_sign=getattr(sd, "call_sign", None),
+                number_imo=getattr(sd, "number_imo", None),
+                ship_type=getattr(sd, "ship_type", None))
+        td = getattr(vessel_raw, "tonnage_data", None)
+        if td is not None:
+            ir.tonnage_data = IrTonnageData(
+                tonnage=self._qty(getattr(td, "tonnage", None)),
+                dead_weight=self._qty(getattr(td, "dead_weight", None)))
+        st = getattr(vessel_raw, "statutory_data", None)
+        if st is not None:
+            ir.statutory_data = IrStatutoryData(
+                port_registration=getattr(st, "port_registration", None),
+                flag_state=getattr(st, "flag_state", None))
+        bi = getattr(vessel_raw, "builder_information", None)
+        if bi is not None:
+            yob = getattr(bi, "year_of_build", None)
+            ir.builder_info = IrBuilderInformation(
+                yard=getattr(bi, "yard", None), designer=getattr(bi, "designer", None),
+                owner=getattr(bi, "owner", None),
+                year_of_build=str(yob) if yob is not None else None)
+        cd = getattr(vessel_raw, "classification_data", None)
+        if cd is not None:
+            ir.classification = {
+                "classification_society": (
+                    getattr(cd, "society_name", None)
+                    or getattr(cd, "newbuilding_society_name", None)),
+            }
+        pp = getattr(cd, "principal_particulars", None) if cd else None
+        if pp is not None:
+            ir.principal_particulars = IrPrincipalParticulars(
+                lpp=self._qty(getattr(pp, "lpp", None)),
+                rule_length=self._qty(getattr(pp, "rule_length", None)),
+                block_coefficient=self._qty(getattr(pp, "block_coefficient", None)),
+                moulded_breadth=self._qty(getattr(pp, "moulded_breadth", None)),
+                moulded_depth=self._qty(getattr(pp, "moulded_depth", None)),
+                scantling_draught=self._qty(getattr(pp, "scantling_draught", None)),
+                design_speed=self._qty(getattr(pp, "design_speed", None)),
+                freeboard_length=self._qty(getattr(pp, "freeboard_length", None)),
+                normal_ballast_draught=self._qty(getattr(pp, "normal_ballast_draught", None)),
+                heavy_ballast_draught=self._qty(getattr(pp, "heavy_ballast_draught", None)),
+                length_of_waterline=self._qty(getattr(pp, "length_of_waterline", None)),
+                upper_deck_area=self._qty(getattr(pp, "upper_deck_area", None)),
+                freeboard_type=self._enum(getattr(pp, "freeboard_type", None)))
 
     # ------------------------------------------------------------------
     # Unit registry
@@ -514,6 +937,8 @@ class OcxV3Builder(IOcxBuilder):
             dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
             cog=self._cog(pp),
             function_type=self._enum(getattr(raw, "function_type", None)),
+            end_cut_end1=self._build_end_cut(getattr(raw, "end_cut_end1", None)),
+            end_cut_end2=self._build_end_cut(getattr(raw, "end_cut_end2", None)),
         )
 
     def _build_pillar(self, raw, parent: ParentRef) -> IrPillar | None:
@@ -672,6 +1097,8 @@ class OcxV3Builder(IOcxBuilder):
 
         pp = getattr(raw, "physical_properties", None)
 
+        seam_ids = self._build_seams_for_panel(raw, ir)
+
         return IrPanel(
             id=pid,
             name=getattr(raw, "name", None),
@@ -685,6 +1112,7 @@ class OcxV3Builder(IOcxBuilder):
             stiffener_ids=stiffener_ids,
             pillar_ids=pillar_ids,
             edge_reinforcement_ids=edge_reinforcement_ids,
+            seam_ids=seam_ids,
             limited_by=limited_by_refs,
         )
 
@@ -715,6 +1143,7 @@ class OcxV3Builder(IOcxBuilder):
                 face_refs=face_refs,
             )
             self._register(ir.compartments, cid, ir_c, ir.duplicate_ids)
+            self._build_cargoes_for_compartment(raw, ir)
 
     def _build_physical_spaces(self, arrangement, ir: IrVessel) -> None:
         for raw in getattr(arrangement, "physical_space", []):
@@ -728,62 +1157,6 @@ class OcxV3Builder(IOcxBuilder):
                 space_type=self._enum(getattr(raw, "space_type", None)),
             )
             self._register(ir.physical_spaces, sid, ir_ps, ir.duplicate_ids)
-
-    # ------------------------------------------------------------------
-    # Vessel metadata
-    # ------------------------------------------------------------------
-
-    def _build_ship_designation(self, vessel_raw) -> dict | None:
-        sd = getattr(vessel_raw, "ship_designation", None)
-        if sd is None:
-            return None
-        return {
-            "vessel_name": getattr(sd, "vessel_name", None),
-            "imo_number": getattr(sd, "imo_number", None),
-            "call_sign": getattr(sd, "call_sign", None),
-        }
-
-    def _build_classification(self, vessel_raw) -> dict | None:
-        cd = getattr(vessel_raw, "classification_data", None)
-        if cd is None:
-            return None
-        return {
-            "classification_society": (
-                getattr(cd, "society_name", None)
-                or getattr(cd, "newbuilding_society_name", None)
-            ),
-        }
-
-    def _build_builder_info(self, vessel_raw) -> dict | None:
-        bi = getattr(vessel_raw, "builder_information", None)
-        if bi is None:
-            return None
-        return {
-            "yard": getattr(bi, "yard", None),
-            "designer": getattr(bi, "designer", None),
-            "owner": getattr(bi, "owner", None),
-        }
-
-    def _build_principal_particulars(self, vessel_raw) -> dict | None:
-        cd = getattr(vessel_raw, "classification_data", None)
-        if cd is None:
-            return None
-        pp = getattr(cd, "principal_particulars", None)
-        if pp is None:
-            return None
-
-        def _q(attr: str) -> dict | None:
-            qty = self._qty(getattr(pp, attr, None))
-            return {"value": qty.value, "unit": qty.unit} if qty else None
-
-        return {
-            "lpp": _q("lpp"),
-            "moulded_breadth": _q("moulded_breadth"),
-            "moulded_depth": _q("moulded_depth"),
-            "design_speed": _q("design_speed"),
-            "scantling_draught": _q("scantling_draught"),
-            "freeboard_length": _q("freeboard_length"),
-        }
 
     # ------------------------------------------------------------------
     # Integrity checks

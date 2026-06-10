@@ -19,20 +19,25 @@ def test_liquid_cargo_fields():
     assert c.compartment_ref is None
     assert c.density == Quantity(1.025, "UKgOverm3")
     assert c.cargo_type is None
+    assert c.carriage_pressure is None
 
 
 def test_gaseous_bulk_unit_cargo_defaults():
     g = IrGaseousCargo(id="g1")
-    assert g.carriage_pressure is None
+    assert g.carriage_pressure is None and g.liquid_state is False
     b = IrBulkCargo(id="b1", angle_of_repose=Quantity(30.0, "Udeg"))
     assert b.stowage_factor is None and b.angle_of_repose == Quantity(30.0, "Udeg")
+    assert b.permeability is None
     u = IrUnitCargo(id="u1", compartment_ref=Ref("comp1"))
     assert u.compartment_ref == Ref("comp1")
 
 
 def test_occurrence_defaults():
     o = IrOccurrence(id="o1")
-    assert o.definition_ref is None and o.transformation is None
+    assert o.plate_ref is None and o.stiffener_ref is None
+    assert o.type_value is None
+    o2 = IrOccurrence(id="o2", plate_ref=Ref("P1"))
+    assert o2.plate_ref == Ref("P1")
 
 
 def test_design_view_is_recursive_tree():
