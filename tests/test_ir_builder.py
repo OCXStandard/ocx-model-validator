@@ -470,43 +470,23 @@ class TestBuildPanel:
 
 MISSING_IR_CLASSES = [
     # Geometry
-    ("Point3D",           "sub-element within curves/surfaces"),
     ("Positions",         "coordinate list sub-element"),
     ("CircumCircle3D",    "2D curve cross-section geometry"),
-    ("Cone3D",            "3D surface geometry"),
-    ("Cylinder3D",        "3D surface geometry"),
-    ("Ellipse3D",         "2D/3D curve geometry"),
-    ("Sphere3D",          "3D surface geometry"),
-    ("PolyLine3D",        "3D polyline curve"),
     # Grid / reference planes
-    ("CoordinateSystem",  "vessel coordinate frame"),
     ("XRefPlanes",        "longitudinal reference planes"),
     ("YRefPlanes",        "transverse reference planes"),
     ("ZRefPlanes",        "horizontal reference planes"),
-    ("RefPlane",          "individual reference plane"),
-    # Occurrence tree
-    ("DesignView",        "functional view of vessel structure"),
-    ("OccurrenceGroup",   "grouping of structural occurrences"),
-    ("Occurrence",        "structural part occurrence record"),
     # Structural connections
-    ("ConnectionConfiguration",          "structural connection configuration"),
     ("WebStiffener",                     "web stiffener connection"),
     ("WebStiffenerWithSingleBracket",    "web stiffener with bracket"),
     # Features
-    ("FeatureCope",       "cope cut-out feature"),
-    ("Penetration",       "penetration cut-out feature"),
     ("SlotParameters",    "slot geometry parameters"),
     # Holes
     ("HoleContourRef",    "hole contour reference"),
     ("InnerContour",      "inner contour of a section"),
-    # Vessel metadata (partially stored as dicts on IrVessel, not typed classes)
-    ("ShipDesignation",   "partially in IrVessel.ship_designation dict"),
+    # Vessel metadata
     ("ClassNotation",     "partially in IrVessel.classification dict"),
-    ("StatutoryData",     "no dedicated IR class"),
     ("Tonnage",           "no dedicated IR class"),
-    ("TonnageData",       "no dedicated IR class"),
-    # Seams
-    ("Seam",              "seam/split line — referenced via IrLimitedByRef only"),
 ]
 
 

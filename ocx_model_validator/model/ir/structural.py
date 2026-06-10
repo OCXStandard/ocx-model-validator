@@ -1,278 +1,48 @@
-"""Schema-neutral Intermediate Representation (IR) dataclasses for OCX models.
-
-These types are completely independent of any OCX schema version.  Builders
-(ocx_agent/builders/) translate versioned OCX xsdata dataclasses into these
-types.  OcxSession and all agent tools work exclusively with IR types.
-
-Design decisions:
-- Every optional field defaults to ``None`` or ``[]`` — no field access ever
-  raises AttributeError.
-- ``IrVessel`` is the single root.  All structural parts (plates, brackets,
-  stiffeners, pillars, sections, materials) are stored in flat dicts keyed by
-  ``id`` so look-up is O(1) and duplicate / dangling-ref detection is trivial.
-- ``IrPanel`` holds *id references* to its children, not the objects themselves.
-- Every child part carries a ``parent_ref: ParentRef`` pointing either to its
-  containing panel or directly to the vessel when not nested inside a panel.
-- Section types are modelled as typed subtypes of ``IrSection`` so callers can
-  ``isinstance``-dispatch on section geometry.
-"""
+"""Structural IR types and the IrVessel root."""
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any, Optional
+from typing import Any
 
-
-# ---------------------------------------------------------------------------
-# Primitive / shared value types
-# ---------------------------------------------------------------------------
-
-@dataclass(frozen=True)
-class IrCog:
-    """Centre of gravity as a 3D point in model coordinates.
-
-    ``unit`` carries the raw OCX unit id (e.g. ``'Um'`` for metres, ``'Umm'``
-    for millimetres) matching the ``unit=`` attribute on the OCX
-    ``<CenterOfGravity>`` element.
-    """
-    x: float
-    y: float
-    z: float
-    unit: str  # OCX unit id, e.g. 'Um'
-
-    def __repr__(self) -> str:
-        return f"IrCog({self.x}, {self.y}, {self.z} [{self.unit}])"
-
-
-@dataclass(frozen=True)
-class Quantity:
-    """A physical quantity — value + unit string."""
-    value: float
-    unit: str
-
-    def __repr__(self) -> str:
-        return f"{self.value} {self.unit}"
-
-
-@dataclass(frozen=True)
-class IrUnit:
-    """Schema-neutral representation of a single UnitsML ``<Unit>`` entry.
-
-    The ``to_si_factor`` converts a raw OCX quantity value to the coherent SI
-    base-unit value::
-
-        si_value = raw_value * ir_unit.to_si_factor
-
-    Examples::
-
-        IrUnit(id='Umm',  symbol='mm', to_si_factor=1e-3,  si_symbol='m')
-        IrUnit(id='UKg',  symbol='kg', to_si_factor=1.0,   si_symbol='kg')
-        IrUnit(id='UNOvermm2', symbol='N/mm2', to_si_factor=1e6, si_symbol='Pa')
-
-    The ``id`` matches the ``id`` attribute on the OCX ``<Unit>`` element,
-    which is also the value stored in all OCX quantity ``unit=`` attributes.
-    """
-    id: str                    # OCX unit id  (e.g. 'Umm')
-    name: str                  # human-readable name (e.g. 'millimeter')
-    symbol: str                # unit symbol (e.g. 'mm')
-    dimension_url: str | None  # UnitsML dimension URL (e.g. 'D_L')
-    to_si_factor: float        # multiply value × this to get SI base unit
-    si_symbol: str             # SI base-unit symbol (e.g. 'm', 'kg', 'Pa')
-
-
-@dataclass(frozen=True)
-class Ref:
-    """A reference to another structural part by XML id and/or GUIDRef."""
-    local_ref: str
-    guidref: str | None = None
-
-    def __repr__(self) -> str:
-        if self.guidref:
-            return f"Ref({self.local_ref!r}, guid={self.guidref!r})"
-        return f"Ref({self.local_ref!r})"
-
-
-class ParentKind(str, Enum):
-    VESSEL = "vessel"
-    PANEL = "panel"
-
-
-@dataclass(frozen=True)
-class ParentRef:
-    """Reference to the parent container of a structural part."""
-    kind: ParentKind
-    id: str  # id of the parent vessel or panel
-
-    def __repr__(self) -> str:
-        return f"ParentRef({self.kind.value}:{self.id!r})"
-
-
-# ---------------------------------------------------------------------------
-# Materials
-# ---------------------------------------------------------------------------
-
-@dataclass
-class IrMaterial:
-    """Schema-neutral material record."""
-    id: str
-    name: str | None = None
-    guidref: str | None = None
-    grade: str | None = None
-    density: Quantity | None = None
-    yield_stress: Quantity | None = None
-    ultimate_stress: Quantity | None = None
-    youngs_modulus: Quantity | None = None
-    poisson_ratio: Quantity | None = None
-    thermal_expansion: Quantity | None = None
-
-
-# ---------------------------------------------------------------------------
-# Sections — typed hierarchy
-# ---------------------------------------------------------------------------
-
-@dataclass
-class IrSection:
-    """Base class for cross-section definitions."""
-    id: str
-    name: str | None = None
-    guidref: str | None = None
-    section_type: str | None = None  # normalised type string, e.g. "FlatBar"
-
-@dataclass
-class IrRectangularTubeSection(IrSection):
-    """Rectangular hollow profile."""
-    height: Quantity | None = None
-    width: Quantity | None = None
-    thickness: Quantity | None = None
-
-@dataclass
-class IrOctagonSection(IrSection):
-    """Octagon solid bar profile / tube."""
-    height: Quantity | None = None
-
-@dataclass
-class IrSquareSection(IrSection):
-    """Square bar profile."""
-    height: Quantity | None = None
-
-@dataclass
-class IrBulbFlatSection(IrSection):
-    """Bulb flat section (HP profile)."""
-    height: Quantity | None = None
-    web_thickness: Quantity | None = None
-    flange_width: Quantity | None = None
-    bulb_angle: Quantity | None = None
-    bulb_outer_radius: Quantity | None = None
-    bulb_inner_radius: Optional[Quantity] | None = None
-    bulb_top_radius: Optional[Quantity] | None = None
-    bulb_bottom_radius: Optional[Quantity] | None = None
-
-
-@dataclass
-class IrFlatBarSection(IrSection):
-    """Flat bar"""
-    height: Quantity | None = None   # flat bar height
-    width: Quantity | None = None
-
-@dataclass
-class IrUSection(IrSection):
-    """U profile."""
-    height: Quantity | None = None
-    width: Quantity | None = None
-    web_thickness: Quantity | None = None
-    flange_thickness: Quantity | None = None
-
-@dataclass
-class IrISection(IrSection):
-    """I profile."""
-    height: Quantity | None = None
-    width: Quantity | None = None
-    web_thickness: Quantity | None = None
-    flange_thickness: Quantity | None = None
-
-@dataclass
-class IrLSectionOvershootFlange(IrSection):
-    """Welded angle bar with overshoot flange."""
-    height: Quantity | None = None
-    width: Quantity | None = None
-    web_thickness: Quantity | None = None
-    flange_thickness: Quantity | None = None
-    overshoot: Quantity | None = None
-
-@dataclass
-class IrZSection(IrSection):
-    """Z-section."""
-    height: Quantity | None = None
-    width: Quantity | None = None
-    web_thickness: Quantity | None = None
-    flange_thickness: Quantity | None = None
-
-@dataclass
-class IrRoundSection(IrSection):
-    """Round bar."""
-    diameter: Quantity | None = None
-
-@dataclass
-class IrLSection(IrSection):
-    """L / angle section with two unequal legs."""
-    height: Quantity | None = None
-    width: Quantity | None = None
-    web_thickness: Quantity | None = None
-    flange_thickness: Quantity | None = None
-
-
-@dataclass
-class IrTSection(IrSection):
-    """T-section (symmetric)."""
-    height: Quantity | None = None
-    width: Quantity | None = None
-    web_thickness: Quantity | None = None
-    flange_thickness: Quantity | None = None
-
-@dataclass
-class IrLSectionOvershootWeb(IrSection):
-    """Angle bar with an overshoot web"""
-    height: Quantity | None = None
-    width: Quantity | None = None
-    web_thickness: Quantity | None = None
-    flange_thickness: Quantity | None = None
-    overshoot: Quantity | None = None
-
-
-@dataclass
-class IrHalfRoundSection(IrSection):
-    """Half round bar"""
-    diameter: Quantity | None = None
-
-
-@dataclass
-class IrHexagonSection(IrSection):
-    """Hexagon solid bar profile"""
-    height: Quantity | None = None
-
-
-@dataclass
-class IrAngleSection(IrSection):
-    """Equal-leg angle section."""
-    leg_length: Quantity | None = None
-    leg_thickness: Quantity | None = None
-
-
-@dataclass
-class IrTubeSection(IrSection):
-    """Circular hollow profile / tube."""
-    diameter: Quantity | None = None
-    thickness: Quantity | None = None
-
-
-@dataclass
-class IrGenericSection(IrSection):
-    """Catch-all for section types not yet mapped to a typed subclass.
-
-    All extracted scalar fields from the raw OCX section dataclass are stored
-    in ``extra`` so no data is silently dropped.
-    """
-    extra: dict[str, Any] = field(default_factory=dict)
+from ocx_model_validator.model.ir.base import (
+    IrCog,
+    IrUnit,
+    ParentKind,
+    ParentRef,
+    Quantity,
+    Ref,
+)
+from ocx_model_validator.model.ir.geometry import (
+    IrCoordinateSystem,
+    IrPoint3D,
+    IrRefPlane,
+    IrSurface,
+    IrSurfaceCollection,
+)
+from ocx_model_validator.model.ir.connections import (
+    IrConnectionConfiguration,
+    IrPenetration,
+)
+from ocx_model_validator.model.ir.sections import IrSection
+from ocx_model_validator.model.ir.catalogues import (
+    IrHoleShapeCatalogue,
+    IrMaterial,
+)
+from ocx_model_validator.model.ir.arrangement import (
+    IrBulkCargo,
+    IrCompartment,
+    IrDesignView,
+    IrGaseousCargo,
+    IrLiquidCargo,
+    IrPhysicalSpace,
+    IrUnitCargo,
+)
+from ocx_model_validator.model.ir.metadata import (
+    IrBuilderInformation,
+    IrPrincipalParticulars,
+    IrShipDesignation,
+    IrStatutoryData,
+)
 
 
 # ---------------------------------------------------------------------------
@@ -323,6 +93,9 @@ class IrStiffener:
     dry_weight: Quantity | None = None
     cog: IrCog | None = None
     function_type: str | None = None
+    end_cut_start: IrEndCut | None = None
+    end_cut_end: IrEndCut | None = None
+    penetrations: list[IrPenetration] = field(default_factory=list)
 
 
 @dataclass
@@ -350,6 +123,62 @@ class IrEdgeReinforcement:
     dry_weight: Quantity | None = None
     cog: IrCog | None = None
     function_type: str | None = None
+
+
+# ---------------------------------------------------------------------------
+# Seams, members and end detailing
+# ---------------------------------------------------------------------------
+
+@dataclass
+class IrSeam:
+    """Weld/connection line that limits plates."""
+    id: str
+    name: str | None = None
+    guidref: str | None = None
+    plate_refs: list[Ref] = field(default_factory=list)
+    material_ref: Ref | None = None
+    section_ref: Ref | None = None
+    dry_weight: Quantity | None = None
+    cog: IrCog | None = None
+    function_type: str | None = None
+
+
+@dataclass
+class IrMember:
+    """Structural beam/column element."""
+    id: str
+    parent_ref: ParentRef
+    name: str | None = None
+    guidref: str | None = None
+    material_ref: Ref | None = None
+    section_ref: Ref | None = None
+    start_point: IrPoint3D | None = None
+    end_point: IrPoint3D | None = None
+    dry_weight: Quantity | None = None
+    cog: IrPoint3D | None = None  # 3D point, not IrCog
+    function_type: str | None = None
+
+
+@dataclass(frozen=True)
+class IrEndCut:
+    """Stiffener end detailing (one instance per stiffener end)."""
+    sniped: bool = False
+    cope_height: Quantity | None = None
+    cope_length: Quantity | None = None
+    cope_radius: Quantity | None = None
+    flange_cutback_angle: Quantity | None = None
+    web_cutback_angle: Quantity | None = None
+
+
+@dataclass(frozen=True)
+class IrFeatureCope:
+    """Cope feature on a structural element."""
+    id: str
+    name: str | None = None
+    guidref: str | None = None
+    cope_height: Quantity | None = None
+    cope_length: Quantity | None = None
+    cope_radius: Quantity | None = None
 
 
 # ---------------------------------------------------------------------------
@@ -420,6 +249,9 @@ class IrPanel:
     stiffener_ids: list[str] = field(default_factory=list)
     pillar_ids: list[str] = field(default_factory=list)
     edge_reinforcement_ids: list[str] = field(default_factory=list)
+    seam_ids: list[str] = field(default_factory=list)
+    member_ids: list[str] = field(default_factory=list)
+    hole_shape_refs: list[Ref] = field(default_factory=list)
     # All boundary references, each tagged with ref_type
     limited_by: list[IrLimitedByRef] = field(default_factory=list)
 
@@ -465,32 +297,6 @@ class IrPanel:
 
 
 # ---------------------------------------------------------------------------
-# Arrangement
-# ---------------------------------------------------------------------------
-
-@dataclass
-class IrCompartment:
-    """Schema-neutral compartment record."""
-    id: str
-    name: str | None = None
-    guidref: str | None = None
-    compartment_purpose: str | None = None
-    volume: Quantity | None = None
-    filling_height: Quantity | None = None
-    face_refs: list[Ref] = field(default_factory=list)
-    cog: Quantity | None = None
-
-
-@dataclass
-class IrPhysicalSpace:
-    """Schema-neutral physical space record."""
-    id: str
-    name: str | None = None
-    guidref: str | None = None
-    space_type: str | None = None
-
-
-# ---------------------------------------------------------------------------
 # Vessel — the root IR object
 # ---------------------------------------------------------------------------
 
@@ -520,19 +326,43 @@ class IrVessel:
     pillars: dict[str, IrPillar] = field(default_factory=dict)
     edge_reinforcements: dict[str, IrEdgeReinforcement] = field(default_factory=dict)
 
+    # --- new structural collections ---
+    seams: dict[str, IrSeam] = field(default_factory=dict)
+    members: dict[str, IrMember] = field(default_factory=dict)
+
     # --- catalogue dicts (keyed by id) ---
     materials: dict[str, IrMaterial] = field(default_factory=dict)
     sections: dict[str, IrSection] = field(default_factory=dict)
+    hole_shape_catalogue: IrHoleShapeCatalogue | None = None
 
     # --- arrangement ---
     compartments: dict[str, IrCompartment] = field(default_factory=dict)
     physical_spaces: dict[str, IrPhysicalSpace] = field(default_factory=dict)
 
+    # --- cargo collections ---
+    liquid_cargoes: dict[str, IrLiquidCargo] = field(default_factory=dict)
+    gaseous_cargoes: dict[str, IrGaseousCargo] = field(default_factory=dict)
+    bulk_cargoes: dict[str, IrBulkCargo] = field(default_factory=dict)
+    unit_cargoes: dict[str, IrUnitCargo] = field(default_factory=dict)
+
+    # --- geometry collections ---
+    coordinate_systems: dict[str, IrCoordinateSystem] = field(default_factory=dict)
+    ref_planes: dict[str, IrRefPlane] = field(default_factory=dict)
+    surfaces: dict[str, IrSurface] = field(default_factory=dict)
+    surface_collections: dict[str, IrSurfaceCollection] = field(default_factory=dict)
+
+    # --- design views ---
+    design_views: dict[str, IrDesignView] = field(default_factory=dict)
+
+    # --- connection configurations (placeholder) ---
+    connection_configurations: dict[str, IrConnectionConfiguration] = field(default_factory=dict)
+
     # --- vessel-level metadata ---
-    ship_designation: dict[str, Any] | None = None
-    classification: dict[str, Any] | None = None
-    builder_info: dict[str, Any] | None = None
-    principal_particulars: dict[str, Any] | None = None
+    ship_designation: IrShipDesignation | None = None
+    classification: dict[str, Any] | None = None  # ClassificationData not in scope
+    builder_info: IrBuilderInformation | None = None
+    principal_particulars: IrPrincipalParticulars | None = None
+    statutory_data: IrStatutoryData | None = None
 
     # --- integrity report populated by builder ---
     duplicate_ids: list[str] = field(default_factory=list)
@@ -556,6 +386,12 @@ class IrVessel:
 
     def get_edge_reinforcement(self, er_id: str) -> IrEdgeReinforcement | None:
         return self.edge_reinforcements.get(er_id)
+
+    def get_seam(self, seam_id: str) -> IrSeam | None:
+        return self.seams.get(seam_id)
+
+    def get_member(self, member_id: str) -> IrMember | None:
+        return self.members.get(member_id)
 
     def get_panel(self, panel_id: str) -> IrPanel | None:
         return self.panels.get(panel_id)
@@ -602,4 +438,3 @@ class IrVessel:
             for eid in panel.edge_reinforcement_ids
             if eid in self.edge_reinforcements
         ]
-
