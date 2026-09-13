@@ -33,7 +33,7 @@ def render_svg(doc: dict) -> str:
 
     parts: list[str] = []
     title = f"Cross section at x={cs.get('x_mm')} mm"
-    if cs.get("frame"):
+    if cs.get("frame") is not None:
         title += f" (frame {cs['frame']})"
     parts.append(
         f'<text x="{_MARGIN}" y="28" font-size="18" font-weight="bold" '
@@ -46,6 +46,7 @@ def render_svg(doc: dict) -> str:
 
     color_of = _thickness_colors(plates)
     to_px = _fit(plates, stiffeners)
+    has_unknown = any(p.get("thickness_mm") is None for p in plates)
 
     if to_px is None:
         parts.append(
@@ -57,7 +58,7 @@ def render_svg(doc: dict) -> str:
         parts.extend(_stiffener_stubs(stiffeners, to_px))
 
     legend_x = _MARGIN + _PLOT_W + 40.0
-    legend_parts, legend_h = _legend(stiffeners, color_of, legend_x)
+    legend_parts, legend_h = _legend(stiffeners, color_of, legend_x, has_unknown)
     parts.extend(legend_parts)
 
     width = _MARGIN * 2 + _PLOT_W + _LEGEND_W
@@ -155,7 +156,7 @@ def _stiffener_stubs(stiffeners, to_px) -> list[str]:
     return out
 
 
-def _legend(stiffeners, color_of, x: float) -> tuple[list[str], float]:
+def _legend(stiffeners, color_of, x: float, has_unknown: bool) -> tuple[list[str], float]:
     out: list[str] = []
     y = _TITLE_H + 20.0
     out.append(f'<text x="{x}" y="{y}" font-size="14" font-weight="bold" '
@@ -180,9 +181,10 @@ def _legend(stiffeners, color_of, x: float) -> tuple[list[str], float]:
         out.append(f'<text x="{x + 38}" y="{y:.1f}" font-size="11" '
                    f'font-family="sans-serif">{t} mm</text>')
         y += _ROW_H
-    out.append(f'<line x1="{x}" y1="{y - 4:.1f}" x2="{x + 30}" y2="{y - 4:.1f}" '
-               f'stroke="{_UNKNOWN_COLOR}" stroke-width="3" stroke-dasharray="6 4"/>')
-    out.append(f'<text x="{x + 38}" y="{y:.1f}" font-size="11" '
-               f'font-family="sans-serif">unknown</text>')
-    y += _ROW_H
+    if has_unknown:
+        out.append(f'<line x1="{x}" y1="{y - 4:.1f}" x2="{x + 30}" y2="{y - 4:.1f}" '
+                   f'stroke="{_UNKNOWN_COLOR}" stroke-width="3" stroke-dasharray="6 4"/>')
+        out.append(f'<text x="{x + 38}" y="{y:.1f}" font-size="11" '
+                   f'font-family="sans-serif">unknown</text>')
+        y += _ROW_H
     return out, y - _TITLE_H

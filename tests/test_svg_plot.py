@@ -109,3 +109,13 @@ def test_empty_geometry_renders_note():
     svg = render_svg(_doc())
     assert "no geometry" in svg.lower()
     ET.fromstring(svg)
+
+
+def test_no_unknown_swatch_when_all_thicknesses_known():
+    svg = render_svg(_doc(plates=[_plate()]))
+    assert "unknown" not in svg
+
+
+def test_frame_zero_label_shown_in_title():
+    svg = render_svg(_doc(plates=[_plate()], frame=0))
+    assert "(frame 0)" in svg
