@@ -98,6 +98,26 @@ def build_frame_table(vessel: IrVessel) -> FrameTable:
     # Sort by X position
     pos.sort(key=lambda lx: lx[1])
 
+    # Remove near-coincident planes (< 1mm apart) and track duplicates
+    filtered_pos: list[tuple[str, float]] = []
+    seen_labels: dict[str, int] = {}  # label -> count
+    
+    for label, x in pos:
+        # Check if this position is too close to the previous one
+        if filtered_pos and x - filtered_pos[-1][1] < _SPACING_TOL_MM:
+            warnings.append(f"Planes {filtered_pos[-1][0]!r} (x={filtered_pos[-1][1]}) and {label!r} (x={x}) are < 1mm apart; dropping {label!r}")
+            continue
+        
+        filtered_pos.append((label, x))
+        seen_labels[label] = seen_labels.get(label, 0) + 1
+    
+    # Warn about duplicate labels
+    for label, count in seen_labels.items():
+        if count > 1:
+            warnings.append(f"Frame label {label!r} appears {count} times at different positions")
+    
+    pos = filtered_pos
+
     # Emit entries at spacing changes
     entries: list[tuple[str, float]] = []
     prev_spacing = None
@@ -107,12 +127,18 @@ def build_frame_table(vessel: IrVessel) -> FrameTable:
             entries.append((pos[i][0], spacing))
             prev_spacing = spacing
 
-    # frame0_offset: look for label "0", else use lowest position
-    by_label = dict(pos)
-    frame0 = by_label.get("0", pos[0][1])
+    # frame0_offset: find frame 0 by numeric match (label parses to 0.0), else lowest x
+    frame0_x = pos[0][1]
+    for label, x in pos:
+        try:
+            if float(label) == 0.0:
+                frame0_x = x
+                break
+        except ValueError:
+            pass
 
     return FrameTable(
-        frame0_offset_mm=frame0,
+        frame0_offset_mm=frame0_x,
         positions=pos,
         entries=entries,
         warnings=warnings,

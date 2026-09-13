@@ -82,3 +82,45 @@ def test_frame_to_x_and_nearest():
     with pytest.raises(SectionError):
         ft.frame_to_x("99")
     assert ft.nearest_frame(3900.0) == ("4", pytest.approx(4000.0))
+
+
+def test_frame0_numeric_match_x0_0_label():
+    """Plane named X0.0 at 0.0 should be found even if a lower negative-x plane exists."""
+    ir = _vessel([_plane("a", "X-2", -2.0), _plane("b", "X0.0", 0.0),
+                  _plane("c", "X4", 4.0)])
+    ft = build_frame_table(ir)
+    assert ft.frame0_offset_mm == pytest.approx(0.0)
+
+
+def test_frame0_numeric_match_x00_label():
+    """Plane named X00 at 0.0 should be found."""
+    ir = _vessel([_plane("a", "X-1", -1.0), _plane("b", "X00", 0.0),
+                  _plane("c", "X5", 5.0)])
+    ft = build_frame_table(ir)
+    assert ft.frame0_offset_mm == pytest.approx(0.0)
+
+
+def test_coincident_planes_dropped_with_warning():
+    """Two planes < 1mm apart: keep first, drop second, append warning."""
+    ir = _vessel([_plane("a", "X0", 0.0), _plane("b", "X0.5", 0.0005),
+                  _plane("c", "X10", 10.0)])
+    ft = build_frame_table(ir)
+    # Should have 2 positions (first and last), middle one dropped
+    assert len(ft.positions) == 2
+    assert ft.positions == [("0", pytest.approx(0.0)), ("10", pytest.approx(10000.0))]
+    # Warning should mention the dropped plane
+    assert any("coincident" in w.lower() or "0.5" in w for w in ft.warnings)
+
+
+def test_duplicate_labels_warning():
+    """Two planes with the same label at different x positions should trigger warning."""
+    ir = _vessel([_plane("a", "X4", 4.0), _plane("b", "X4", 8.0),
+                  _plane("c", "X10", 10.0)])
+    ft = build_frame_table(ir)
+    # Should keep both positions (same label, different x)
+    assert len(ft.positions) == 3
+    assert ft.positions == [("4", pytest.approx(4000.0)), ("4", pytest.approx(8000.0)),
+                            ("10", pytest.approx(10000.0))]
+    # Warning should mention the duplicate label
+    assert any("4" in w and ("duplicate" in w.lower() or "appears" in w.lower())
+               for w in ft.warnings)
