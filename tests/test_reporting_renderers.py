@@ -99,3 +99,15 @@ def test_get_renderer_dispatch():
 def test_get_renderer_unknown_format():
     with pytest.raises(ValueError, match="markdown, rich"):
         get_renderer("pdf")
+
+
+def test_rich_renderer_escapes_markup_in_titles_and_notes():
+    report = Report(
+        title="Model [/bold] weird",
+        metadata={"Key [x]": "value [/]"},
+        sections=[ReportSection(title="S [/]", intro="intro [/]",
+                                tables=[ReportTable("T [/]", ["A"], [["v"]])],
+                                notes=["note [/bold]"])],
+    )
+    out = RichRenderer().render(report)  # must not raise MarkupError
+    assert "weird" in out

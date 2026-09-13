@@ -5,7 +5,7 @@ from ocx_model_validator.reporting.renderers.base import ReportRenderer
 from ocx_model_validator.reporting.renderers.markdown import MarkdownRenderer
 from ocx_model_validator.reporting.renderers.rich import RichRenderer
 
-_RENDERERS: dict[str, type] = {
+_RENDERERS: dict[str, type[ReportRenderer]] = {
     "markdown": MarkdownRenderer,
     "rich": RichRenderer,
 }

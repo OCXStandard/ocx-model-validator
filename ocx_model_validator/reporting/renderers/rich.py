@@ -23,18 +23,18 @@ class RichRenderer:
         return console.export_text()
 
     def render_to_console(self, report: Report, console: Console) -> None:
-        console.print(f"[bold underline]{report.title}[/]")
+        console.print(f"[bold underline]{escape(report.title)}[/]")
         for key, value in report.metadata.items():
-            console.print(f"[bold]{key}:[/] {value}")
+            console.print(f"[bold]{escape(key)}:[/] {escape(str(value))}")
         for section in report.sections:
             self._render_section(section, console)
 
     def _render_section(self, section: ReportSection, console: Console) -> None:
-        console.print(f"\n[bold]{section.title}[/]")
+        console.print(f"\n[bold]{escape(section.title)}[/]")
         if section.intro:
-            console.print(section.intro)
+            console.print(escape(section.intro))
         for t in section.tables:
-            table = Table(title=t.title)
+            table = Table(title=escape(t.title))
             for col in t.columns:
                 table.add_column(escape(col))
             if not t.rows and not t.footer_rows:
@@ -45,4 +45,4 @@ class RichRenderer:
                 table.add_row(*[f"[bold]{escape(_cell(c))}[/]" for c in row])
             console.print(table)
         for note in section.notes:
-            console.print(f"[yellow]Note:[/] {note}")
+            console.print(f"[yellow]Note:[/] {escape(note)}")
