@@ -47,3 +47,33 @@ def test_markdown_empty_table_renders_empty_marker():
     ])
     out = MarkdownRenderer().render(report)
     assert "| (empty) |  |" in out
+
+
+def test_markdown_escapes_pipes_and_newlines():
+    report = Report(title="R", sections=[
+        ReportSection(title="S", tables=[
+            ReportTable("T", ["A|B"], [["x|y"], ["line1\nline2"]])
+        ])
+    ])
+    out = MarkdownRenderer().render(report)
+    assert "| A\\|B |" in out
+    assert "| x\\|y |" in out
+    assert "| line1 line2 |" in out
+
+
+def test_markdown_multiline_note_stays_in_blockquote():
+    report = Report(title="R", sections=[
+        ReportSection(title="S", notes=["first\nsecond"])
+    ])
+    out = MarkdownRenderer().render(report)
+    assert "> first\n> second" in out
+
+
+def test_markdown_empty_footer_cell_not_bolded():
+    report = Report(title="R", sections=[
+        ReportSection(title="S", tables=[
+            ReportTable("T", ["A", "B"], [["x", "y"]], footer_rows=[["Total", ""]])
+        ])
+    ])
+    out = MarkdownRenderer().render(report)
+    assert "| **Total** |  |" in out

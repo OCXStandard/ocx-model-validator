@@ -6,13 +6,17 @@ from ocx_model_validator.reporting.model import Cell, Report, ReportSection, Rep
 _NA = "N/A"
 
 
+def _escape(text: str) -> str:
+    return text.replace("\r\n", " ").replace("\n", " ").replace("\r", " ").replace("|", "\\|")
+
+
 def _cell(c: Cell) -> str:
-    return _NA if c is None else str(c)
+    return _NA if c is None else _escape(str(c))
 
 
 def _table_lines(t: ReportTable) -> list[str]:
     lines = [f"### {t.title}", ""]
-    lines.append("| " + " | ".join(t.columns) + " |")
+    lines.append("| " + " | ".join(_escape(col) for col in t.columns) + " |")
     lines.append("|" + "---|" * len(t.columns))
     if not t.rows and not t.footer_rows:
         cells = ["(empty)"] + [""] * (len(t.columns) - 1)
@@ -20,7 +24,11 @@ def _table_lines(t: ReportTable) -> list[str]:
     for row in t.rows:
         lines.append("| " + " | ".join(_cell(c) for c in row) + " |")
     for row in t.footer_rows:
-        lines.append("| " + " | ".join(f"**{_cell(c)}**" for c in row) + " |")
+        cells = []
+        for c in row:
+            cell_text = _cell(c)
+            cells.append(f"**{cell_text}**" if cell_text and cell_text != _NA else cell_text)
+        lines.append("| " + " | ".join(cells) + " |")
     lines.append("")
     return lines
 
@@ -32,7 +40,8 @@ def _section_lines(section: ReportSection) -> list[str]:
     for t in section.tables:
         lines.extend(_table_lines(t))
     for note in section.notes:
-        lines.append(f"> {note}")
+        for note_line in note.split("\n"):
+            lines.append(f"> {note_line}")
     if section.notes:
         lines.append("")
     return lines
