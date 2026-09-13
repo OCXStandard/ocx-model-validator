@@ -16,6 +16,7 @@ from ocx_model_validator.model.ir import (
     IrEllipse3D,
     IrEndCut,
     IrLine3D,
+    IrLSectionOvershootFlange,
     IrNurbs3D,
     IrOccurrence,
     IrOccurrenceGroup,
@@ -71,6 +72,7 @@ class CompositeCurve3D(_Stub): pass
 
 class BarSection(_Stub): pass
 class Tbar(_Stub): pass
+class LbarOF(_Stub): pass
 
 # --- named surface stubs ---
 
@@ -271,6 +273,27 @@ def test_build_section_unwraps_bar_section_choice():
     assert section.name == "500X11 + 150X25 TEE"
     assert section.height.value == 0.5
     assert section.flange_thickness.value == 0.025
+
+
+def test_build_section_unwraps_lbar_of_choice():
+    """xsdata field names for L-bar overshoot choices are lbar_of / lbar_ow."""
+    raw = BarSection(
+        id="S2",
+        name="L300x90 OF",
+        guidref="g-s2",
+        lbar_of=LbarOF(
+            height=_q(0.3, "Um"),
+            width=_q(0.09, "Um"),
+            web_thickness=_q(0.012, "Um"),
+            flange_thickness=_q(0.016, "Um"),
+        ),
+    )
+
+    section = _b()._build_section(raw)
+
+    assert isinstance(section, IrLSectionOvershootFlange)
+    assert section.id == "S2"
+    assert section.height.value == 0.3
 
 
 # ===========================================================================
