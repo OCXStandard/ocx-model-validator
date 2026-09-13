@@ -1,7 +1,7 @@
 """Frame table report generator — reuses sections.build_frame_table."""
 from __future__ import annotations
 
-from ocx_model_validator.exeptions import SectionError
+from ocx_model_validator.exeptions import GeometryError, SectionError
 from ocx_model_validator.model.ir.structural import IrVessel
 from ocx_model_validator.reporting.generators._common import report_metadata
 from ocx_model_validator.reporting.model import Report, ReportSection, ReportTable
@@ -14,7 +14,7 @@ def build(vessel: IrVessel, source_file: str = "") -> Report:
     metadata = report_metadata(vessel, source_file)
     try:
         ft = build_frame_table(vessel)
-    except SectionError as exc:
+    except (GeometryError, SectionError) as exc:
         section = ReportSection(
             title="Frame table",
             tables=[ReportTable("Frame positions", ["Frame", "x (mm)"], [])],

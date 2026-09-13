@@ -80,3 +80,22 @@ def test_frame_table_report_empty_model():
     section = report.sections[0]
     assert section.tables[0].rows == []
     assert any("reference planes" in n for n in section.notes)
+
+
+def test_frame_table_report_unknown_unit_degrades():
+    """Test that unknown ref-plane units degrade gracefully instead of raising."""
+    vessel = IrVessel(id="V1", name="MV Test", schema_version="3.1.0")
+    # Create a ref plane with unknown unit "Uft"
+    rp = IrRefPlane(id="FR0", name="FR0", location=Quantity(0.0, "Uft"))
+    vessel.ref_planes[rp.id] = rp
+    # Register in a global coordinate system exactly like _vessel_with_frames does
+    vessel.coordinate_systems["CS1"] = IrCoordinateSystem(
+        id="CS1",
+        is_global=True,
+        x_ref_plane_ids=["FR0"],
+    )
+    # Should not raise; instead gracefully degrade and capture error in notes
+    report = frame_table_gen.build(vessel, source_file="m.3docx")
+    section = report.sections[0]
+    assert section.tables[0].rows == []
+    assert section.notes  # error captured as note, not raised
