@@ -170,6 +170,9 @@ def _volume_m3(
     name: str,
     warnings: list[str],
 ) -> float | None:
+    if compartment.volume is None:
+        warnings.append(f"compartment {name}: volume is missing")
+        return None
     try:
         return qty_m3(compartment.volume, vessel.unit_registry)
     except GeometryError as exc:
@@ -217,17 +220,18 @@ def _extent_mm(
 
 
 def _referenced_panels(face_refs: list[Ref], vessel: IrVessel) -> list[IrPanel]:
+    by_guid = {
+        panel.guidref: panel for panel in vessel.panels.values() if panel.guidref is not None
+    }
     panels: list[IrPanel] = []
     seen: set[str] = set()
     for face_ref in face_refs:
-        for panel in vessel.panels.values():
-            if panel.id in seen:
-                continue
-            if face_ref.local_ref == panel.id or (
-                face_ref.guidref is not None and face_ref.guidref == panel.guidref
-            ):
-                panels.append(panel)
-                seen.add(panel.id)
+        panel = vessel.panels.get(face_ref.local_ref)
+        if panel is None and face_ref.guidref is not None:
+            panel = by_guid.get(face_ref.guidref)
+        if panel is not None and panel.id not in seen:
+            panels.append(panel)
+            seen.add(panel.id)
     return panels
 
 
