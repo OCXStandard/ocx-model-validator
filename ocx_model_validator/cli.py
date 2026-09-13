@@ -31,6 +31,9 @@ app = typer.Typer(
 )
 report_app = typer.Typer(help="Generate model reports.", no_args_is_help=True)
 app.add_typer(report_app, name="report")
+section_app = typer.Typer(help="Create and plot cross sections.",
+                          no_args_is_help=True)
+app.add_typer(section_app, name="section")
 
 
 class ReportFormat(str, Enum):
@@ -107,6 +110,43 @@ def _emit(report: Report, fmt: ReportFormat | None, destination: Path | None) ->
         RichRenderer().render_to_console(report, Console())
     else:
         typer.echo(get_renderer("markdown").render(report), nl=False)
+
+
+def _default_section_output(model: Path, frame: str | None,
+                            x_mm: float | None) -> Path:
+    tag = re.sub(r"[^\w.-]", "_", frame) if frame is not None else f"x{x_mm:g}"
+    return Path(f"{model.stem}-{tag}.json")
+
+
+@section_app.command("create")
+def section_create_cmd(
+    model: Path = _MODEL_ARG,
+    frame: str | None = typer.Option(None, "--frame",
+                                     help="Frame label, e.g. FR20."),
+    x_mm: float | None = typer.Option(None, "--x",
+                                      help="Section x-position in mm."),
+    output: Path | None = typer.Option(None, "--output", "-o",
+                                       help="Output JSON file."),
+) -> None:
+    """Build a transverse cross-section and write the JSON document."""
+    from ocx_model_validator.exeptions import GeometryError, SectionError
+    from ocx_model_validator.sections.document import build_document, save_document
+
+    if (frame is None) == (x_mm is None):
+        raise typer.BadParameter("Provide exactly one of --frame or --x")
+    vessel = _load_vessel(model)
+    try:
+        doc = build_document(vessel, str(model), x_mm=x_mm, frame=frame)
+    except (GeometryError, SectionError) as exc:
+        logger.error("Cannot build section for {}: {}", model, exc)
+        raise typer.Exit(code=1) from exc
+    out = output or _default_section_output(model, frame, x_mm)
+    try:
+        save_document(doc, out)
+    except OSError as exc:
+        logger.error("Cannot write {}: {}", out, exc)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"Section written to {out}")
 
 
 @report_app.command("frame-table")
