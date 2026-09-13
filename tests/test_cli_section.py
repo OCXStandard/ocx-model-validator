@@ -99,3 +99,22 @@ def test_section_plot_invalid_document_exits_1(tmp_path: Path):
     bad.write_text('{"schema": "wrong"}', encoding="utf-8")
     result = runner.invoke(app, ["section", "plot", str(bad)])
     assert result.exit_code == 1
+
+
+def test_section_plot_malformed_rows_exits_1(tmp_path: Path):
+    # passes load_document's top-level checks, but plate row lacks coordinates
+    doc = {
+        "schema": "nh-cross-section/1",
+        "frame_table": {},
+        "compartments": [],
+        "cross_section": {
+            "x_mm": 1.0, "frame": None,
+            "plates": [{"name": "p", "thickness_mm": 10}],
+            "stiffeners": [],
+        },
+    }
+    bad = tmp_path / "malformed.json"
+    bad.write_text(json.dumps(doc), encoding="utf-8")
+    result = runner.invoke(app, ["section", "plot", str(bad)])
+    assert result.exit_code == 1
+    assert not (tmp_path / "malformed.svg").exists()

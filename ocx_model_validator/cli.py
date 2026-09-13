@@ -170,7 +170,12 @@ def section_plot_cmd(
         raise typer.Exit(code=1) from exc
     out = output or section.with_suffix(".svg")
     try:
-        out.write_text(render_svg(doc), encoding="utf-8")
+        svg = render_svg(doc)
+    except (KeyError, TypeError) as exc:
+        logger.error("Invalid cross-section document {}: {}", section, exc)
+        raise typer.Exit(code=1) from exc
+    try:
+        out.write_text(svg, encoding="utf-8")
     except OSError as exc:
         logger.error("Cannot write {}: {}", out, exc)
         raise typer.Exit(code=1) from exc

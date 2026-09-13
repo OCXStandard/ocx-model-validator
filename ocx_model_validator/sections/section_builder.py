@@ -404,7 +404,10 @@ def _web_dir(
     def _distance(inc) -> float:
         if inc.position is None:
             return float("inf")
-        px, _, _ = to_mm(inc.position)
+        try:
+            px, _, _ = to_mm(inc.position)
+        except GeometryError:
+            return float("inf")
         return abs(px - x_mm)
 
     with_pos = [inc for inc in candidates if inc.position is not None]

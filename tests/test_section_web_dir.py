@@ -60,6 +60,33 @@ def test_web_dir_x_only_vector_is_degenerate():
     assert warnings
 
 
+def test_web_dir_bad_position_unit_degrades_gracefully():
+    from ocx_model_validator.exeptions import GeometryError
+
+    inc_bad = IrInclination(
+        web_direction=IrVector3D(0.0, 0.0, 1.0),
+        position=IrPoint3D(0.0, 0.0, 0.0, "Ubogus"),
+    )
+    inc_good = IrInclination(
+        web_direction=IrVector3D(0.0, 1.0, 0.0),
+        position=IrPoint3D(50.0, 0.0, 0.0, "Um"),
+    )
+
+    def _raising_to_mm(p: IrPoint3D):
+        if p.unit == "Ubogus":
+            raise GeometryError("Unknown unit id 'Ubogus'")
+        return (p.x * 1000.0, p.y * 1000.0, p.z * 1000.0)
+
+    warnings: list[str] = []
+    y, z = _web_dir(
+        _mk_stiffener([inc_bad, inc_good]),
+        x_mm=0.0,
+        to_mm=_raising_to_mm,
+        warnings=warnings,
+    )
+    assert (y, z) == (1.0, 0.0)
+
+
 def test_section_stiffener_has_web_dir_fields():
     s = SectionStiffener(
         name="L1",
