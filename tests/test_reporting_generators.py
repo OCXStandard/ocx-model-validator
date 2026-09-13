@@ -1,7 +1,9 @@
 """Tests for report generators."""
-from ocx_model_validator.model.ir.base import Quantity
+from ocx_model_validator.model.ir.arrangement import IrCompartment
+from ocx_model_validator.model.ir.base import IrCog, Quantity
 from ocx_model_validator.model.ir.geometry import IrCoordinateSystem, IrRefPlane
 from ocx_model_validator.model.ir.structural import IrVessel
+from ocx_model_validator.reporting.generators import compartments as compartments_gen
 from ocx_model_validator.reporting.generators import frame_table as frame_table_gen
 from ocx_model_validator.reporting.generators._common import (
     qty_mm_cell,
@@ -99,3 +101,24 @@ def test_frame_table_report_unknown_unit_degrades():
     section = report.sections[0]
     assert section.tables[0].rows == []
     assert section.notes  # error captured as note, not raised
+
+
+def test_compartments_report():
+    vessel = IrVessel(id="V1", name="MV Test")
+    vessel.compartments["C1"] = IrCompartment(
+        id="C1", name="WB Tank 1", compartment_purpose="ballast",
+        volume=Quantity(120.0, "Um3"), cog=IrCog(10.0, 0.0, 2.0, "Um"),
+    )
+    report = compartments_gen.build(vessel, source_file="m.3docx")
+    table = report.sections[0].tables[0]
+    assert table.columns[:4] == ["Name", "Tank type", "Volume (m³)", "COG x (mm)"]
+    row = table.rows[0]
+    assert row[0] == "WB Tank 1"
+    assert row[1] == "BALLASTWATERTANK"
+    assert row[2] == 120.0
+    assert row[3] == 10000.0
+
+
+def test_compartments_report_empty():
+    report = compartments_gen.build(IrVessel(id="V1"), source_file="m.3docx")
+    assert report.sections[0].tables[0].rows == []
