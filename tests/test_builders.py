@@ -6,7 +6,7 @@ import pytest
 from ocx_model_validator.builders.factory import get_builder
 from ocx_model_validator.builders.base import UnsupportedSchemaVersionError
 from ocx_model_validator.builders.v3_builder import OcxV3Builder
-from ocx_model_validator.model.ir import IrVessel
+from ocx_model_validator.model.ir import IrVessel, ParentKind, ParentRef
 
 
 class TestBuilderFactory:
@@ -93,3 +93,61 @@ class TestOcxV3BuilderFromStub:
             numericvalue = None
             unit = "Umm"
         assert b._qty(_Q()) is None
+
+
+class _StubVector3D:
+    def __init__(self, direction):
+        self.direction = direction
+
+
+class _StubPoint3D:
+    def __init__(self, coordinates, unit="Um"):
+        self.coordinates = coordinates
+        self.unit = unit
+
+
+class _StubInclination:
+    def __init__(self, web_direction=None, flange_direction=None, position=None):
+        self.web_direction = web_direction
+        self.flange_direction = flange_direction
+        self.position = position
+
+
+class _StubStiffenerWithInclination:
+    id = "S1"
+    name = "L1"
+    guidref = None
+    physical_properties = None
+    material_ref = None
+    section_ref = None
+    function_type = None
+    end_cut_end1 = None
+    end_cut_end2 = None
+    trace_line = None
+    inclination = [
+        _StubInclination(
+            web_direction=_StubVector3D([0.0, 0.0, 1.0]),
+            position=_StubPoint3D([10.0, 0.0, 5.0]),
+        )
+    ]
+
+
+def test_build_stiffener_extracts_inclinations():
+    builder = OcxV3Builder()
+    parent = ParentRef(kind=ParentKind.VESSEL, id="V1")
+    s = builder._build_stiffener(_StubStiffenerWithInclination(), parent)
+    assert len(s.inclinations) == 1
+    inc = s.inclinations[0]
+    assert inc.web_direction.z == 1.0
+    assert inc.flange_direction is None
+    assert inc.position.x == 10.0
+
+
+def test_build_stiffener_without_inclination_defaults_empty():
+    class _Bare(_StubStiffenerWithInclination):
+        inclination = None
+
+    builder = OcxV3Builder()
+    parent = ParentRef(kind=ParentKind.VESSEL, id="V1")
+    s = builder._build_stiffener(_Bare(), parent)
+    assert s.inclinations == []

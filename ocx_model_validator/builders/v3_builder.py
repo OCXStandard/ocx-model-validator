@@ -23,6 +23,7 @@ from ocx_model_validator.model.ir import (
     IrEdgeReinforcement,
     IrFlatBarSection,
     IrGenericSection,
+    IrInclination,
     IrLimitedByRef,
     IrLSectionOvershootFlange,
     IrLSectionOvershootWeb,
@@ -590,6 +591,16 @@ class OcxV3Builder(IOcxBuilder):
             sniped=bool(getattr(ec, "sniped", False)),
             feature_cope=cope)
 
+    def _build_inclinations(self, raw_list) -> list[IrInclination]:
+        result: list[IrInclination] = []
+        for raw in raw_list or []:
+            result.append(IrInclination(
+                web_direction=self._vec(getattr(raw, "web_direction", None)),
+                flange_direction=self._vec(getattr(raw, "flange_direction", None)),
+                position=self._pt(getattr(raw, "position", None)),
+            ))
+        return result
+
     def _build_seams_for_panel(self, panel_raw, ir: IrVessel) -> list[str]:
         """Extract seams from Panel.split_by; register and return their ids."""
         seam_ids: list[str] = []
@@ -1045,6 +1056,7 @@ class OcxV3Builder(IOcxBuilder):
             end_cut_end1=self._build_end_cut(getattr(raw, "end_cut_end1", None)),
             end_cut_end2=self._build_end_cut(getattr(raw, "end_cut_end2", None)),
             trace=self._build_contour(getattr(raw, "trace_line", None)),
+            inclinations=self._build_inclinations(getattr(raw, "inclination", None)),
         )
 
     def _build_pillar(self, raw, parent: ParentRef) -> IrPillar | None:

@@ -100,6 +100,7 @@ from ocx_model_validator.model.ir.structural import (
     IrEdgeReinforcement,
     IrEndCut,
     IrFeatureCope,
+    IrInclination,
     IrLimitedByRef,
     IrMember,
     IrPanel,
@@ -132,7 +133,7 @@ __all__ = [
     # structural
     "IrPlate", "IrBracket", "IrStiffener", "IrPillar", "IrEdgeReinforcement",
     "IrLimitedByRef", "IrPanel", "IrVessel",
-    "IrSeam", "IrMember", "IrEndCut", "IrFeatureCope",
+    "IrSeam", "IrMember", "IrEndCut", "IrFeatureCope", "IrInclination",
     # arrangement
     "IrCompartment", "IrPhysicalSpace",
     "IrLiquidCargo", "IrGaseousCargo", "IrBulkCargo", "IrUnitCargo",
