@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import dataclasses
 
+from ocx_model_validator.model.ir.base import Quantity
 from ocx_model_validator.model.ir.structural import IrVessel
 from ocx_model_validator.reporting.generators._common import (
     qty_mm_cell,
@@ -13,7 +14,7 @@ from ocx_model_validator.reporting.generators._common import (
 from ocx_model_validator.reporting.model import Cell, Report, ReportSection, ReportTable
 
 # Non-dimension fields on IrSection subclasses (see model/ir/sections.py)
-_SECTION_BASE_FIELDS = {"id", "name", "guidref", "section_type"}
+_SECTION_BASE_FIELDS = {"id", "name", "guidref", "section_type", "extra"}
 
 
 def _materials_section(vessel: IrVessel) -> ReportSection:
@@ -49,14 +50,19 @@ def _sections_section(vessel: IrVessel) -> ReportSection:
     dim_names = sorted({
         f.name for s in secs for f in dataclasses.fields(s)
         if f.name not in _SECTION_BASE_FIELDS
+        and isinstance(getattr(s, f.name, None), Quantity)
     })
     columns = ["Id", "Name", "Type"] + [f"{n} (mm)" for n in dim_names]
     rows: list[list[Cell]] = []
     for s in secs:
         row: list[Cell] = [s.id, s.name, _section_type_name(s)]
         for n in dim_names:
-            row.append(qty_mm_cell(getattr(s, n, None), reg, notes,
-                                   f"section {s.id} {n}"))
+            value = getattr(s, n, None)
+            if isinstance(value, Quantity):
+                row.append(qty_mm_cell(value, reg, notes,
+                                       f"section {s.id} {n}"))
+            else:
+                row.append(None)
         rows.append(row)
     return ReportSection(title="Cross sections",
                          tables=[ReportTable("Cross sections", columns, rows)],
@@ -87,6 +93,8 @@ def build(vessel: IrVessel, which: str = "all", source_file: str = "") -> Report
         "section": _sections_section,
         "opening": _openings_section,
     }
+    if which != "all" and which not in builders:
+        raise ValueError(f"unknown catalogue {which!r}; expected material|section|opening|all")
     keys = list(builders) if which == "all" else [which]
     sections = [builders[k](vessel) for k in keys]
     return Report(title="Catalogue report",

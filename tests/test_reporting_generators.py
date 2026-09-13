@@ -1,9 +1,11 @@
 """Tests for report generators."""
+import pytest
+
 from ocx_model_validator.model.ir.arrangement import IrCompartment
 from ocx_model_validator.model.ir.base import IrCog, Quantity
 from ocx_model_validator.model.ir.catalogues import IrHole2D, IrHoleShapeCatalogue, IrMaterial
 from ocx_model_validator.model.ir.geometry import IrCoordinateSystem, IrRefPlane
-from ocx_model_validator.model.ir.sections import IrFlatBarSection, IrTSection
+from ocx_model_validator.model.ir.sections import IrFlatBarSection, IrGenericSection, IrTSection
 from ocx_model_validator.model.ir.structural import IrVessel
 from ocx_model_validator.reporting.generators import catalogues as catalogues_gen
 from ocx_model_validator.reporting.generators import compartments as compartments_gen
@@ -179,3 +181,18 @@ def test_catalogues_no_hole_catalogue():
     section = report.sections[0]
     assert section.tables[0].rows == []
     assert any("hole shape catalogue" in n.lower() for n in section.notes)
+
+
+def test_catalogues_generic_section_does_not_crash():
+    vessel = _vessel_with_catalogues()
+    vessel.sections["G1"] = IrGenericSection(id="G1", name="Gen", extra={"height": 0.2})
+    report = catalogues_gen.build(vessel, which="section")
+    table = report.sections[0].tables[0]
+    assert "extra (mm)" not in table.columns
+    g_row = next(r for r in table.rows if r[0] == "G1")
+    assert g_row[1] == "Gen"
+
+
+def test_catalogues_invalid_which_raises_value_error():
+    with pytest.raises(ValueError, match="unknown catalogue"):
+        catalogues_gen.build(IrVessel(id="V1"), which="materials")
