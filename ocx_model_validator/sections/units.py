@@ -18,7 +18,7 @@ _FALLBACK_SI = {
     "Um3": 1.0,
     "UPa": 1.0,
     "UMPa": 1e6,
-    "Ukg": 1.0,
+    "UKg": 1.0,
     "Ut": 1e3,
 }
 
