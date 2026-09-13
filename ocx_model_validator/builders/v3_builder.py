@@ -83,6 +83,7 @@ from ocx_model_validator.model.ir import (
     IrUnitCargo,
     IrVector3D,
 )
+from ocx_model_validator.model.ir.geometry import IrUnboundedGeometry
 from .base import IOcxBuilder, MetaData
 
 
@@ -311,6 +312,10 @@ class OcxV3Builder(IOcxBuilder):
     # Geometry — curves and surfaces
     # ------------------------------------------------------------------
 
+    _CONTOUR_ATTRS = ("composite_curve3_d", "nurbs3_d", "line3_d",
+                      "poly_line3_d", "circum_arc3_d", "ellipse3_d",
+                      "circle3_d", "circum_circle3_d")
+
     def _build_curve(self, elem):
         """Dispatch a raw OCX curve element to its IR curve type."""
         if elem is None:
@@ -355,13 +360,19 @@ class OcxV3Builder(IOcxBuilder):
             kv = getattr(elem, "knot_vector", None)
             cpl = getattr(elem, "control_pt_list", None)
             pts = []
+            weights = []
             if cpl is not None:
-                pts = [self._pt(p) for p in getattr(cpl, "control_point", None) or []]
+                control_points = getattr(cpl, "control_point", None) or []
+                pts = [self._pt(p) for p in control_points]
+                for p in control_points:
+                    w = getattr(p, "weight", None)
+                    weights.append(float(w) if w is not None else 1.0)
             form = getattr(props, "form", None) if props else None
             return IrNurbs3D(curve_length=cl, id=cid,
                              degree=getattr(props, "degree", None) if props else None,
                              knot_vector=list(getattr(kv, "value", None) or []) if kv else [],
                              control_points=[p for p in pts if p],
+                             weights=weights,
                              is_rational=bool(getattr(props, "is_rational", False)) if props else False,
                              form=getattr(form, "value", None) if form is not None else None)
         if "line3d" in name:
@@ -370,6 +381,26 @@ class OcxV3Builder(IOcxBuilder):
                             end=self._pt(getattr(elem, "end_point", None)))
         logger.debug("Unknown curve type: {}", type(elem).__name__)
         return None
+
+    def _build_contour(self, container):
+        """Build one IR curve from a TraceLine/OuterContour container."""
+        if container is None:
+            return None
+        curves = []
+        for attr in self._CONTOUR_ATTRS:
+            val = getattr(container, attr, None)
+            if val is None:
+                continue
+            elems = val if isinstance(val, (list, tuple)) else [val]
+            for elem in elems:
+                built = self._build_curve(elem)
+                if built is not None:
+                    curves.append(built)
+        if not curves:
+            return None
+        if len(curves) == 1:
+            return curves[0]
+        return IrCompositeCurve3D(curve_length=None, segments=curves)
 
     def _build_surface(self, elem):
         """Dispatch a raw OCX surface element to its IR surface type."""
@@ -413,6 +444,30 @@ class OcxV3Builder(IOcxBuilder):
     _SURFACE_ATTRS = ("plane3_d", "nurbssurface", "extruded_surface",
                       "sphere3_d", "cone3_d", "cylinder3_d")
 
+    def _build_unbounded(self, ug):
+        """Build IrUnboundedGeometry from a Panel/Plate UnboundedGeometry."""
+        if ug is None:
+            return None
+        surface = None
+        for attr in self._SURFACE_ATTRS:
+            val = getattr(ug, attr, None)
+            if val is None:
+                continue
+            elems = val if isinstance(val, (list, tuple)) else [val]
+            for elem in elems:
+                surface = self._build_surface(elem)
+                if surface is not None:
+                    break
+            if surface is not None:
+                break
+        grid = getattr(ug, "grid_ref", None)
+        sref = getattr(ug, "surface_ref", None)
+        return IrUnboundedGeometry(
+            surface=surface,
+            surface_ref=(getattr(sref, "local_ref", None) or None) if sref else None,
+            grid_ref=(getattr(grid, "local_ref", None) or None) if grid else None,
+        )
+
     def _build_reference_surfaces(self, rs, ir: IrVessel) -> None:
         if rs is None:
             return
@@ -451,7 +506,11 @@ class OcxV3Builder(IOcxBuilder):
                 if rid:
                     ids.append(rid)
                     self._register(ir.ref_planes, rid,
-                                   IrRefPlane(id=rid, name=getattr(rp, "name", None)),
+                                   IrRefPlane(
+                                       id=rid,
+                                       name=getattr(rp, "name", None),
+                                       location=self._qty(getattr(rp, "reference_location", None)),
+                                   ),
                                    ir.duplicate_ids)
             return ids
 
@@ -572,9 +631,6 @@ class OcxV3Builder(IOcxBuilder):
             id=did, name=getattr(dv, "name", None),
             vessel_ref=self._ref(getattr(dv, "vessel_ref", None)),
             children=children), ir.duplicate_ids)
-
-    _CONTOUR_ATTRS = ("composite_curve3_d", "poly_line3_d", "circle3_d",
-                      "ellipse3_d", "circum_arc3_d", "line3_d", "nurbs3_d")
 
     def _build_hole_catalogue(self, cat, ir: IrVessel) -> None:
         if cat is None:
@@ -897,6 +953,7 @@ class OcxV3Builder(IOcxBuilder):
             cog=self._cog(pp),
             net_area=self._qty(getattr(raw, "net_area", None)),
             function_type=self._enum(getattr(raw, "function_type", None)),
+            outer_contour=self._build_contour(getattr(raw, "outer_contour", None)),
         )
 
     def _build_bracket(self, raw, parent: ParentRef) -> IrBracket | None:
@@ -939,6 +996,7 @@ class OcxV3Builder(IOcxBuilder):
             function_type=self._enum(getattr(raw, "function_type", None)),
             end_cut_end1=self._build_end_cut(getattr(raw, "end_cut_end1", None)),
             end_cut_end2=self._build_end_cut(getattr(raw, "end_cut_end2", None)),
+            trace=self._build_contour(getattr(raw, "trace_line", None)),
         )
 
     def _build_pillar(self, raw, parent: ParentRef) -> IrPillar | None:
@@ -1114,6 +1172,7 @@ class OcxV3Builder(IOcxBuilder):
             edge_reinforcement_ids=edge_reinforcement_ids,
             seam_ids=seam_ids,
             limited_by=limited_by_refs,
+            unbounded_geometry=self._build_unbounded(getattr(raw, "unbounded_geometry", None)),
         )
 
     # ------------------------------------------------------------------
@@ -1141,6 +1200,7 @@ class OcxV3Builder(IOcxBuilder):
                 volume=self._qty(getattr(cp, "volume", None) if cp else None),
                 filling_height=self._qty(getattr(cp, "filling_height", None) if cp else None),
                 face_refs=face_refs,
+                cog=self._cog(cp),
             )
             self._register(ir.compartments, cid, ir_c, ir.duplicate_ids)
             self._build_cargoes_for_compartment(raw, ir)
@@ -1231,4 +1291,3 @@ class OcxV3Builder(IOcxBuilder):
             logger.warning(f"Integrity check: {len(dangling)} dangling reference(s) detected.")
         if ir.duplicate_ids:
             logger.warning(f"Integrity check: {len(ir.duplicate_ids)} duplicate id(s) detected.")
-
