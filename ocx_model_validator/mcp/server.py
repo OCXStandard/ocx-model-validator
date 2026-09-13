@@ -58,6 +58,7 @@ def _frame_table_dict(vessel: IrVessel) -> tuple[dict[str, Any], list[str]]:
 
 @mcp.tool()
 def load_model(path: str) -> dict[str, Any]:
+    """Load and parse an OCX 3D ship model file. Must be called before any other tool."""
     try:
         vessel = _load_vessel(path)
         state.set_model(vessel, path)
@@ -68,6 +69,7 @@ def load_model(path: str) -> dict[str, Any]:
 
 @mcp.tool()
 def get_model_info() -> dict[str, Any]:
+    """Retrieve model ID, name, and entity counts (panels, plates, stiffeners, compartments, ref planes, materials, sections)."""
     try:
         vessel = _require_model()
         return {
@@ -82,6 +84,7 @@ def get_model_info() -> dict[str, Any]:
 
 @mcp.tool()
 def get_frame_table() -> dict[str, Any]:
+    """Retrieve Nauticus frame table with labels, positions and spacings in mm derived from X reference planes. Requires load_model."""
     try:
         vessel = _require_model()
         frame_table, warnings = _frame_table_dict(vessel)
@@ -92,6 +95,7 @@ def get_frame_table() -> dict[str, Any]:
 
 @mcp.tool()
 def get_compartments() -> dict[str, Any]:
+    """Retrieve compartment list with tank type, center-of-gravity (mm), volume (m³), and extent (mm). Requires load_model."""
     try:
         vessel = _require_model()
         compartments, warnings = build_compartments_block(vessel)
@@ -105,6 +109,7 @@ def build_cross_section(
     x_mm: float | None = None,
     frame: str | None = None,
 ) -> dict[str, Any]:
+    """Build cross-section JSON document at a transverse plane; provide exactly one of x_mm (mm) or frame (frame label string). Requires load_model."""
     try:
         vessel = _require_model()
         if state.source_file is None:
@@ -121,6 +126,7 @@ def save_cross_section(
     x_mm: float | None = None,
     frame: str | None = None,
 ) -> dict[str, Any]:
+    """Build and save the cross-section document to a JSON file path; provide exactly one of x_mm (mm) or frame (frame label string). Requires load_model."""
     try:
         vessel = _require_model()
         if state.source_file is None:

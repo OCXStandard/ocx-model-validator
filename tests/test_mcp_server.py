@@ -26,6 +26,14 @@ def test_six_tools_registered():
     }
 
 
+def test_all_tools_have_descriptions():
+    """Verify all tools have non-empty descriptions for LLM clients."""
+    tools = asyncio.run(server.mcp.list_tools())
+    for tool in tools:
+        assert tool.description, f"Tool '{tool.name}' has empty description"
+        assert len(tool.description.strip()) > 0, f"Tool '{tool.name}' has whitespace-only description"
+
+
 def test_tools_require_loaded_model():
     for fn in (
         server.get_model_info,
