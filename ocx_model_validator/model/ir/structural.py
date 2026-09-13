@@ -18,6 +18,7 @@ from ocx_model_validator.model.ir.geometry import (
     IrRefPlane,
     IrSurface,
     IrSurfaceCollection,
+    IrUnboundedGeometry,
 )
 from ocx_model_validator.model.ir.connections import (
     IrConnectionConfiguration,
@@ -63,6 +64,7 @@ class IrPlate:
     cog: IrCog | None = None
     net_area: Quantity | None = None
     function_type: str | None = None
+    outer_contour: IrCurve3D | None = None
 
 
 @dataclass
@@ -97,6 +99,7 @@ class IrStiffener:
     end_cut_end1: IrEndCut | None = None
     end_cut_end2: IrEndCut | None = None
     penetrations: list[IrPenetration] = field(default_factory=list)
+    trace: IrCurve3D | None = None
 
 
 @dataclass
@@ -254,6 +257,7 @@ class IrPanel:
     hole_shape_refs: list[Ref] = field(default_factory=list)
     # All boundary references, each tagged with ref_type
     limited_by: list[IrLimitedByRef] = field(default_factory=list)
+    unbounded_geometry: IrUnboundedGeometry | None = None
 
     # ------------------------------------------------------------------
     # Typed filter helpers

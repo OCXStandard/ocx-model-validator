@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from ocx_model_validator.model.ir.base import Quantity, Ref
+from ocx_model_validator.model.ir.base import IrCog, Quantity, Ref
 
 
 @dataclass
@@ -16,7 +16,7 @@ class IrCompartment:
     volume: Quantity | None = None
     filling_height: Quantity | None = None
     face_refs: list[Ref] = field(default_factory=list)
-    cog: Quantity | None = None
+    cog: IrCog | None = None
 
 
 @dataclass

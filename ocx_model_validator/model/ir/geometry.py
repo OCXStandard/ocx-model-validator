@@ -147,6 +147,15 @@ class IrNurbsSurface(IrSurface3D):
     control_points: list[list[IrPoint3D]] = field(default_factory=list)
 
 
+@dataclass(frozen=True)
+class IrUnboundedGeometry:
+    """Panel UnboundedGeometry: exactly one of an inline surface, a
+    SurfaceRef (local_ref) or a GridRef (ref-plane id) is normally set."""
+    surface: IrSurface3D | None = None
+    surface_ref: str | None = None
+    grid_ref: str | None = None
+
+
 # --- standalone reference geometry ---
 
 @dataclass(frozen=True)
@@ -165,6 +174,7 @@ class IrRefPlane:
     id: str
     name: str | None = None
     reference_plane: IrPlane3D | None = None
+    location: Quantity | None = None
 
 
 @dataclass(frozen=True)
