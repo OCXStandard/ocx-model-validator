@@ -213,3 +213,69 @@ def test_plate_odd_hits_warns_and_drops_leftover(vessel: IrVessel) -> None:
 
     assert len(odd_segments) == 1
     assert any("Odd plate" in warning and "odd" in warning.lower() for warning in section.warnings)
+
+
+def test_plate_thickness_bad_unit_is_emitted_with_none_and_warning(vessel: IrVessel) -> None:
+    vessel.panels["panel-c"] = IrPanel(id="panel-c", name="Panel C", plate_ids=["plate-bad-thickness"])
+    vessel.plates["plate-bad-thickness"] = IrPlate(
+        id="plate-bad-thickness",
+        parent_ref=parent("panel-c"),
+        name="Bad thickness plate",
+        material_ref=Ref("mat315"),
+        thickness=q(12.0, "Ubad"),
+        outer_contour=rectangle(0.0, 2.0, 0.0),
+    )
+
+    section = build_cross_section(vessel, 5000.0)
+
+    plate = next(p for p in section.plates if p.name == "Bad thickness plate")
+    assert plate.thickness_mm is None
+    assert any("Bad thickness plate" in warning for warning in section.warnings)
+
+
+def test_stiffener_section_dims_bad_unit_is_emitted_with_none_and_warning(vessel: IrVessel) -> None:
+    vessel.sections["bad-bulb"] = IrBulbFlatSection(
+        id="bad-bulb",
+        name="Bad bulb",
+        height=q(300.0, "Ubad"),
+        web_thickness=q(11.0, "Umm"),
+    )
+    vessel.stiffeners["stiff-bad-dims"] = IrStiffener(
+        id="stiff-bad-dims",
+        parent_ref=parent("panel-a"),
+        name="Bad dims stiffener",
+        material_ref=Ref("mat315"),
+        section_ref=Ref("bad-bulb"),
+        trace=line(0.5, 0.1),
+    )
+    vessel.panels["panel-a"].stiffener_ids.append("stiff-bad-dims")
+
+    section = build_cross_section(vessel, 5000.0)
+
+    stiffener = next(s for s in section.stiffeners if s.name == "Bad dims stiffener")
+    assert stiffener.profile_type == "HpBulb"
+    assert stiffener.profile_dimensions is None
+    assert any("Bad dims stiffener" in warning for warning in section.warnings)
+
+
+def test_stiffener_material_yield_bad_unit_is_emitted_with_none_and_warning(vessel: IrVessel) -> None:
+    vessel.materials["bad-mat"] = IrMaterial(
+        id="bad-mat",
+        name="Bad material",
+        yield_stress=q(315e6, "Ubad"),
+    )
+    vessel.stiffeners["stiff-bad-mat"] = IrStiffener(
+        id="stiff-bad-mat",
+        parent_ref=parent("panel-a"),
+        name="Bad material stiffener",
+        material_ref=Ref("bad-mat"),
+        section_ref=Ref("hp300"),
+        trace=line(1.5, 0.1),
+    )
+    vessel.panels["panel-a"].stiffener_ids.append("stiff-bad-mat")
+
+    section = build_cross_section(vessel, 5000.0)
+
+    stiffener = next(s for s in section.stiffeners if s.name == "Bad material stiffener")
+    assert stiffener.material_reh_mpa is None
+    assert any("Bad material stiffener" in warning for warning in section.warnings)
