@@ -1,0 +1,32 @@
+"""Integration test: BOM report against the real VLCC reference model."""
+from pathlib import Path
+
+import pytest
+from typer.testing import CliRunner
+
+from ocx_model_validator.cli import app
+
+MODEL = Path(r"C:\PythonDev\nh-mcp\examples\D-VLCC_1-HOLD-OCX-simple_v3.3docx")
+
+pytestmark = [
+    pytest.mark.integration,
+    pytest.mark.skipif(not MODEL.exists(), reason="VLCC reference model not present"),
+]
+
+runner = CliRunner()
+
+
+def test_bom_report_on_reference_model(tmp_path: Path):
+    dest = tmp_path / "bom.md"
+    result = runner.invoke(
+        app,
+        ["report", "bom", str(MODEL), "--detailed", "--destination", str(dest)],
+    )
+    assert result.exit_code == 0
+    text = dest.read_text(encoding="utf-8")
+    assert "### Summary" in text
+    assert "### Items" in text
+    assert "**Grand total**" in text
+    total_line = next(l for l in text.splitlines() if "Grand total" in l)
+    weight = float(total_line.split("|")[5].strip().strip("*"))
+    assert weight > 0
