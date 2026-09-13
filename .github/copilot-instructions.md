@@ -51,13 +51,13 @@ Two equivalent entrypoints are registered (`validator` and `ocx-validate`):
 
 ```bash
 # Generate XML test stubs from .3docx models in ./models/
-validator --generate
+validator generate-stubs
 
 # Wipe and regenerate all stubs
-validator --generate --force
+validator generate-stubs --force
 ```
 
-The `models/` directory at the repo root is the source for stub generation. Place `.3docx` files there before running `--generate`. Generated stubs land in `tests/data/ocx_{version}_stubs/` and `tests/data/unitsml_stubs/`.
+The `models/` directory at the repo root is the source for stub generation. Place `.3docx` files there before running `validator generate-stubs`. Generated stubs land in `tests/data/ocx_{version}_stubs/` and `tests/data/unitsml_stubs/`.
 
 ## Architecture — the parse → build pipeline
 

@@ -15,7 +15,7 @@ making downstream tools independent of any particular OCX schema version.
 - Builds a typed, frozen IR (`IrVessel`, `IrPanel`, `IrPlate`, `IrBracket`, `IrStiffener`, …)
 - Supports OCX schema **3.0 / 3.1 / 3.2** out of the box
 - Converts UnitsML unit definitions to SI factors via `build_unit_registry`
-- CLI entrypoint `validator --generate [--force]` for auto-generating xsdata test stubs
+- CLI subcommands for model reports and `validator generate-stubs [--force]` for auto-generating xsdata test stubs
 - Duplicate-id and dangling-ref integrity checks built into the builder
 - **Cross-section extraction** (`ocx_model_validator.sections`): builds a Nauticus-style
   frame table from the model's X reference planes, intersects the 3D model at any
@@ -161,11 +161,18 @@ ocx-model-validator/
 ## CLI
 
 ```bash
+# model reports (rich to stdout, or markdown to a file)
+validator report frame-table  model.3docx
+validator report compartments model.3docx
+validator report catalogues   model.3docx --catalogue material
+validator report bom          model.3docx --detailed
+validator report all          model.3docx --destination report.md
+
 # generate xsdata stubs from .3docx models in ./models/
-validator --generate
+validator generate-stubs
 
 # wipe and regenerate all stubs
-validator --generate --force
+validator generate-stubs --force
 ```
 
 ---
