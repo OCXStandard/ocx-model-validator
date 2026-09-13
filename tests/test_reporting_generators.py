@@ -1,8 +1,11 @@
 """Tests for report generators."""
 from ocx_model_validator.model.ir.arrangement import IrCompartment
 from ocx_model_validator.model.ir.base import IrCog, Quantity
+from ocx_model_validator.model.ir.catalogues import IrHole2D, IrHoleShapeCatalogue, IrMaterial
 from ocx_model_validator.model.ir.geometry import IrCoordinateSystem, IrRefPlane
+from ocx_model_validator.model.ir.sections import IrFlatBarSection, IrTSection
 from ocx_model_validator.model.ir.structural import IrVessel
+from ocx_model_validator.reporting.generators import catalogues as catalogues_gen
 from ocx_model_validator.reporting.generators import compartments as compartments_gen
 from ocx_model_validator.reporting.generators import frame_table as frame_table_gen
 from ocx_model_validator.reporting.generators._common import (
@@ -122,3 +125,57 @@ def test_compartments_report():
 def test_compartments_report_empty():
     report = compartments_gen.build(IrVessel(id="V1"), source_file="m.3docx")
     assert report.sections[0].tables[0].rows == []
+
+
+def _vessel_with_catalogues() -> IrVessel:
+    vessel = IrVessel(id="V1", name="MV Test")
+    vessel.materials["M1"] = IrMaterial(
+        id="M1", name="NV A36", grade="A36",
+        density=Quantity(7850.0, ""),        # blank unit == already SI (kg/m³)
+        yield_stress=Quantity(355.0, "UMPa"),
+    )
+    vessel.sections["S1"] = IrFlatBarSection(
+        id="S1", name="FB200x20",
+        height=Quantity(0.2, "Um"), width=Quantity(0.02, "Um"),
+    )
+    vessel.sections["S2"] = IrTSection(id="S2", name="T300")
+    vessel.hole_shape_catalogue = IrHoleShapeCatalogue(
+        id="H", name="Holes",
+        holes={"H1": IrHole2D(id="H1", name="Manhole",
+                              parametric={"length": 600, "width": 400})},
+    )
+    return vessel
+
+
+def test_catalogues_report_all_sections():
+    report = catalogues_gen.build(_vessel_with_catalogues(), source_file="m.3docx")
+    assert [s.title for s in report.sections] == ["Materials", "Cross sections", "Openings"]
+
+
+def test_catalogues_materials_table():
+    report = catalogues_gen.build(_vessel_with_catalogues())
+    table = report.sections[0].tables[0]
+    assert table.columns == ["Id", "Name", "Grade", "Density (t/m³)",
+                             "Yield (MPa)", "Ultimate (MPa)", "E (MPa)"]
+    assert table.rows[0] == ["M1", "NV A36", "A36", 7.85, 355, None, None]
+
+
+def test_catalogues_sections_table_union_columns():
+    report = catalogues_gen.build(_vessel_with_catalogues())
+    table = report.sections[1].tables[0]
+    assert table.columns[:3] == ["Id", "Name", "Type"]
+    assert "height (mm)" in table.columns
+    fb_row = next(r for r in table.rows if r[0] == "S1")
+    assert fb_row[table.columns.index("height (mm)")] == 200.0
+
+
+def test_catalogues_filter_material_only():
+    report = catalogues_gen.build(_vessel_with_catalogues(), which="material")
+    assert [s.title for s in report.sections] == ["Materials"]
+
+
+def test_catalogues_no_hole_catalogue():
+    report = catalogues_gen.build(IrVessel(id="V1"), which="opening")
+    section = report.sections[0]
+    assert section.tables[0].rows == []
+    assert any("hole shape catalogue" in n.lower() for n in section.notes)
