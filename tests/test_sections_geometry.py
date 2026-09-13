@@ -105,6 +105,52 @@ def test_nurbs_rational_quarter_circle() -> None:
     assert hits[0] == pytest.approx((0.0, expected), abs=0.1)
 
 
+def test_nurbs_tangent_plane_hit() -> None:
+    curve = IrNurbs3D(
+        curve_length=None,
+        degree=2,
+        knot_vector=[0.0, 0.0, 0.0, 0.5, 0.5, 1.0, 1.0, 1.0],
+        control_points=[
+            p(0, 0, -1),
+            p(1, 0, -1),
+            p(1, 0, 0),
+            p(1, 0, 1),
+            p(0, 0, 1),
+        ],
+        weights=[1.0, sqrt(2.0) / 2.0, 1.0, sqrt(2.0) / 2.0, 1.0],
+        is_rational=True,
+    )
+
+    hits = intersect_curve_plane(curve, 1000.0, to_mm)
+
+    assert len(hits) == 1
+    assert hits[0] == pytest.approx((0.0, 0.0), abs=0.1)
+
+
+def test_nurbs_near_tangent_two_hits() -> None:
+    curve = IrNurbs3D(
+        curve_length=None,
+        degree=2,
+        knot_vector=[0.0, 0.0, 0.0, 0.5, 0.5, 1.0, 1.0, 1.0],
+        control_points=[
+            p(0, 0, -1),
+            p(1, 0, -1),
+            p(1, 0, 0),
+            p(1, 0, 1),
+            p(0, 0, 1),
+        ],
+        weights=[1.0, sqrt(2.0) / 2.0, 1.0, sqrt(2.0) / 2.0, 1.0],
+        is_rational=True,
+    )
+    expected_z = sqrt(1000.0**2 - 999.99**2)
+
+    hits = sorted(intersect_curve_plane(curve, 999.99, to_mm), key=lambda yz: yz[1])
+
+    assert len(hits) == 2
+    assert hits[0] == pytest.approx((0.0, -expected_z), abs=0.1)
+    assert hits[1] == pytest.approx((0.0, expected_z), abs=0.1)
+
+
 def test_nurbs_invalid_degree_raises_geometry_error() -> None:
     curve = IrNurbs3D(
         curve_length=None,

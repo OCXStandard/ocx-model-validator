@@ -198,7 +198,83 @@ def _sampled_hits(
             continue
         hit = _bisect_hit(f, left_t, right_t, x_mm, tol)
         hits.append((float(hit[1]), float(hit[2])))
+
+    near_hit_threshold = max(tol, 5.0 * tol)
+    for index in range(1, len(params) - 1):
+        residual = residuals[index]
+        left_r = residuals[index - 1]
+        right_r = residuals[index + 1]
+        if (
+            abs(residual) > near_hit_threshold
+            or (
+                not (residual >= left_r and residual >= right_r)
+                and not (residual <= left_r and residual <= right_r)
+            )
+        ):
+            continue
+        hit_t, hit, hit_residual = _refine_residual_extremum(
+            f,
+            float(params[index - 1]),
+            float(params[index]),
+            float(params[index + 1]),
+            x_mm,
+            maximize=residual >= left_r and residual >= right_r,
+        )
+        found_bracketed_hit = False
+        if left_r * hit_residual < 0.0:
+            hit = _bisect_hit(f, float(params[index - 1]), hit_t, x_mm, tol)
+            hits.append((float(hit[1]), float(hit[2])))
+            found_bracketed_hit = True
+        if hit_residual * right_r < 0.0:
+            hit = _bisect_hit(f, hit_t, float(params[index + 1]), x_mm, tol)
+            hits.append((float(hit[1]), float(hit[2])))
+            found_bracketed_hit = True
+        if not found_bracketed_hit and abs(hit_residual) <= tol:
+            hits.append((float(hit[1]), float(hit[2])))
     return hits
+
+
+def _refine_residual_extremum(
+    f: Callable[[float], np.ndarray],
+    left_t: float,
+    center_t: float,
+    right_t: float,
+    x_mm: float,
+    *,
+    maximize: bool,
+) -> tuple[float, np.ndarray, float]:
+    left = left_t
+    right = right_t
+    center_value = f(center_t)
+    center_residual = float(center_value[0] - x_mm)
+    best_t = center_t
+    best_value = center_value
+    best_residual = center_residual
+    for _ in range(80):
+        left_mid = left + (right - left) / 3.0
+        right_mid = right - (right - left) / 3.0
+        left_value = f(left_mid)
+        right_value = f(right_mid)
+        left_residual = float(left_value[0] - x_mm)
+        right_residual = float(right_value[0] - x_mm)
+        if (maximize and left_residual < right_residual) or (
+            not maximize and left_residual > right_residual
+        ):
+            left = left_mid
+        else:
+            right = right_mid
+
+        candidate_t = (left + right) / 2.0
+        candidate_value = f(candidate_t)
+        candidate_residual = float(candidate_value[0] - x_mm)
+        if (maximize and candidate_residual > best_residual) or (
+            not maximize and candidate_residual < best_residual
+        ):
+            best_t = candidate_t
+            best_value = candidate_value
+            best_residual = candidate_residual
+
+    return best_t, best_value, best_residual
 
 
 def _bisect_hit(
