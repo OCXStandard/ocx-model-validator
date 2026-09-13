@@ -17,6 +17,13 @@ making downstream tools independent of any particular OCX schema version.
 - Converts UnitsML unit definitions to SI factors via `build_unit_registry`
 - CLI entrypoint `validator --generate [--force]` for auto-generating xsdata test stubs
 - Duplicate-id and dangling-ref integrity checks built into the builder
+- **Cross-section extraction** (`ocx_model_validator.sections`): builds a Nauticus-style
+  frame table from the model's X reference planes, intersects the 3D model at any
+  longitudinal position (analytic lines/circles/arcs + de Boor NURBS evaluation with
+  tangency refinement), and assembles stiffener/plate/compartment data into a
+  JSON document (schema `nh-cross-section/1`)
+- **MCP server** `ocx-mcp` exposing the parse → frame table → cross-section → JSON
+  pipeline to LLM clients
 
 ---
 
@@ -52,6 +59,59 @@ for plate in ir.plates.values():
     print(plate.id, plate.thickness)
 ```
 
+### Cross-section extraction
+
+```python
+from ocx_model_validator.sections import build_frame_table, build_document, save_document
+
+frame_table = build_frame_table(ir)
+print(len(frame_table.positions), "frame positions,",
+      len(frame_table.entries), "spacing entries")
+
+label, x_mm = frame_table.nearest_frame(161_000.0)   # e.g. midship
+doc = build_document(ir, source_file="model.3docx", x_mm=x_mm)
+
+section = doc["cross_section"]
+print(len(section["stiffeners"]), "stiffeners,", len(section["plates"]), "plates")
+save_document(doc, "midship.json")
+```
+
+The document (schema `nh-cross-section/1`) contains four blocks — `frame_table`,
+`cross_section`, `compartments` and `warnings` — with all coordinates in **mm**,
+volumes in **m³** and yield stress in **MPa**, matching the input conventions of
+the DNV Nauticus Hull `RulesAPI` (see the companion
+[`nh-mcp`](../nh-mcp/) project).
+
+### MCP server
+
+Run the `ocx-mcp` server over stdio:
+
+```bash
+uv run ocx-mcp
+```
+
+MCP client configuration (e.g. `mcp.json`):
+
+```json
+{
+  "mcpServers": {
+    "ocx": {
+      "command": "uv",
+      "args": ["run", "--directory", "C:\\PythonDev\\ocx-model-validator", "ocx-mcp"]
+    }
+  }
+}
+```
+
+| Tool | Purpose |
+|---|---|
+| `load_model` | Parse a `.3docx` file and build the IR (kept in session state) |
+| `get_model_info` | Vessel name, schema version and entity counts |
+| `get_frame_table` | Frame 0 offset, spacing entries and frame positions (mm) |
+| `get_compartments` | Compartment names, tank types, COGs, volumes and extents |
+| `build_cross_section` | Full `nh-cross-section/1` document at a frame label or x position |
+| `save_cross_section` | Build the document and persist it to a JSON file |
+
 ---
 
 ## Project structure
@@ -68,6 +128,15 @@ ocx-model-validator/
 │   ├── model/
 │   │   ├── ir.py               ← all IR dataclasses
 │   │   └── units.py            ← UnitConverter, build_unit_registry
+│   ├── sections/
+│   │   ├── units.py            ← quantity → mm/MPa conversion helpers
+│   │   ├── geometry.py         ← curve/plane intersection engine
+│   │   ├── frame_table.py      ← FrameTable, build_frame_table
+│   │   ├── section_builder.py  ← CrossSection, build_cross_section
+│   │   └── document.py         ← nh-cross-section/1 JSON document
+│   ├── mcp/
+│   │   ├── state.py            ← session state (loaded vessel)
+│   │   └── server.py           ← FastMCP "ocx-mcp" server (6 tools)
 │   ├── parsers/
 │   │   ├── base_parser.py
 │   │   ├── dynamic_loader.py   ← runtime xsdata module loader
@@ -104,8 +173,12 @@ validator --generate --force
 ## Running tests
 
 ```bash
-uv run pytest
+uv run pytest                  # unit tests (integration deselected by default)
+uv run pytest -m integration   # end-to-end against a real .3docx model (slow)
 ```
+
+The integration suite parses a full VLCC model and verifies frame table,
+midship cross-section and document extraction against known values.
 
 ---
 
@@ -123,6 +196,14 @@ get_builder(schema_version)
     │  dispatches on (major, minor) → OcxV3Builder
     ▼
 IOcxBuilder.build(root) → IrVessel   ← schema-neutral IR
+    │
+    ▼
+sections.build_frame_table(vessel) → FrameTable        (X ref planes → frames)
+sections.build_cross_section(vessel, x_mm) → CrossSection   (plane intersection)
+sections.build_document(vessel, ...) → dict            (nh-cross-section/1 JSON)
+    │
+    ▼
+ocx-mcp MCP server / DNV Nauticus Hull rule checks (nh-mcp)
 ```
 
 ---
