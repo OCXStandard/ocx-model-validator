@@ -1,7 +1,7 @@
 """sections.units: Quantity/point conversion to mm / MPa / m3."""
 import pytest
 
-from ocx_model_validator.exeptions import GeometryError, OcxParserError, SectionError
+from ocx_model_validator.exeptions import GeometryError, XmlParserError, SectionError
 from ocx_model_validator.model.ir.base import IrUnit, Quantity
 from ocx_model_validator.model.ir.geometry import IrPoint3D
 from ocx_model_validator.sections.units import point_mm, qty_m3, qty_mm, qty_mpa, to_si
@@ -17,8 +17,8 @@ REGISTRY = {
 
 
 def test_exceptions_subclass_parser_error():
-    assert issubclass(GeometryError, OcxParserError)
-    assert issubclass(SectionError, OcxParserError)
+    assert issubclass(GeometryError, XmlParserError)
+    assert issubclass(SectionError, XmlParserError)
 
 
 def test_to_si_uses_registry():
