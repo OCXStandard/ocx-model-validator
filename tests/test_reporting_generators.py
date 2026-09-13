@@ -5,7 +5,12 @@ from ocx_model_validator.model.ir.arrangement import IrCompartment
 from ocx_model_validator.model.ir.base import IrCog, Quantity
 from ocx_model_validator.model.ir.catalogues import IrHole2D, IrHoleShapeCatalogue, IrMaterial
 from ocx_model_validator.model.ir.geometry import IrCoordinateSystem, IrRefPlane
-from ocx_model_validator.model.ir.sections import IrFlatBarSection, IrGenericSection, IrTSection
+from ocx_model_validator.model.ir.sections import (
+    IrBulbFlatSection,
+    IrFlatBarSection,
+    IrGenericSection,
+    IrTSection,
+)
 from ocx_model_validator.model.ir.structural import IrVessel
 from ocx_model_validator.reporting.generators import catalogues as catalogues_gen
 from ocx_model_validator.reporting.generators import compartments as compartments_gen
@@ -191,6 +196,35 @@ def test_catalogues_generic_section_does_not_crash():
     assert "extra (mm)" not in table.columns
     g_row = next(r for r in table.rows if r[0] == "G1")
     assert g_row[1] == "Gen"
+
+
+def test_catalogues_bulb_angle_rendered_in_degrees():
+    vessel = _vessel_with_catalogues()
+    vessel.sections["S3"] = IrBulbFlatSection(
+        id="S3", name="HP200x10",
+        height=Quantity(0.2, "Um"),
+        bulb_angle=Quantity(15.0, "Udeg"),
+    )
+    report = catalogues_gen.build(vessel, which="section")
+    table = report.sections[0].tables[0]
+    assert "bulb_angle (mm)" not in table.columns
+    assert "bulb_angle (deg)" in table.columns
+    hp_row = next(r for r in table.rows if r[0] == "S3")
+    assert hp_row[table.columns.index("bulb_angle (deg)")] == 15.0
+
+
+def test_catalogues_bulb_angle_unknown_unit_noted():
+    vessel = IrVessel(id="V1")
+    vessel.sections["S3"] = IrBulbFlatSection(
+        id="S3", name="HP200x10",
+        bulb_angle=Quantity(0.26, "Ugon"),
+    )
+    report = catalogues_gen.build(vessel, which="section")
+    section = report.sections[0]
+    hp_row = section.tables[0].rows[0]
+    idx = section.tables[0].columns.index("bulb_angle (deg)")
+    assert hp_row[idx] == "0.26 Ugon"
+    assert any("bulb_angle" in n for n in section.notes)
 
 
 def test_catalogues_invalid_which_raises_value_error():
