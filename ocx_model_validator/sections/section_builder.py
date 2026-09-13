@@ -34,6 +34,8 @@ class SectionStiffener:
     spacing_mm: float | None
     orientation: str = "Longitudinal"
     web_angle_deg: float = 90.0
+    web_dir_y: float | None = None
+    web_dir_z: float | None = None
 
 
 @dataclass(frozen=True)
@@ -119,6 +121,7 @@ def _build_stiffeners(
             material_reh_mpa = _safe_material_reh_mpa(stiffener.material_ref, vessel, "stiffener", name, warnings)
             panel_name = _panel_name(panel_item.panel)
             panel_id = panel_item.panel.id if panel_item.panel is not None else None
+            web_dir_y, web_dir_z = _web_dir(stiffener, x_mm, to_mm, warnings)
             for y_mm, z_mm in hits:
                 result.append(
                     _StiffenerItem(
@@ -132,6 +135,8 @@ def _build_stiffeners(
                             profile_dimensions=profile_dimensions,
                             material_reh_mpa=material_reh_mpa,
                             spacing_mm=None,
+                            web_dir_y=web_dir_y,
+                            web_dir_z=web_dir_z,
                         ),
                     )
                 )
@@ -381,6 +386,37 @@ def _profile(
         warnings.append(f"stiffener {stiffener_name}: section dimensions are incomplete")
         return profile_type, None
     return profile_type, dimensions
+
+
+def _web_dir(
+    stiffener,
+    x_mm: float,
+    to_mm,
+    warnings: list[str],
+) -> tuple[float | None, float | None]:
+    """Project the stiffener web direction onto the section (y, z) plane."""
+    inclinations = getattr(stiffener, "inclinations", None) or []
+    candidates = [inc for inc in inclinations if inc.web_direction is not None]
+    if not candidates:
+        warnings.append(f"stiffener {_name(stiffener)}: no inclination; web direction unknown")
+        return None, None
+
+    def _distance(inc) -> float:
+        if inc.position is None:
+            return float("inf")
+        px, _, _ = to_mm(inc.position)
+        return abs(px - x_mm)
+
+    with_pos = [inc for inc in candidates if inc.position is not None]
+    chosen = min(with_pos, key=_distance) if with_pos else candidates[0]
+    wd = chosen.web_direction
+    length = hypot(wd.y, wd.z)
+    if length < 1e-9:
+        warnings.append(
+            f"stiffener {_name(stiffener)}: web direction has no in-plane component"
+        )
+        return None, None
+    return wd.y / length, wd.z / length
 
 
 def _safe_qty_mm(
