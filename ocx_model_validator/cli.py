@@ -60,6 +60,11 @@ def _load_vessel(model: Path):
             root = parser.parse(str(model))
             version = root.schema_version
         else:
+            logger.warning(
+                "{} has no schemaVersion attribute and is being loaded as a "
+                "bare fragment; units and catalogues will be unavailable.",
+                model,
+            )
             root = SimpleNamespace(
                 vessel=parser.parse_from_string(
                     xml_str=model.read_text(encoding="utf-8"),
@@ -82,9 +87,6 @@ def _detect_schema_version(model: Path) -> str | None:
     namespace_version = re.search(r"//V(\d)(\d)(\d)//OCX_Schema\.xsd", xml)
     if namespace_version:
         return ".".join(namespace_version.groups())
-    folder_version = re.search(r"ocx_(\d)(\d)(\d+)_stubs", model.parent.name)
-    if folder_version:
-        return ".".join(folder_version.groups())
     return None
 
 
