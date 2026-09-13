@@ -2,6 +2,7 @@
 from ocx_model_validator.sections.document import (
     build_compartments_block,
     build_document,
+    frame_table_block,
     load_document,
     save_document,
 )
@@ -22,6 +23,7 @@ __all__ = [
     "build_cross_section",
     "build_compartments_block",
     "build_document",
+    "frame_table_block",
     "save_document",
     "load_document",
 ]

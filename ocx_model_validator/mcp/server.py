@@ -14,6 +14,7 @@ from ocx_model_validator.sections import (
     build_compartments_block,
     build_document,
     build_frame_table,
+    frame_table_block,
     save_document,
 )
 
@@ -34,12 +35,11 @@ def _counts(vessel: IrVessel) -> dict[str, int]:
 
 def _load_vessel(path: str) -> IrVessel:
     source = Path(path)
+    if not source.is_file():
+        raise FileNotFoundError(f"Model file not found: {path}")
     root = OcxParser().parse(source)
     schema_version = getattr(root, "schema_version", "unknown")
     return get_builder(schema_version).build(root)
-
-
-_DEFAULT_LOAD_VESSEL = _load_vessel
 
 
 def _require_model() -> IrVessel:
@@ -51,17 +51,7 @@ def _require_model() -> IrVessel:
 def _frame_table_dict(vessel: IrVessel) -> tuple[dict[str, Any], list[str]]:
     frame_table = build_frame_table(vessel)
     return (
-        {
-            "frame0_offset_mm": frame_table.frame0_offset_mm,
-            "entries": [
-                {"frame_no": frame_no, "spacing_mm": spacing_mm}
-                for frame_no, spacing_mm in frame_table.entries
-            ],
-            "positions": [
-                {"frame_no": frame_no, "x_mm": x_mm}
-                for frame_no, x_mm in frame_table.positions
-            ],
-        },
+        frame_table_block(frame_table),
         list(frame_table.warnings),
     )
 
@@ -69,8 +59,6 @@ def _frame_table_dict(vessel: IrVessel) -> tuple[dict[str, Any], list[str]]:
 @mcp.tool()
 def load_model(path: str) -> dict[str, Any]:
     try:
-        if _load_vessel is _DEFAULT_LOAD_VESSEL and not Path(path).is_file():
-            return {"ok": False, "error": f"Model file not found: {path}"}
         vessel = _load_vessel(path)
         state.set_model(vessel, path)
         return {"ok": True, "vessel_id": vessel.id, "counts": _counts(vessel)}

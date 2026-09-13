@@ -11,7 +11,7 @@ from ocx_model_validator.exeptions import GeometryError, SectionError
 from ocx_model_validator.model.ir.arrangement import IrCompartment
 from ocx_model_validator.model.ir.base import IrCog, Ref
 from ocx_model_validator.model.ir.structural import IrPanel, IrVessel
-from ocx_model_validator.sections.frame_table import build_frame_table
+from ocx_model_validator.sections.frame_table import FrameTable, build_frame_table
 from ocx_model_validator.sections.section_builder import build_cross_section
 from ocx_model_validator.sections.units import point_mm, qty_m3
 
@@ -59,17 +59,7 @@ def build_document(
             "vessel_id": vessel.id,
             "generated": datetime.now(timezone.utc).isoformat(),
         },
-        "frame_table": {
-            "frame0_offset_mm": frame_table.frame0_offset_mm,
-            "entries": [
-                {"frame_no": label, "spacing_mm": spacing_mm}
-                for label, spacing_mm in frame_table.entries
-            ],
-            "positions": [
-                {"frame_no": label, "x_mm": position_x_mm}
-                for label, position_x_mm in frame_table.positions
-            ],
-        },
+        "frame_table": frame_table_block(frame_table),
         "cross_section": {
             "x_mm": cross_section.x_mm,
             "frame": cross_section.frame,
@@ -80,6 +70,21 @@ def build_document(
         "warnings": warnings,
     }
     return _round_floats(doc)
+
+
+def frame_table_block(ft: FrameTable) -> dict[str, Any]:
+    """Serialize a FrameTable into JSON-ready dict format."""
+    return {
+        "frame0_offset_mm": ft.frame0_offset_mm,
+        "entries": [
+            {"frame_no": frame_no, "spacing_mm": spacing_mm}
+            for frame_no, spacing_mm in ft.entries
+        ],
+        "positions": [
+            {"frame_no": frame_no, "x_mm": x_mm}
+            for frame_no, x_mm in ft.positions
+        ],
+    }
 
 
 def build_compartments_block(vessel: IrVessel) -> tuple[list[dict[str, Any]], list[str]]:
