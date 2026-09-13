@@ -31,6 +31,24 @@ def rectangle(y1: float, y2: float, z: float) -> IrPolyLine3D:
     )
 
 
+def four_hit_plate_contour() -> IrPolyLine3D:
+    """Closed contour crossing x=5m at (y,z) mm: (0,0), (2000,50), (3000,45), (6000,0)."""
+    return IrPolyLine3D(
+        curve_length=None,
+        vertices=[
+            p(4.0, 0.0, 0.0),
+            p(6.0, 0.0, 0.0),
+            p(6.0, 2.0, 0.05),
+            p(4.0, 2.0, 0.05),
+            p(4.0, 3.0, 0.045),
+            p(6.0, 3.0, 0.045),
+            p(6.0, 6.0, 0.0),
+            p(4.0, 6.0, 0.0),
+        ],
+        is_closed=True,
+    )
+
+
 def parent(panel_id: str) -> ParentRef:
     return ParentRef(ParentKind.PANEL, panel_id)
 
@@ -175,6 +193,84 @@ def test_plate_segments_are_paired_with_thickness_and_material(vessel: IrVessel)
     )
 
 
+def test_plate_segments_with_non_monotonic_z_are_paired_along_principal_axis(vessel: IrVessel) -> None:
+    vessel.panels["panel-c"] = IrPanel(id="panel-c", name="Panel C", plate_ids=["cambered-plate"])
+    vessel.plates["cambered-plate"] = IrPlate(
+        id="cambered-plate",
+        parent_ref=parent("panel-c"),
+        name="Cambered hatch plate",
+        material_ref=Ref("mat315"),
+        thickness=q(14.0, "Umm"),
+        outer_contour=four_hit_plate_contour(),
+    )
+
+    section = build_cross_section(vessel, 5000.0)
+
+    segments = [plate for plate in section.plates if plate.name == "Cambered hatch plate"]
+    assert [(s.y1_mm, s.z1_mm, s.y2_mm, s.z2_mm) for s in segments] == pytest.approx(
+        [
+            (0.0, 0.0, 2000.0, 50.0),
+            (3000.0, 45.0, 6000.0, 0.0),
+        ]
+    )
+
+
+def test_stiffeners_without_panel_do_not_get_spacing_from_each_other(vessel: IrVessel) -> None:
+    vessel.stiffeners["orphan-1"] = IrStiffener(
+        id="orphan-1",
+        parent_ref=parent("missing-panel"),
+        name="Orphan 1",
+        material_ref=Ref("mat315"),
+        section_ref=Ref("hp300"),
+        trace=line(10.0, 0.1),
+    )
+    vessel.stiffeners["orphan-2"] = IrStiffener(
+        id="orphan-2",
+        parent_ref=parent("missing-panel"),
+        name="Orphan 2",
+        material_ref=Ref("mat315"),
+        section_ref=Ref("hp300"),
+        trace=line(11.0, 0.1),
+    )
+
+    section = build_cross_section(vessel, 5000.0)
+
+    by_name = {stiffener.name: stiffener for stiffener in section.stiffeners}
+    assert by_name["Orphan 1"].spacing_mm is None
+    assert by_name["Orphan 2"].spacing_mm is None
+    assert any("stiffener Orphan 1:" in warning and "panel" in warning.lower() for warning in section.warnings)
+    assert any("stiffener Orphan 2:" in warning and "panel" in warning.lower() for warning in section.warnings)
+
+
+def test_stiffener_spacing_uses_panel_id_not_display_name(vessel: IrVessel) -> None:
+    vessel.panels["panel-c"] = IrPanel(id="panel-c", name="Repeated", stiffener_ids=["same-name-c"])
+    vessel.panels["panel-d"] = IrPanel(id="panel-d", name="Repeated", stiffener_ids=["same-name-d"])
+    vessel.stiffeners["same-name-c"] = IrStiffener(
+        id="same-name-c",
+        parent_ref=parent("panel-c"),
+        name="Same name C",
+        material_ref=Ref("mat315"),
+        section_ref=Ref("hp300"),
+        trace=line(12.0, 0.1),
+    )
+    vessel.stiffeners["same-name-d"] = IrStiffener(
+        id="same-name-d",
+        parent_ref=parent("panel-d"),
+        name="Same name D",
+        material_ref=Ref("mat315"),
+        section_ref=Ref("hp300"),
+        trace=line(13.0, 0.1),
+    )
+
+    section = build_cross_section(vessel, 5000.0)
+
+    by_name = {stiffener.name: stiffener for stiffener in section.stiffeners}
+    assert by_name["Same name C"].panel == "Repeated"
+    assert by_name["Same name D"].panel == "Repeated"
+    assert by_name["Same name C"].spacing_mm is None
+    assert by_name["Same name D"].spacing_mm is None
+
+
 def test_unknown_curve_becomes_warning_and_does_not_abort(vessel: IrVessel) -> None:
     vessel.stiffeners["bad-curve"] = IrStiffener(
         id="bad-curve",
@@ -230,7 +326,10 @@ def test_plate_thickness_bad_unit_is_emitted_with_none_and_warning(vessel: IrVes
 
     plate = next(p for p in section.plates if p.name == "Bad thickness plate")
     assert plate.thickness_mm is None
-    assert any("Bad thickness plate" in warning for warning in section.warnings)
+    assert any(
+        "plate Bad thickness plate:" in warning and "Ubad" in warning
+        for warning in section.warnings
+    )
 
 
 def test_stiffener_section_dims_bad_unit_is_emitted_with_none_and_warning(vessel: IrVessel) -> None:
@@ -255,7 +354,10 @@ def test_stiffener_section_dims_bad_unit_is_emitted_with_none_and_warning(vessel
     stiffener = next(s for s in section.stiffeners if s.name == "Bad dims stiffener")
     assert stiffener.profile_type == "HpBulb"
     assert stiffener.profile_dimensions is None
-    assert any("Bad dims stiffener" in warning for warning in section.warnings)
+    assert any(
+        "stiffener Bad dims stiffener:" in warning and "Ubad" in warning
+        for warning in section.warnings
+    )
 
 
 def test_stiffener_material_yield_bad_unit_is_emitted_with_none_and_warning(vessel: IrVessel) -> None:
@@ -278,4 +380,7 @@ def test_stiffener_material_yield_bad_unit_is_emitted_with_none_and_warning(vess
 
     stiffener = next(s for s in section.stiffeners if s.name == "Bad material stiffener")
     assert stiffener.material_reh_mpa is None
-    assert any("Bad material stiffener" in warning for warning in section.warnings)
+    assert any(
+        "stiffener Bad material stiffener:" in warning and "Ubad" in warning
+        for warning in section.warnings
+    )

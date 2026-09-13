@@ -6,7 +6,7 @@ from math import hypot
 from typing import Iterable
 
 from ocx_model_validator.exeptions import GeometryError, SectionError
-from ocx_model_validator.model.ir.base import Ref
+from ocx_model_validator.model.ir.base import Quantity, Ref
 from ocx_model_validator.model.ir.catalogues import IrMaterial
 from ocx_model_validator.model.ir.sections import (
     IrBulbFlatSection,
@@ -63,6 +63,12 @@ class _PanelItem:
     item: IrPlate | IrStiffener
 
 
+@dataclass(frozen=True)
+class _StiffenerItem:
+    panel_id: str | None
+    stiffener: SectionStiffener
+
+
 def build_cross_section(
     vessel: IrVessel,
     x_mm: float,
@@ -73,8 +79,8 @@ def build_cross_section(
     warnings: list[str] = []
     to_mm = lambda p: point_mm(p, vessel.unit_registry)
 
-    stiffeners = _build_stiffeners(vessel, x_mm, to_mm, tol, warnings)
-    stiffeners = _with_spacing(stiffeners, warnings)
+    stiffener_items = _build_stiffeners(vessel, x_mm, to_mm, tol, warnings)
+    stiffeners = _with_spacing(stiffener_items, warnings)
     plates = _build_plates(vessel, x_mm, to_mm, tol, warnings)
 
     if not stiffeners and not plates:
@@ -95,8 +101,8 @@ def _build_stiffeners(
     to_mm,
     tol: float,
     warnings: list[str],
-) -> list[SectionStiffener]:
-    result: list[SectionStiffener] = []
+) -> list[_StiffenerItem]:
+    result: list[_StiffenerItem] = []
     for panel_item in _panel_stiffeners(vessel):
         stiffener = panel_item.item
         assert isinstance(stiffener, IrStiffener)
@@ -110,19 +116,23 @@ def _build_stiffeners(
                 continue
 
             profile_type, profile_dimensions = _profile(stiffener, vessel, warnings, name)
-            material_reh_mpa = _safe_material_reh_mpa(stiffener.material_ref, vessel, name, warnings)
+            material_reh_mpa = _safe_material_reh_mpa(stiffener.material_ref, vessel, "stiffener", name, warnings)
             panel_name = _panel_name(panel_item.panel)
+            panel_id = panel_item.panel.id if panel_item.panel is not None else None
             for y_mm, z_mm in hits:
                 result.append(
-                    SectionStiffener(
-                        name=name,
-                        y_mm=y_mm,
-                        z_mm=z_mm,
-                        panel=panel_name,
-                        profile_type=profile_type,
-                        profile_dimensions=profile_dimensions,
-                        material_reh_mpa=material_reh_mpa,
-                        spacing_mm=None,
+                    _StiffenerItem(
+                        panel_id=panel_id,
+                        stiffener=SectionStiffener(
+                            name=name,
+                            y_mm=y_mm,
+                            z_mm=z_mm,
+                            panel=panel_name,
+                            profile_type=profile_type,
+                            profile_dimensions=profile_dimensions,
+                            material_reh_mpa=material_reh_mpa,
+                            spacing_mm=None,
+                        ),
                     )
                 )
         except GeometryError as exc:
@@ -152,12 +162,12 @@ def _build_plates(
             if not hits:
                 continue
 
-            hits = sorted(hits, key=lambda yz: (yz[1], yz[0]))
+            hits = _sort_hits_along_principal_axis(hits)
             if len(hits) % 2 == 1:
                 warnings.append(f"plate {name}: odd number of intersection points ({len(hits)}); dropping leftover")
             
-            thickness_mm = _safe_qty_mm(plate.thickness, vessel.unit_registry, name, "thickness", warnings)
-            material_reh_mpa = _safe_material_reh_mpa(plate.material_ref, vessel, name, warnings)
+            thickness_mm = _safe_qty_mm(plate.thickness, vessel.unit_registry, "plate", name, "thickness", warnings)
+            material_reh_mpa = _safe_material_reh_mpa(plate.material_ref, vessel, "plate", name, warnings)
             panel_name = _panel_name(panel_item.panel)
             
             for left, right in zip(hits[0::2], hits[1::2]):
@@ -217,21 +227,62 @@ def _parent_panel(vessel: IrVessel, item: IrPlate | IrStiffener) -> IrPanel | No
     return vessel.panels.get(parent_ref.id)
 
 
-def _with_spacing(stiffeners: list[SectionStiffener], warnings: list[str]) -> list[SectionStiffener]:
-    by_panel: dict[str | None, list[int]] = {}
-    for index, stiffener in enumerate(stiffeners):
-        by_panel.setdefault(stiffener.panel, []).append(index)
+def _sort_hits_along_principal_axis(hits: list[tuple[float, float]]) -> list[tuple[float, float]]:
+    if len(hits) <= 2:
+        return sorted(hits, key=lambda yz: (yz[1], yz[0]))
 
-    updated = list(stiffeners)
-    for panel_name, indexes in by_panel.items():
+    best_i = 0
+    best_j = 1
+    best_dist_sq = -1.0
+    for i, first in enumerate(hits):
+        for j in range(i + 1, len(hits)):
+            second = hits[j]
+            dist_sq = (second[0] - first[0]) ** 2 + (second[1] - first[1]) ** 2
+            if dist_sq > best_dist_sq:
+                best_i = i
+                best_j = j
+                best_dist_sq = dist_sq
+
+    axis_start = hits[best_i]
+    axis_end = hits[best_j]
+    if (axis_end[0], axis_end[1]) < (axis_start[0], axis_start[1]):
+        axis_start, axis_end = axis_end, axis_start
+    axis_y = axis_end[0] - axis_start[0]
+    axis_z = axis_end[1] - axis_start[1]
+    return sorted(
+        hits,
+        key=lambda yz: (
+            (yz[0] - axis_start[0]) * axis_y + (yz[1] - axis_start[1]) * axis_z,
+            yz[1],
+            yz[0],
+        ),
+    )
+
+
+def _with_spacing(stiffener_items: list[_StiffenerItem], warnings: list[str]) -> list[SectionStiffener]:
+    by_panel: dict[str, list[int]] = {}
+    updated = [item.stiffener for item in stiffener_items]
+    for index, item in enumerate(stiffener_items):
+        if item.panel_id is None:
+            warnings.append(
+                f"stiffener {item.stiffener.name}: panel is missing or unresolved; spacing unavailable"
+            )
+            continue
+        by_panel.setdefault(item.panel_id, []).append(index)
+
+    for panel_id, indexes in by_panel.items():
         if len(indexes) == 1:
-            warnings.append(f"panel {panel_name or '<none>'}: one stiffener intersects section; spacing unavailable")
+            panel_name = stiffener_items[indexes[0]].stiffener.panel or panel_id
+            warnings.append(f"panel {panel_name}: one stiffener intersects section; spacing unavailable")
             updated[indexes[0]] = replace(updated[indexes[0]], spacing_mm=None)
             continue
         for index in indexes:
-            current = stiffeners[index]
+            current = stiffener_items[index].stiffener
             nearest = min(
-                hypot(current.y_mm - stiffeners[other].y_mm, current.z_mm - stiffeners[other].z_mm)
+                hypot(
+                    current.y_mm - stiffener_items[other].stiffener.y_mm,
+                    current.z_mm - stiffener_items[other].stiffener.z_mm,
+                )
                 for other in indexes
                 if other != index
             )
@@ -253,31 +304,74 @@ def _profile(
     registry = vessel.unit_registry
     if isinstance(section, IrBulbFlatSection):
         dimensions = _safe_dimensions(
-            [_safe_qty_mm(section.height, registry, stiffener_name, "height", warnings),
-             _safe_qty_mm(section.web_thickness, registry, stiffener_name, "web_thickness", warnings)]
+            [
+                _safe_qty_mm(section.height, registry, "stiffener", stiffener_name, "height", warnings),
+                _safe_qty_mm(
+                    section.web_thickness,
+                    registry,
+                    "stiffener",
+                    stiffener_name,
+                    "web_thickness",
+                    warnings,
+                ),
+            ]
         )
         profile_type = "HpBulb"
     elif isinstance(section, IrFlatBarSection):
         dimensions = _safe_dimensions(
-            [_safe_qty_mm(section.height, registry, stiffener_name, "height", warnings),
-             _safe_qty_mm(section.width, registry, stiffener_name, "width", warnings)]
+            [
+                _safe_qty_mm(section.height, registry, "stiffener", stiffener_name, "height", warnings),
+                _safe_qty_mm(section.width, registry, "stiffener", stiffener_name, "width", warnings),
+            ]
         )
         profile_type = "FlatBar"
     elif isinstance(section, IrTSection):
-        dimensions = _safe_dimensions([
-            _safe_qty_mm(section.height, registry, stiffener_name, "height", warnings),
-            _safe_qty_mm(section.width, registry, stiffener_name, "width", warnings),
-            _safe_qty_mm(section.web_thickness, registry, stiffener_name, "web_thickness", warnings),
-            _safe_qty_mm(section.flange_thickness, registry, stiffener_name, "flange_thickness", warnings),
-        ])
+        dimensions = _safe_dimensions(
+            [
+                _safe_qty_mm(section.height, registry, "stiffener", stiffener_name, "height", warnings),
+                _safe_qty_mm(section.width, registry, "stiffener", stiffener_name, "width", warnings),
+                _safe_qty_mm(
+                    section.web_thickness,
+                    registry,
+                    "stiffener",
+                    stiffener_name,
+                    "web_thickness",
+                    warnings,
+                ),
+                _safe_qty_mm(
+                    section.flange_thickness,
+                    registry,
+                    "stiffener",
+                    stiffener_name,
+                    "flange_thickness",
+                    warnings,
+                ),
+            ]
+        )
         profile_type = "TBar"
     elif isinstance(section, (IrLSection, IrLSectionOvershootFlange, IrLSectionOvershootWeb)):
-        dimensions = _safe_dimensions([
-            _safe_qty_mm(section.height, registry, stiffener_name, "height", warnings),
-            _safe_qty_mm(section.width, registry, stiffener_name, "width", warnings),
-            _safe_qty_mm(section.web_thickness, registry, stiffener_name, "web_thickness", warnings),
-            _safe_qty_mm(section.flange_thickness, registry, stiffener_name, "flange_thickness", warnings),
-        ])
+        dimensions = _safe_dimensions(
+            [
+                _safe_qty_mm(section.height, registry, "stiffener", stiffener_name, "height", warnings),
+                _safe_qty_mm(section.width, registry, "stiffener", stiffener_name, "width", warnings),
+                _safe_qty_mm(
+                    section.web_thickness,
+                    registry,
+                    "stiffener",
+                    stiffener_name,
+                    "web_thickness",
+                    warnings,
+                ),
+                _safe_qty_mm(
+                    section.flange_thickness,
+                    registry,
+                    "stiffener",
+                    stiffener_name,
+                    "flange_thickness",
+                    warnings,
+                ),
+            ]
+        )
         profile_type = "AngleBar"
     else:
         warnings.append(f"stiffener {stiffener_name}: unsupported section type {type(section).__name__}")
@@ -289,25 +383,31 @@ def _profile(
     return profile_type, dimensions
 
 
-def _material_reh_mpa(ref: Ref | None, vessel: IrVessel) -> float | None:
-    material = _resolve(vessel.materials, ref)
-    if not isinstance(material, IrMaterial):
-        return None
-    return qty_mpa(material.yield_stress, vessel.unit_registry)
-
-
-def _safe_qty_mm(qty: Quantity | None, registry: dict[str, object], item_name: str, attr_name: str, warnings: list[str]) -> float | None:
+def _safe_qty_mm(
+    qty: Quantity | None,
+    registry: dict[str, object],
+    item_kind: str,
+    item_name: str,
+    attr_name: str,
+    warnings: list[str],
+) -> float | None:
     """Convert quantity to mm, returning None on unit conversion errors with warning."""
     if qty is None:
         return None
     try:
         return qty_mm(qty, registry)
     except GeometryError as exc:
-        warnings.append(f"{item_name}: {exc}")
+        warnings.append(f"{item_kind} {item_name}: {exc}")
         return None
 
 
-def _safe_material_reh_mpa(ref: Ref | None, vessel: IrVessel, item_name: str, warnings: list[str]) -> float | None:
+def _safe_material_reh_mpa(
+    ref: Ref | None,
+    vessel: IrVessel,
+    item_kind: str,
+    item_name: str,
+    warnings: list[str],
+) -> float | None:
     """Get material yield stress in MPa, returning None on unit conversion errors with warning."""
     material = _resolve(vessel.materials, ref)
     if not isinstance(material, IrMaterial):
@@ -315,7 +415,7 @@ def _safe_material_reh_mpa(ref: Ref | None, vessel: IrVessel, item_name: str, wa
     try:
         return qty_mpa(material.yield_stress, vessel.unit_registry)
     except GeometryError as exc:
-        warnings.append(f"{item_name}: {exc}")
+        warnings.append(f"{item_kind} {item_name}: {exc}")
         return None
 
 
