@@ -27,6 +27,24 @@ def _label(name: str | None, pid: str) -> str:
     return raw
 
 
+def _x_ref_plane_ids(vessel: IrVessel) -> list[str]:
+    """Return X ref plane ids from the vessel's coordinate systems."""
+    coordinate_systems = list(vessel.coordinate_systems.values())
+    global_coordinate_systems = [
+        cs for cs in coordinate_systems if getattr(cs, "is_global", False)
+    ]
+    source_coordinate_systems = global_coordinate_systems or coordinate_systems
+
+    ids: list[str] = []
+    seen: set[str] = set()
+    for coordinate_system in source_coordinate_systems:
+        for pid in coordinate_system.x_ref_plane_ids:
+            if pid not in seen:
+                ids.append(pid)
+                seen.add(pid)
+    return ids
+
+
 @dataclass(frozen=True)
 class FrameTable:
     frame0_offset_mm: float
@@ -61,9 +79,7 @@ def build_frame_table(vessel: IrVessel) -> FrameTable:
     warnings: list[str] = []
     pos: list[tuple[str, float]] = []
 
-    # Get the list of X ref plane ids. Try x_ref_plane_ids attribute first
-    # (set by test helper), then fallback to all ref_plane ids.
-    ids = getattr(vessel, "x_ref_plane_ids", None) or list(vessel.ref_planes.keys())
+    ids = _x_ref_plane_ids(vessel)
 
     for pid in ids:
         rp = vessel.ref_planes.get(pid)

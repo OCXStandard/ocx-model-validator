@@ -3,7 +3,7 @@ import pytest
 
 from ocx_model_validator.exeptions import SectionError
 from ocx_model_validator.model.ir.base import Quantity
-from ocx_model_validator.model.ir.geometry import IrRefPlane
+from ocx_model_validator.model.ir.geometry import IrCoordinateSystem, IrRefPlane
 from ocx_model_validator.model.ir.structural import IrVessel
 from ocx_model_validator.sections.frame_table import FrameTable, build_frame_table
 
@@ -12,10 +12,11 @@ def _vessel(planes, x_ids=None):
     ir = IrVessel(id="v1")
     for p in planes:
         ir.ref_planes[p.id] = p
-    if x_ids is not None:
-        ir.x_ref_plane_ids = x_ids
-    else:
-        ir.x_ref_plane_ids = [p.id for p in planes]
+    ir.coordinate_systems["global"] = IrCoordinateSystem(
+        id="global",
+        is_global=True,
+        x_ref_plane_ids=x_ids if x_ids is not None else [p.id for p in planes],
+    )
     return ir
 
 
@@ -63,6 +64,15 @@ def test_planes_without_location_skipped_with_warning():
 def test_no_x_planes_raises():
     with pytest.raises(SectionError):
         build_frame_table(_vessel([]))
+
+
+def test_ignores_non_x_ref_planes_not_in_coordinate_system():
+    ir = _vessel(
+        [_plane("x0", "X0", 0.0), _plane("x5", "X5", 5.0), _plane("Z5", "Z5", 5.0)],
+        x_ids=["x0", "x5"],
+    )
+    ft = build_frame_table(ir)
+    assert ft.positions == [("0", pytest.approx(0.0)), ("5", pytest.approx(5000.0))]
 
 
 def test_frame_to_x_and_nearest():
