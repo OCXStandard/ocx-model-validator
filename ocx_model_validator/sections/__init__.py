@@ -1,5 +1,10 @@
 """Cross-section extraction from OCX IR models."""
-from ocx_model_validator.sections.document import build_document, load_document, save_document
+from ocx_model_validator.sections.document import (
+    build_compartments_block,
+    build_document,
+    load_document,
+    save_document,
+)
 from ocx_model_validator.sections.frame_table import FrameTable, build_frame_table
 from ocx_model_validator.sections.section_builder import (
     CrossSection,
@@ -15,6 +20,7 @@ __all__ = [
     "SectionPlate",
     "SectionStiffener",
     "build_cross_section",
+    "build_compartments_block",
     "build_document",
     "save_document",
     "load_document",
