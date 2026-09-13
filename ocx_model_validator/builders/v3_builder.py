@@ -115,6 +115,41 @@ _SECTION_TYPE_MAP: dict[str, str] = {
     "tube":            "Tube",
 }
 
+_BAR_SECTION_CHOICE_ATTRS: tuple[str, ...] = (
+    "rectangular_tube",
+    "octagon_bar",
+    "square_bar",
+    "bulb_flat",
+    "flat_bar",
+    "half_round_bar",
+    "hexagon_bar",
+    "round_bar",
+    "ubar",
+    "ibar",
+    "lbarof",
+    "zbar",
+    "lbarow",
+    "lbar",
+    "tbar",
+    "tube",
+)
+
+
+def _children(value: Any) -> list[Any]:
+    if value is None:
+        return []
+    if isinstance(value, list | tuple):
+        return list(value)
+    return [value]
+
+
+def _bar_section_choice(raw_section: Any) -> Any:
+    for attr in _BAR_SECTION_CHOICE_ATTRS:
+        child = getattr(raw_section, attr, None)
+        if child is not None:
+            return child
+    return raw_section
+
 
 class OcxV3Builder(IOcxBuilder):
     """Builds an ``IrVessel`` from an OCX v3.x root dataclass."""
@@ -499,13 +534,17 @@ class OcxV3Builder(IOcxBuilder):
     def _build_coordinate_system(self, cs, ir: IrVessel) -> None:
         if cs is None:
             return
+        if isinstance(cs, list | tuple):
+            for item in cs:
+                self._build_coordinate_system(item, ir)
+            return
         cid = getattr(cs, "id", None) or "CoordinateSystem"
 
         def _plane_ids(group):
             ids = []
             if group is None:
                 return ids
-            for rp in getattr(group, "ref_plane", None) or []:
+            for rp in _children(getattr(group, "ref_plane", None)):
                 rid = getattr(rp, "id", None)
                 if rid:
                     ids.append(rid)
@@ -572,14 +611,14 @@ class OcxV3Builder(IOcxBuilder):
     def _build_cargoes_for_compartment(self, comp, ir: IrVessel) -> None:
         cid = getattr(comp, "id", None)
         ref = Ref(local_ref=cid or "", guidref=getattr(comp, "guidref", None))
-        for i, lc in enumerate(getattr(comp, "liquid_cargo", None) or []):
+        for i, lc in enumerate(_children(getattr(comp, "liquid_cargo", None))):
             cargo_id = f"{cid}/liquid/{i}"
             self._register(ir.liquid_cargoes, cargo_id, IrLiquidCargo(
                 id=cargo_id, compartment_ref=ref,
                 cargo_type=self._enum(getattr(lc, "liquid_cargo_type", None)),
                 density=self._qty(getattr(lc, "density", None)),
                 carriage_pressure=self._qty(getattr(lc, "carriage_pressure", None))), ir.duplicate_ids)
-        for i, gc in enumerate(getattr(comp, "gaseous_cargo", None) or []):
+        for i, gc in enumerate(_children(getattr(comp, "gaseous_cargo", None))):
             cargo_id = f"{cid}/gas/{i}"
             self._register(ir.gaseous_cargoes, cargo_id, IrGaseousCargo(
                 id=cargo_id, compartment_ref=ref,
@@ -587,7 +626,7 @@ class OcxV3Builder(IOcxBuilder):
                 density=self._qty(getattr(gc, "density", None)),
                 carriage_pressure=self._qty(getattr(gc, "carriage_pressure", None)),
                 liquid_state=bool(getattr(gc, "liquid_state", False))), ir.duplicate_ids)
-        for i, bc in enumerate(getattr(comp, "bulk_cargo", None) or []):
+        for i, bc in enumerate(_children(getattr(comp, "bulk_cargo", None))):
             cargo_id = f"{cid}/bulk/{i}"
             self._register(ir.bulk_cargoes, cargo_id, IrBulkCargo(
                 id=cargo_id, compartment_ref=ref,
@@ -595,7 +634,7 @@ class OcxV3Builder(IOcxBuilder):
                 stowage_factor=self._qty(getattr(bc, "stowage_factor", None)),
                 permeability=self._qty(getattr(bc, "permeability", None)),
                 angle_of_repose=self._qty(getattr(bc, "angle_of_repose", None))), ir.duplicate_ids)
-        for i, uc in enumerate(getattr(comp, "unit_cargo", None) or []):
+        for i, uc in enumerate(_children(getattr(comp, "unit_cargo", None))):
             cargo_id = f"{cid}/unit/{i}"
             self._register(ir.unit_cargoes, cargo_id, IrUnitCargo(
                 id=cargo_id, compartment_ref=ref,
@@ -782,131 +821,136 @@ class OcxV3Builder(IOcxBuilder):
         sid = getattr(raw_section, "id", None) or getattr(raw_section, "guidref", None) or ""
         name = getattr(raw_section, "name", None)
         guid = getattr(raw_section, "guidref", None)
+        data = raw_section
         stype = self._detect_section_type(raw_section)
+        if stype == "Generic":
+            data = _bar_section_choice(raw_section)
+            stype = self._detect_section_type(data)
 
         if stype == "RectangularTube":
             return IrRectangularTubeSection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                height=self._qty(getattr(raw_section, "height", None)),
-                width=self._qty(getattr(raw_section, "width", None)),
-                thickness=self._qty(getattr(raw_section, "thickness", None)),
+                height=self._qty(getattr(data, "height", None)),
+                width=self._qty(getattr(data, "width", None)),
+                thickness=self._qty(getattr(data, "thickness", None)),
             )
 
         if stype == "OctagonBar":
             return IrOctagonSection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                height=self._qty(getattr(raw_section, "height", None)),
+                height=self._qty(getattr(data, "height", None)),
             )
 
         if stype == "SquareBar":
             return IrSquareSection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                height=self._qty(getattr(raw_section, "height", None)),
+                height=self._qty(getattr(data, "height", None)),
             )
 
         if stype == "BulbFlat":
             return IrBulbFlatSection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                height=self._qty(getattr(raw_section, "height", None)),
-                web_thickness=self._qty(getattr(raw_section, "web_thickness", None)),
-                flange_width=self._qty(getattr(raw_section, "flange_width", None)),
-                bulb_angle=self._qty(getattr(raw_section, "bulb_angle", None)),
-                bulb_outer_radius=self._qty(getattr(raw_section, "bulb_outer_radius", None)),
-                bulb_inner_radius=self._qty(getattr(raw_section, "bulb_inner_radius", None)),
-                bulb_top_radius=self._qty(getattr(raw_section, "bulb_top_radius", None)),
-                bulb_bottom_radius=self._qty(getattr(raw_section, "bulb_bottom_radius", None)),
+                height=self._qty(getattr(data, "height", None)),
+                web_thickness=self._qty(getattr(data, "web_thickness", None)),
+                flange_width=self._qty(getattr(data, "flange_width", None)),
+                bulb_angle=self._qty(getattr(data, "bulb_angle", None)),
+                bulb_outer_radius=self._qty(getattr(data, "bulb_outer_radius", None)),
+                bulb_inner_radius=self._qty(getattr(data, "bulb_inner_radius", None)),
+                bulb_top_radius=self._qty(getattr(data, "bulb_top_radius", None)),
+                bulb_bottom_radius=self._qty(getattr(data, "bulb_bottom_radius", None)),
             )
 
         if stype == "FlatBar":
             return IrFlatBarSection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                height=self._qty(getattr(raw_section, "height", None)),
-                width=self._qty(getattr(raw_section, "width", None)),
+                height=self._qty(getattr(data, "height", None)),
+                width=self._qty(getattr(data, "width", None)),
             )
 
         if stype == "UBar":
             return IrUSection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                height=self._qty(getattr(raw_section, "height", None)),
-                width=self._qty(getattr(raw_section, "width", None)),
-                web_thickness=self._qty(getattr(raw_section, "web_thickness", None)),
-                flange_thickness=self._qty(getattr(raw_section, "flange_thickness", None)),
+                height=self._qty(getattr(data, "height", None)),
+                width=self._qty(getattr(data, "width", None)),
+                web_thickness=self._qty(getattr(data, "web_thickness", None)),
+                flange_thickness=self._qty(getattr(data, "flange_thickness", None)),
             )
 
         if stype == "IBar":
             return IrISection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                height=self._qty(getattr(raw_section, "height", None)),
-                width=self._qty(getattr(raw_section, "width", None)),
-                web_thickness=self._qty(getattr(raw_section, "web_thickness", None)),
-                flange_thickness=self._qty(getattr(raw_section, "flange_thickness", None)),
+                height=self._qty(getattr(data, "height", None)),
+                width=self._qty(getattr(data, "width", None)),
+                web_thickness=self._qty(getattr(data, "web_thickness", None)),
+                flange_thickness=self._qty(getattr(data, "flange_thickness", None)),
             )
+
         if stype == "LBarOF":
             return IrLSectionOvershootFlange(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                height=self._qty(getattr(raw_section, "height", None)),
-                width=self._qty(getattr(raw_section, "width", None)),
-                web_thickness=self._qty(getattr(raw_section, "web_thickness", None)),
-                flange_thickness=self._qty(getattr(raw_section, "flange_thickness", None)),
-                overshoot=self._qty(getattr(raw_section, "overshoot", None)),
+                height=self._qty(getattr(data, "height", None)),
+                width=self._qty(getattr(data, "width", None)),
+                web_thickness=self._qty(getattr(data, "web_thickness", None)),
+                flange_thickness=self._qty(getattr(data, "flange_thickness", None)),
+                overshoot=self._qty(getattr(data, "overshoot", None)),
             )
         if stype == "ZBar":
             return IrZSection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                height=self._qty(getattr(raw_section, "height", None)),
-                width=self._qty(getattr(raw_section, "width", None)),
-                web_thickness=self._qty(getattr(raw_section, "web_thickness", None)),
-                flange_thickness=self._qty(getattr(raw_section, "flange_thickness", None)),
+                height=self._qty(getattr(data, "height", None)),
+                width=self._qty(getattr(data, "width", None)),
+                web_thickness=self._qty(getattr(data, "web_thickness", None)),
+                flange_thickness=self._qty(getattr(data, "flange_thickness", None)),
             )
         if stype == "RoundBar":
             return IrRoundSection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                diameter=self._qty(getattr(raw_section, "diameter", None)),
+                diameter=self._qty(getattr(data, "diameter", None)),
             )
         if stype == "LBar":
             return IrLSection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                height=self._qty(getattr(raw_section, "height", None)),
-                width=self._qty(getattr(raw_section, "width", None)),
-                web_thickness=self._qty(getattr(raw_section, "web_thickness", None)),
-                flange_thickness=self._qty(getattr(raw_section, "flange_thickness", None)),
+                height=self._qty(getattr(data, "height", None)),
+                width=self._qty(getattr(data, "width", None)),
+                web_thickness=self._qty(getattr(data, "web_thickness", None)),
+                flange_thickness=self._qty(getattr(data, "flange_thickness", None)),
             )
 
         if stype == "TBar":
             return IrTSection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                height=self._qty(getattr(raw_section, "height", None)),
-                width=self._qty(getattr(raw_section, "width", None)),
-                web_thickness=self._qty(getattr(raw_section, "web_thickness", None)),
-                flange_thickness=self._qty(getattr(raw_section, "flange_thickness", None)),
+                height=self._qty(getattr(data, "height", None)),
+                width=self._qty(getattr(data, "width", None)),
+                web_thickness=self._qty(getattr(data, "web_thickness", None)),
+                flange_thickness=self._qty(getattr(data, "flange_thickness", None)),
             )
 
         if stype == "LBarOW":
             return IrLSectionOvershootWeb(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                height=self._qty(getattr(raw_section, "height", None)),
-                width=self._qty(getattr(raw_section, "width", None)),
-                web_thickness=self._qty(getattr(raw_section, "web_thickness", None)),
-                flange_thickness=self._qty(getattr(raw_section, "flange_thickness", None)),
-                overshoot=self._qty(getattr(raw_section, "overshoot", None)),
+                height=self._qty(getattr(data, "height", None)),
+                width=self._qty(getattr(data, "width", None)),
+                web_thickness=self._qty(getattr(data, "web_thickness", None)),
+                flange_thickness=self._qty(getattr(data, "flange_thickness", None)),
+                overshoot=self._qty(getattr(data, "overshoot", None)),
             )
 
         if stype == "HalfRoundBar":
             return IrHalfRoundSection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                diameter=self._qty(getattr(raw_section, "diameter", None)),
+                diameter=self._qty(getattr(data, "diameter", None)),
             )
         if stype == "HexagonBar":
             return IrHexagonSection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                height=self._qty(getattr(raw_section, "height", None)),
+                height=self._qty(getattr(data, "height", None)),
             )
 
         if stype == "Tube":
             return IrTubeSection(
                 id=sid, name=name, guidref=guid, section_type=stype,
-                diameter=self._qty(getattr(raw_section, "diameter", None)),
-                thickness=self._qty(getattr(raw_section, "thickness", None)),
+                diameter=self._qty(getattr(data, "diameter", None)),
+                thickness=self._qty(getattr(data, "thickness", None)),
             )
         # Generic fallback — capture all scalar fields
         extra: dict[str, Any] = {}

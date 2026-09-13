@@ -22,6 +22,7 @@ from ocx_model_validator.model.ir import (
     IrPlane3D,
     IrPolyLine3D,
     IrSphere3D,
+    IrTSection,
     IrVessel,
 )
 
@@ -65,6 +66,11 @@ class PolyLine3D(_Stub): pass
 class Ellipse3D(_Stub): pass
 class Nurbs3D(_Stub): pass
 class CompositeCurve3D(_Stub): pass
+
+# --- named section stubs ---
+
+class BarSection(_Stub): pass
+class Tbar(_Stub): pass
 
 # --- named surface stubs ---
 
@@ -227,6 +233,46 @@ def test_build_coordinate_system():
     assert "RPX" in v.ref_planes and "RPY" in v.ref_planes
 
 
+def test_build_coordinate_system_accepts_list_and_single_ref_plane():
+    v = IrVessel(id="v1")
+    cs = [
+        _Stub(
+            id="CS1",
+            is_global=True,
+            xref_planes=_Stub(ref_plane=_Stub(id="RPX", name="X0")),
+            yref_planes=None,
+            zref_planes=None,
+        )
+    ]
+
+    _b()._build_coordinate_system(cs, v)
+
+    assert v.coordinate_systems["CS1"].x_ref_plane_ids == ["RPX"]
+    assert v.ref_planes["RPX"].name == "X0"
+
+
+def test_build_section_unwraps_bar_section_choice():
+    raw = BarSection(
+        id="S1",
+        name="500X11 + 150X25 TEE",
+        guidref="g-s1",
+        tbar=Tbar(
+            height=_q(0.5, "Um"),
+            width=_q(0.15, "Um"),
+            web_thickness=_q(0.011, "Um"),
+            flange_thickness=_q(0.025, "Um"),
+        ),
+    )
+
+    section = _b()._build_section(raw)
+
+    assert isinstance(section, IrTSection)
+    assert section.id == "S1"
+    assert section.name == "500X11 + 150X25 TEE"
+    assert section.height.value == 0.5
+    assert section.flange_thickness.value == 0.025
+
+
 # ===========================================================================
 # Metadata
 # ===========================================================================
@@ -277,6 +323,22 @@ def test_build_cargoes_for_compartment():
     assert lc.compartment_ref.local_ref == "C1" and lc.compartment_ref.guidref == "g-c1"
     bc = v.bulk_cargoes["C1/bulk/0"]
     assert bc.permeability.value == 0.95 and bc.cargo_type == "Grain"
+    assert v.unit_cargoes["C1/unit/0"].cargo_type == "Container"
+
+
+def test_build_cargoes_for_compartment_accepts_single_cargo_objects():
+    v = IrVessel(id="v1")
+    comp = _Stub(
+        id="C1",
+        liquid_cargo=_Stub(liquid_cargo_type=_enum_stub("Ballast")),
+        bulk_cargo=_Stub(bulk_cargo_type=_enum_stub("Grain")),
+        unit_cargo=_Stub(unit_cargo_type=_enum_stub("Container")),
+    )
+
+    _b()._build_cargoes_for_compartment(comp, v)
+
+    assert v.liquid_cargoes["C1/liquid/0"].cargo_type == "Ballast"
+    assert v.bulk_cargoes["C1/bulk/0"].cargo_type == "Grain"
     assert v.unit_cargoes["C1/unit/0"].cargo_type == "Container"
 
 
