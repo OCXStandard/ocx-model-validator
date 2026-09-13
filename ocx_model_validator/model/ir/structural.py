@@ -15,10 +15,12 @@ from ocx_model_validator.model.ir.base import (
 from ocx_model_validator.model.ir.geometry import (
     IrCoordinateSystem,
     IrCurve3D,
+    IrPoint3D,
     IrRefPlane,
     IrSurface,
     IrSurfaceCollection,
     IrUnboundedGeometry,
+    IrVector3D,
 )
 from ocx_model_validator.model.ir.connections import (
     IrConnectionConfiguration,
@@ -50,6 +52,14 @@ from ocx_model_validator.model.ir.metadata import (
 # ---------------------------------------------------------------------------
 # Structural parts
 # ---------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class IrInclination:
+    """Local web/flange orientation of a stiffener at a position on its trace."""
+    web_direction: IrVector3D | None = None
+    flange_direction: IrVector3D | None = None
+    position: IrPoint3D | None = None
+
 
 @dataclass
 class IrPlate:
@@ -100,6 +110,7 @@ class IrStiffener:
     end_cut_end2: IrEndCut | None = None
     penetrations: list[IrPenetration] = field(default_factory=list)
     trace: IrCurve3D | None = None
+    inclinations: list[IrInclination] = field(default_factory=list)
 
 
 @dataclass
