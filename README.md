@@ -168,6 +168,11 @@ validator report catalogues   model.3docx --catalogue material
 validator report bom          model.3docx --detailed
 validator report all          model.3docx --destination report.md
 
+# cross sections: JSON document at a frame or x-position, then SVG plot
+validator section create model.3docx --frame FR20 -o section.json
+validator section create model.3docx --x 50000
+validator section plot section.json -o section.svg
+
 # generate xsdata stubs from .3docx models in ./models/
 validator generate-stubs
 

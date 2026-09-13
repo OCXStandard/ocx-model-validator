@@ -7,6 +7,8 @@ Usage::
     validator report catalogues MODEL.3docx [--catalogue material|section|opening|all] ...
     validator report bom MODEL.3docx [--detailed] ...
     validator report all MODEL.3docx ...
+    validator section create MODEL.3docx --frame FR20 -o section.json
+    validator section plot section.json -o section.svg
     validator generate-stubs [--force]
 """
 from __future__ import annotations
@@ -147,6 +149,32 @@ def section_create_cmd(
         logger.error("Cannot write {}: {}", out, exc)
         raise typer.Exit(code=1) from exc
     typer.echo(f"Section written to {out}")
+
+
+@section_app.command("plot")
+def section_plot_cmd(
+    section: Path = typer.Argument(..., exists=True, readable=True,
+                                   help="Cross-section JSON document."),
+    output: Path | None = typer.Option(None, "--output", "-o",
+                                       help="Output SVG file."),
+) -> None:
+    """Plot a cross-section JSON document as an SVG."""
+    from ocx_model_validator.exeptions import SectionError
+    from ocx_model_validator.sections.document import load_document
+    from ocx_model_validator.sections.svg_plot import render_svg
+
+    try:
+        doc = load_document(section)
+    except (SectionError, ValueError) as exc:
+        logger.error("Cannot load {}: {}", section, exc)
+        raise typer.Exit(code=1) from exc
+    out = output or section.with_suffix(".svg")
+    try:
+        out.write_text(render_svg(doc), encoding="utf-8")
+    except OSError as exc:
+        logger.error("Cannot write {}: {}", out, exc)
+        raise typer.Exit(code=1) from exc
+    typer.echo(f"Plot written to {out}")
 
 
 @report_app.command("frame-table")
