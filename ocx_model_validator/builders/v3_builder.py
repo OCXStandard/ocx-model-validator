@@ -342,6 +342,10 @@ class OcxV3Builder(IOcxBuilder):
                                  start=self._pt(getattr(elem, "start_point", None)),
                                  intermediate=self._pt(getattr(elem, "intermediate_point", None)),
                                  end=self._pt(getattr(elem, "end_point", None)))
+        if "circumcircle" in name:
+            # CircumCircle3D is a full circle defined only by three positions;
+            # the current IR has no faithful three-point full-circle form.
+            return None
         if "circle" in name:
             return IrCircle3D(curve_length=cl, id=cid,
                               center=self._pt(getattr(elem, "center", None)),

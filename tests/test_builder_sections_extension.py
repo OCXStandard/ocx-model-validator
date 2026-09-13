@@ -3,7 +3,7 @@ from types import SimpleNamespace as NS
 
 from ocx_model_validator.builders.v3_builder import OcxV3Builder
 from ocx_model_validator.model.ir.base import ParentKind, ParentRef
-from ocx_model_validator.model.ir.geometry import IrCompositeCurve3D, IrLine3D
+from ocx_model_validator.model.ir.geometry import IrCircle3D, IrCompositeCurve3D, IrLine3D
 from ocx_model_validator.model.ir.structural import IrVessel
 
 PARENT = ParentRef(kind=ParentKind.PANEL, id="panel1")
@@ -39,6 +39,13 @@ class Nurbs3D:
             NS(coordinates=[0.0, 0.0, 0.0], unit="Um", weight=1.0),
             NS(coordinates=[1.0, 0.0, 0.0], unit="Um", weight=0.5),
         ])
+
+
+class CircumCircle3D:
+    def __init__(self, points):
+        self.id = None
+        self.curve_length = None
+        self.positions = NS(point3_d=points)
 
 
 def _pt(x, y, z):
@@ -79,6 +86,26 @@ def test_plate_outer_contour_absent():
 def test_nurbs_weights_populated():
     curve = OcxV3Builder()._build_curve(Nurbs3D())
     assert curve.weights == [1.0, 0.5]
+
+
+def test_circum_circle_contour_does_not_build_degenerate_circle():
+    contour = NS(composite_curve3_d=None, nurbs3_d=None, line3_d=None,
+                 poly_line3_d=None, circum_arc3_d=None, ellipse3_d=None,
+                 circle3_d=None,
+                 circum_circle3_d=CircumCircle3D([
+                     _pt(0.0, 0.0, 0.0),
+                     _pt(1.0, 0.0, 0.0),
+                     _pt(0.0, 1.0, 0.0),
+                 ]))
+
+    curve = OcxV3Builder()._build_contour(contour)
+
+    assert curve is None or not (
+        isinstance(curve, IrCircle3D)
+        and curve.center is None
+        and curve.diameter is None
+        and curve.normal is None
+    )
 
 
 def test_ref_plane_location_populated():
