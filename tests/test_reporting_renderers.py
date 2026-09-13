@@ -1,6 +1,10 @@
 """Tests for report renderers."""
+import pytest
+
 from ocx_model_validator.reporting.model import Report, ReportSection, ReportTable
+from ocx_model_validator.reporting.renderers import get_renderer
 from ocx_model_validator.reporting.renderers.markdown import MarkdownRenderer
+from ocx_model_validator.reporting.renderers.rich import RichRenderer
 
 
 def _sample_report() -> Report:
@@ -77,3 +81,21 @@ def test_markdown_empty_footer_cell_not_bolded():
     ])
     out = MarkdownRenderer().render(report)
     assert "| **Total** |  |" in out
+
+
+def test_rich_renderer_smoke():
+    out = RichRenderer().render(_sample_report())
+    assert "Test report" in out
+    assert "P1" in out
+    assert "N/A" in out
+    assert "Total" in out
+
+
+def test_get_renderer_dispatch():
+    assert isinstance(get_renderer("markdown").render(_sample_report()), str)
+    assert isinstance(get_renderer("rich"), RichRenderer)
+
+
+def test_get_renderer_unknown_format():
+    with pytest.raises(ValueError, match="markdown, rich"):
+        get_renderer("pdf")
