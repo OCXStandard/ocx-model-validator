@@ -5,6 +5,7 @@ description = "Parse and validate OCX .3docx ship model files into a schema-neut
 readme = "ocx_model_validator.md"
 requires-python = ">=3.12"
 dependencies = [
+    "mcp>=1.0,<2",
     "ocx>=3.2.0rc8",
     "xsdata[lxml]>=26.0",
     "lxml>=6.0",
@@ -15,6 +16,7 @@ dependencies = [
 ]
 
 [project.scripts]
+ocx-mcp = "ocx_model_validator.mcp.server:main"
 ocx-validate = "ocx_model_validator.cli:entrypoint"
 validator = "ocx_model_validator.cli:entrypoint"
 
@@ -33,5 +35,6 @@ dev = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-v --tb=short"
+addopts = "-v --tb=short -m \"not integration\""
 pythonpath = ["."]
+markers = ["integration: requires the real OCX reference model"]
