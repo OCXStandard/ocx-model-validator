@@ -122,6 +122,90 @@ def frame_table_cmd(
     _emit(frame_table.build(vessel, source_file=str(model)), fmt, destination)
 
 
+class CatalogueKind(str, Enum):
+    material = "material"
+    section = "section"
+    opening = "opening"
+    all = "all"
+
+
+@report_app.command("compartments")
+def compartments_cmd(
+    model: Path = _MODEL_ARG,
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """Compartments: name, tank type, volume, COG and extents."""
+    from ocx_model_validator.reporting.generators import compartments
+
+    vessel = _load_vessel(model)
+    _emit(compartments.build(vessel, source_file=str(model)), fmt, destination)
+
+
+@report_app.command("catalogues")
+def catalogues_cmd(
+    model: Path = _MODEL_ARG,
+    catalogue: CatalogueKind = typer.Option(
+        CatalogueKind.all, "--catalogue",
+        help="Which catalogue to report."),
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """Catalogues: materials, cross sections and openings."""
+    from ocx_model_validator.reporting.generators import catalogues
+
+    vessel = _load_vessel(model)
+    _emit(catalogues.build(vessel, which=catalogue.value,
+                           source_file=str(model)), fmt, destination)
+
+
+@report_app.command("bom")
+def bom_cmd(
+    model: Path = _MODEL_ARG,
+    detailed: bool = typer.Option(
+        False, "--detailed",
+        help="Add per-item rows below the summary.", is_flag=True),
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """Bill of material grouped by material, with weights and totals."""
+    from ocx_model_validator.reporting.generators import bom
+
+    vessel = _load_vessel(model)
+    _emit(bom.build(vessel, detailed=detailed, source_file=str(model)),
+          fmt, destination)
+
+
+@report_app.command("all")
+def all_cmd(
+    model: Path = _MODEL_ARG,
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """All reports merged into one document (report defaults; no per-report flags)."""
+    from ocx_model_validator.reporting.generators import (
+        bom,
+        catalogues,
+        compartments,
+        frame_table,
+    )
+
+    vessel = _load_vessel(model)
+    source = str(model)
+    parts = [
+        frame_table.build(vessel, source_file=source),
+        compartments.build(vessel, source_file=source),
+        catalogues.build(vessel, source_file=source),
+        bom.build(vessel, source_file=source),
+    ]
+    merged = Report(
+        title="Model report",
+        metadata=parts[0].metadata,
+        sections=[s for p in parts for s in p.sections],
+    )
+    _emit(merged, fmt, destination)
+
+
 @app.command("generate-stubs")
 def generate_stubs_cmd(
     force: bool = typer.Option(

@@ -51,3 +51,39 @@ def test_report_missing_model_file():
 def test_generate_stubs_command_exists():
     result = runner.invoke(app, ["generate-stubs", "--help"])
     assert result.exit_code == 0
+
+
+def test_report_compartments(model_310: Path):
+    result = runner.invoke(app, ["report", "compartments", str(model_310),
+                                 "--format", "markdown"])
+    assert result.exit_code == 0
+    assert "# Compartments report" in result.output
+
+
+def test_report_catalogues_filter(model_310: Path):
+    result = runner.invoke(app, ["report", "catalogues", str(model_310),
+                                 "--catalogue", "material",
+                                 "--format", "markdown"])
+    assert result.exit_code == 0
+    assert "## Materials" in result.output
+    assert "## Cross sections" not in result.output
+
+
+def test_report_bom_detailed(model_310: Path):
+    result = runner.invoke(app, ["report", "bom", str(model_310),
+                                 "--detailed", "--format", "markdown"])
+    assert result.exit_code == 0
+    assert "# Bill of material report" in result.output
+    assert "### Items" in result.output
+
+
+def test_report_all(model_310: Path, tmp_path: Path):
+    dest = tmp_path / "all.md"
+    result = runner.invoke(app, ["report", "all", str(model_310),
+                                 "--destination", str(dest)])
+    assert result.exit_code == 0
+    text = dest.read_text(encoding="utf-8")
+    assert text.startswith("# Model report")
+    for heading in ["## Frame table", "## Compartments", "## Materials",
+                    "## Bill of material"]:
+        assert heading in text
