@@ -1,12 +1,14 @@
 """Tests for report generators."""
 from ocx_model_validator.model.ir.base import Quantity
+from ocx_model_validator.model.ir.geometry import IrCoordinateSystem, IrRefPlane
+from ocx_model_validator.model.ir.structural import IrVessel
+from ocx_model_validator.reporting.generators import frame_table as frame_table_gen
 from ocx_model_validator.reporting.generators._common import (
     qty_mm_cell,
     qty_mpa_cell,
     qty_tonnes_cell,
     report_metadata,
 )
-from ocx_model_validator.model.ir.structural import IrVessel
 
 
 def test_qty_mm_cell_converts():
@@ -45,3 +47,36 @@ def test_report_metadata():
     assert md["Schema version"] == "3.1.0"
     assert md["Source"] == "model.3docx"
     assert "Generated" in md
+
+
+def _vessel_with_frames() -> IrVessel:
+    vessel = IrVessel(id="V1", name="MV Test", schema_version="3.1.0")
+    frame_ids: list[str] = []
+    for i, x in enumerate([0.0, 0.8, 1.6]):
+        rp = IrRefPlane(id=f"FR{i}", name=f"FR{i}", location=Quantity(x, "Um"))
+        vessel.ref_planes[rp.id] = rp
+        frame_ids.append(rp.id)
+    vessel.coordinate_systems["CS1"] = IrCoordinateSystem(
+        id="CS1",
+        is_global=True,
+        x_ref_plane_ids=frame_ids,
+    )
+    return vessel
+
+
+def test_frame_table_report():
+    report = frame_table_gen.build(_vessel_with_frames(), source_file="m.3docx")
+    assert report.title == "Frame table report"
+    section = report.sections[0]
+    titles = [t.title for t in section.tables]
+    assert titles == ["Spacing entries", "Frame positions"]
+    positions = section.tables[1]
+    assert positions.columns == ["Frame", "x (mm)"]
+    assert positions.rows == [["FR0", 0.0], ["FR1", 800.0], ["FR2", 1600.0]]
+
+
+def test_frame_table_report_empty_model():
+    report = frame_table_gen.build(IrVessel(id="V1"), source_file="m.3docx")
+    section = report.sections[0]
+    assert section.tables[0].rows == []
+    assert any("reference planes" in n for n in section.notes)
