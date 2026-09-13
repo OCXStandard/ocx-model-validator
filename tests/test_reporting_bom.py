@@ -93,3 +93,18 @@ def test_bom_notes_deduplicated():
     report = bom_gen.build(v)
     notes = report.sections[0].notes
     assert len(notes) == len(set(notes))
+
+
+def test_bom_detailed_items_table():
+    report = bom_gen.build(_vessel(), detailed=True)
+    tables = report.sections[0].tables
+    assert [t.title for t in tables] == ["Summary", "Items"]
+    items = tables[1]
+    assert items.columns == ["Material", "Part type", "Group", "Id", "Name", "Weight (t)"]
+    p3_row = next(r for r in items.rows if r[3] == "P3")
+    assert p3_row[5] is None  # missing weight renders None
+
+
+def test_bom_detailed_item_count():
+    report = bom_gen.build(_vessel(), detailed=True)
+    assert len(report.sections[0].tables[1].rows) == 5
