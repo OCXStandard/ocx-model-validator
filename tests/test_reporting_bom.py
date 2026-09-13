@@ -57,3 +57,39 @@ def test_bom_summary_grouping_and_totals():
 def test_bom_summary_has_no_items_table():
     report = bom_gen.build(_vessel())
     assert [t.title for t in report.sections[0].tables] == ["Summary"]
+
+
+def test_bom_unknown_thickness_unit_group_key():
+    v = _vessel()
+    v.plates["P5"] = IrPlate(id="P5", parent_ref=_PARENT, name="P5",
+                             material_ref=Ref("M1"),
+                             thickness=Quantity(12.5, "Ubogus"),
+                             dry_weight=Quantity(100.0, "UKg"))
+    report = bom_gen.build(v)
+    table = report.sections[0].tables[0]
+    keys = [r[2] for r in table.rows]
+    assert "t=12.5 Ubogus" in keys
+    assert not any(isinstance(k, str) and k.endswith("Ubogus mm") for k in keys)
+
+
+def test_bom_unknown_weight_unit_is_noted():
+    v = _vessel()
+    v.plates["P6"] = IrPlate(id="P6", parent_ref=_PARENT, name="P6",
+                             material_ref=Ref("M1"),
+                             thickness=Quantity(10.0, "Umm"),
+                             dry_weight=Quantity(3.0, "Ustone"))
+    report = bom_gen.build(v)
+    notes = report.sections[0].notes
+    assert any("P6" in n and "Ustone" in n for n in notes)
+
+
+def test_bom_notes_deduplicated():
+    v = _vessel()
+    for i in (7, 8):
+        v.plates[f"P{i}"] = IrPlate(id=f"P{i}", parent_ref=_PARENT, name=f"P{i}",
+                                    material_ref=Ref("M1"),
+                                    thickness=Quantity(12.5, "Ubogus"),
+                                    dry_weight=Quantity(100.0, "UKg"))
+    report = bom_gen.build(v)
+    notes = report.sections[0].notes
+    assert len(notes) == len(set(notes))

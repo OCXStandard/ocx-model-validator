@@ -53,7 +53,9 @@ def _group_key(part, kind: str, vessel: IrVessel, notes: list[str]) -> str:
     if kind == "thickness":
         mm = qty_mm_cell(part.thickness, vessel.unit_registry, notes,
                          f"{part.id} thickness")
-        return f"t={mm} mm" if mm is not None else "t=N/A"
+        if isinstance(mm, (int, float)):
+            return f"t={mm} mm"
+        return f"t={mm}" if mm is not None else "t=N/A"
     ref = part.section_ref
     if ref is None:
         return _NO_SECTION
@@ -61,12 +63,14 @@ def _group_key(part, kind: str, vessel: IrVessel, notes: list[str]) -> str:
     return (s.name or s.id) if s is not None else ref.local_ref
 
 
-def _weight_tonnes(part, vessel: IrVessel) -> float | None:
+def _weight_tonnes(part, vessel: IrVessel, notes: list[str]) -> float | None:
     if part.dry_weight is None:
         return None
     try:
         return to_si(part.dry_weight, vessel.unit_registry) / 1000.0
     except GeometryError:
+        notes.append(f"{part.id} dry_weight: unknown unit "
+                     f"{part.dry_weight.unit!r}; excluded from totals")
         return None
 
 
@@ -79,7 +83,7 @@ def build(vessel: IrVessel, detailed: bool = False, source_file: str = "") -> Re
             key = (_material_name(part, vessel), part_type,
                    _group_key(part, kind, vessel, notes))
             g = groups.setdefault(key, _Group())
-            w = _weight_tonnes(part, vessel)
+            w = _weight_tonnes(part, vessel, notes)
             g.count += 1
             if w is None:
                 g.missing += 1
@@ -141,6 +145,7 @@ def build(vessel: IrVessel, detailed: bool = False, source_file: str = "") -> Re
             rows=item_rows,
         ))
 
+    notes[:] = list(dict.fromkeys(notes))
     section = ReportSection(title="Bill of material", tables=tables, notes=notes)
     return Report(title="Bill of material report",
                   metadata=report_metadata(vessel, source_file),
