@@ -9,6 +9,7 @@ dependencies = [
     "xsdata[lxml]>=26.0",
     "lxml>=6.0",
     "loguru>=0.7",
+    "numpy>=1.26",
     "packaging>=23.1",
     "typer>=0.9",
 ]
