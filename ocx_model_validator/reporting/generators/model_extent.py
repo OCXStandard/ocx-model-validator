@@ -48,6 +48,20 @@ def _gather_points(vessel: IrVessel, notes: list[str]) -> list[tuple[float, floa
     return points
 
 
+def extent_mm(vessel: IrVessel) -> dict[str, float] | None:
+    """Return model bounding box in mm, or None if no points found."""
+    notes: list[str] = []
+    pts = _gather_points(vessel, notes)
+    if not pts:
+        return None
+    xs, ys, zs = zip(*pts)
+    return {
+        "min_x": min(xs), "max_x": max(xs),
+        "min_y": min(ys), "max_y": max(ys),
+        "min_z": min(zs), "max_z": max(zs),
+    }
+
+
 def build(vessel: IrVessel, source_file: str = "") -> Report:
     notes: list[str] = []
     points = _gather_points(vessel, notes)
