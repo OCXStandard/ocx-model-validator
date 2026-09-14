@@ -32,6 +32,11 @@ class SectionStiffener:
     profile_dimensions: str | None
     material_reh_mpa: float | None
     spacing_mm: float | None
+    section_kind: str | None = None
+    h_mm: float | None = None
+    bf_mm: float | None = None
+    tw_mm: float | None = None
+    tf_mm: float | None = None
     orientation: str = "Longitudinal"
     web_angle_deg: float = 90.0
     web_dir_y: float | None = None
@@ -117,7 +122,9 @@ def _build_stiffeners(
             if not hits:
                 continue
 
-            profile_type, profile_dimensions = _profile(stiffener, vessel, warnings, name)
+            profile_type, profile_dimensions, section_kind, h_mm, bf_mm, tw_mm, tf_mm = _profile(
+                stiffener, vessel, warnings, name
+            )
             material_reh_mpa = _safe_material_reh_mpa(stiffener.material_ref, vessel, "stiffener", name, warnings)
             panel_name = _panel_name(panel_item.panel)
             panel_id = panel_item.panel.id if panel_item.panel is not None else None
@@ -135,6 +142,11 @@ def _build_stiffeners(
                             profile_dimensions=profile_dimensions,
                             material_reh_mpa=material_reh_mpa,
                             spacing_mm=None,
+                            section_kind=section_kind,
+                            h_mm=h_mm,
+                            bf_mm=bf_mm,
+                            tw_mm=tw_mm,
+                            tf_mm=tf_mm,
                             web_dir_y=web_dir_y,
                             web_dir_z=web_dir_z,
                         ),
@@ -300,92 +312,104 @@ def _profile(
     vessel: IrVessel,
     warnings: list[str],
     stiffener_name: str,
-) -> tuple[str | None, str | None]:
+) -> tuple[
+    str | None,
+    str | None,
+    str | None,
+    float | None,
+    float | None,
+    float | None,
+    float | None,
+]:
     section = _resolve(vessel.sections, stiffener.section_ref)
     if section is None:
         warnings.append(f"stiffener {stiffener_name}: section reference is missing or unresolved")
-        return None, None
+        return None, None, None, None, None, None, None
 
     registry = vessel.unit_registry
     if isinstance(section, IrBulbFlatSection):
-        dimensions = _safe_dimensions(
-            [
-                _safe_qty_mm(section.height, registry, "stiffener", stiffener_name, "height", warnings),
-                _safe_qty_mm(
-                    section.web_thickness,
-                    registry,
-                    "stiffener",
-                    stiffener_name,
-                    "web_thickness",
-                    warnings,
-                ),
-            ]
+        h_mm = _safe_qty_mm(section.height, registry, "stiffener", stiffener_name, "height", warnings)
+        tw_mm = _safe_qty_mm(
+            section.web_thickness,
+            registry,
+            "stiffener",
+            stiffener_name,
+            "web_thickness",
+            warnings,
         )
+        bf_mm = None
+        tf_mm = None
+        dimensions = _safe_dimensions([h_mm, tw_mm])
         profile_type = "HpBulb"
+        section_kind = "bulb_flat"
     elif isinstance(section, IrFlatBarSection):
-        dimensions = _safe_dimensions(
-            [
-                _safe_qty_mm(section.height, registry, "stiffener", stiffener_name, "height", warnings),
-                _safe_qty_mm(section.width, registry, "stiffener", stiffener_name, "width", warnings),
-            ]
-        )
+        h_mm = _safe_qty_mm(section.height, registry, "stiffener", stiffener_name, "height", warnings)
+        tw_mm = _safe_qty_mm(section.width, registry, "stiffener", stiffener_name, "width", warnings)
+        bf_mm = None
+        tf_mm = None
+        dimensions = _safe_dimensions([h_mm, tw_mm])
         profile_type = "FlatBar"
+        section_kind = "flat_bar"
     elif isinstance(section, IrTSection):
-        dimensions = _safe_dimensions(
-            [
-                _safe_qty_mm(section.height, registry, "stiffener", stiffener_name, "height", warnings),
-                _safe_qty_mm(section.width, registry, "stiffener", stiffener_name, "width", warnings),
-                _safe_qty_mm(
-                    section.web_thickness,
-                    registry,
-                    "stiffener",
-                    stiffener_name,
-                    "web_thickness",
-                    warnings,
-                ),
-                _safe_qty_mm(
-                    section.flange_thickness,
-                    registry,
-                    "stiffener",
-                    stiffener_name,
-                    "flange_thickness",
-                    warnings,
-                ),
-            ]
+        h_mm = _safe_qty_mm(section.height, registry, "stiffener", stiffener_name, "height", warnings)
+        bf_mm = _safe_qty_mm(section.width, registry, "stiffener", stiffener_name, "width", warnings)
+        tw_mm = _safe_qty_mm(
+            section.web_thickness,
+            registry,
+            "stiffener",
+            stiffener_name,
+            "web_thickness",
+            warnings,
         )
+        tf_mm = _safe_qty_mm(
+            section.flange_thickness,
+            registry,
+            "stiffener",
+            stiffener_name,
+            "flange_thickness",
+            warnings,
+        )
+        dimensions = _safe_dimensions([h_mm, bf_mm, tw_mm, tf_mm])
         profile_type = "TBar"
+        section_kind = "t_section"
     elif isinstance(section, (IrLSection, IrLSectionOvershootFlange, IrLSectionOvershootWeb)):
-        dimensions = _safe_dimensions(
-            [
-                _safe_qty_mm(section.height, registry, "stiffener", stiffener_name, "height", warnings),
-                _safe_qty_mm(section.width, registry, "stiffener", stiffener_name, "width", warnings),
-                _safe_qty_mm(
-                    section.web_thickness,
-                    registry,
-                    "stiffener",
-                    stiffener_name,
-                    "web_thickness",
-                    warnings,
-                ),
-                _safe_qty_mm(
-                    section.flange_thickness,
-                    registry,
-                    "stiffener",
-                    stiffener_name,
-                    "flange_thickness",
-                    warnings,
-                ),
-            ]
+        h_mm = _safe_qty_mm(section.height, registry, "stiffener", stiffener_name, "height", warnings)
+        bf_mm = _safe_qty_mm(section.width, registry, "stiffener", stiffener_name, "width", warnings)
+        tw_mm = _safe_qty_mm(
+            section.web_thickness,
+            registry,
+            "stiffener",
+            stiffener_name,
+            "web_thickness",
+            warnings,
         )
+        tf_mm = _safe_qty_mm(
+            section.flange_thickness,
+            registry,
+            "stiffener",
+            stiffener_name,
+            "flange_thickness",
+            warnings,
+        )
+        dimensions = _safe_dimensions([h_mm, bf_mm, tw_mm, tf_mm])
         profile_type = "AngleBar"
+        section_kind = _l_section_kind(section)
     else:
         warnings.append(f"stiffener {stiffener_name}: unsupported section type {type(section).__name__}")
-        return None, None
+        return None, None, None, None, None, None, None
 
     if dimensions is None:
         warnings.append(f"stiffener {stiffener_name}: section dimensions are incomplete")
-        return profile_type, None
-    return profile_type, dimensions
+        return profile_type, None, section_kind, h_mm, bf_mm, tw_mm, tf_mm
+    return profile_type, dimensions, section_kind, h_mm, bf_mm, tw_mm, tf_mm
+
+
+def _l_section_kind(section: IrLSection | IrLSectionOvershootFlange | IrLSectionOvershootWeb) -> str:
+    if isinstance(section, IrLSectionOvershootFlange):
+        return "l_overshoot_flange"
+    if isinstance(section, IrLSectionOvershootWeb):
+        return "l_overshoot_web"
+    return "l_section"
 
 
 def _web_dir(

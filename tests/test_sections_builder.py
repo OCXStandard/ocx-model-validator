@@ -6,9 +6,16 @@ from ocx_model_validator.exeptions import SectionError
 from ocx_model_validator.model.ir.base import Ref
 from ocx_model_validator.model.ir.catalogues import IrMaterial
 from ocx_model_validator.model.ir.geometry import IrCurve3D, IrPolyLine3D
-from ocx_model_validator.model.ir.sections import IrBulbFlatSection
+from ocx_model_validator.model.ir.sections import (
+    IrBulbFlatSection,
+    IrFlatBarSection,
+    IrLSection,
+    IrLSectionOvershootFlange,
+    IrLSectionOvershootWeb,
+    IrTSection,
+)
 from ocx_model_validator.model.ir.structural import IrPanel, IrPlate, IrStiffener, IrVessel
-from ocx_model_validator.sections.section_builder import build_cross_section
+from ocx_model_validator.sections.section_builder import _profile, build_cross_section
 from tests.section_fixtures import four_hit_plate_contour, line, make_synthetic_vessel, p, parent, q, rectangle
 
 
@@ -35,6 +42,11 @@ def test_bulb_flat_profile_and_material_are_resolved(vessel: IrVessel) -> None:
     assert stiffener.panel == "Panel A"
     assert stiffener.profile_type == "HpBulb"
     assert stiffener.profile_dimensions == "300 x 11"
+    assert stiffener.section_kind == "bulb_flat"
+    assert stiffener.h_mm == pytest.approx(300.0)
+    assert stiffener.bf_mm is None
+    assert stiffener.tw_mm == pytest.approx(11.0)
+    assert stiffener.tf_mm is None
     assert stiffener.material_reh_mpa == pytest.approx(315.0)
     assert stiffener.orientation == "Longitudinal"
     assert stiffener.web_angle_deg == pytest.approx(90.0)
@@ -46,8 +58,104 @@ def test_missing_section_ref_warns_but_stiffener_is_emitted(vessel: IrVessel) ->
     stiffener = next(s for s in section.stiffeners if s.name == "A missing profile")
     assert stiffener.profile_type is None
     assert stiffener.profile_dimensions is None
+    assert stiffener.section_kind is None
+    assert stiffener.h_mm is None
+    assert stiffener.bf_mm is None
+    assert stiffener.tw_mm is None
+    assert stiffener.tf_mm is None
     assert stiffener.material_reh_mpa == pytest.approx(315.0)
     assert any("A missing profile" in warning and "section" in warning.lower() for warning in section.warnings)
+
+
+def test_profile_returns_numeric_dimensions_for_flat_bar() -> None:
+    vessel = IrVessel(id="vessel")
+    vessel.sections["fb"] = IrFlatBarSection(id="fb", height=q(250.0, "Umm"), width=q(12.0, "Umm"))
+    stiffener = IrStiffener(id="stiff", parent_ref=parent("panel"), section_ref=Ref("fb"))
+    warnings: list[str] = []
+
+    assert _profile(stiffener, vessel, warnings, "Flat") == (
+        "FlatBar",
+        "250 x 12",
+        "flat_bar",
+        pytest.approx(250.0),
+        None,
+        pytest.approx(12.0),
+        None,
+    )
+    assert warnings == []
+
+
+def test_profile_returns_numeric_dimensions_for_t_section() -> None:
+    vessel = IrVessel(id="vessel")
+    vessel.sections["t"] = IrTSection(
+        id="t",
+        height=q(400.0, "Umm"),
+        width=q(150.0, "Umm"),
+        web_thickness=q(9.0, "Umm"),
+        flange_thickness=q(14.0, "Umm"),
+    )
+    stiffener = IrStiffener(id="stiff", parent_ref=parent("panel"), section_ref=Ref("t"))
+
+    profile_type, dims, section_kind, h_mm, bf_mm, tw_mm, tf_mm = _profile(stiffener, vessel, [], "T")
+
+    assert profile_type == "TBar"
+    assert dims == "400 x 150 x 9 x 14"
+    assert section_kind == "t_section"
+    assert (h_mm, bf_mm, tw_mm, tf_mm) == pytest.approx((400.0, 150.0, 9.0, 14.0))
+
+
+@pytest.mark.parametrize(
+    ("section", "expected_kind"),
+    [
+        (
+            IrLSection(
+                id="l",
+                height=q(300.0, "Umm"),
+                width=q(100.0, "Umm"),
+                web_thickness=q(8.0, "Umm"),
+                flange_thickness=q(12.0, "Umm"),
+            ),
+            "l_section",
+        ),
+        (
+            IrLSectionOvershootFlange(
+                id="lof",
+                height=q(310.0, "Umm"),
+                width=q(110.0, "Umm"),
+                web_thickness=q(9.0, "Umm"),
+                flange_thickness=q(13.0, "Umm"),
+            ),
+            "l_overshoot_flange",
+        ),
+        (
+            IrLSectionOvershootWeb(
+                id="low",
+                height=q(320.0, "Umm"),
+                width=q(120.0, "Umm"),
+                web_thickness=q(10.0, "Umm"),
+                flange_thickness=q(14.0, "Umm"),
+            ),
+            "l_overshoot_web",
+        ),
+    ],
+)
+def test_profile_distinguishes_l_section_variants(section, expected_kind: str) -> None:
+    vessel = IrVessel(id="vessel")
+    vessel.sections[section.id] = section
+    stiffener = IrStiffener(id="stiff", parent_ref=parent("panel"), section_ref=Ref(section.id))
+
+    profile_type, _, section_kind, h_mm, bf_mm, tw_mm, tf_mm = _profile(stiffener, vessel, [], "L")
+
+    assert profile_type == "AngleBar"
+    assert section_kind == expected_kind
+    assert (h_mm, bf_mm, tw_mm, tf_mm) == pytest.approx(
+        (
+            section.height.value,
+            section.width.value,
+            section.web_thickness.value,
+            section.flange_thickness.value,
+        )
+    )
 
 
 def test_spacing_is_nearest_neighbour_per_panel(vessel: IrVessel) -> None:
