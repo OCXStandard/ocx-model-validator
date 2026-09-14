@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import pytest
-
 from ocx_model_validator.model.ir.arrangement import IrCompartment
 from ocx_model_validator.model.ir.base import IrCog, Quantity
 from ocx_model_validator.model.ir.geometry import IrPoint3D, IrPolyLine3D
@@ -75,6 +73,8 @@ def test_ship_data_builds_schema_specific_rule_child_and_required_placeholders()
         }
         assert any("draught T uses placeholder" in warning for warning in warnings)
         assert any("GeneralShipData" in warning for warning in warnings)
+        assert any("RuleEdition" in warning and "placeholder" in warning for warning in warnings)
+        assert any("MaterialData" in warning and "Sigma" in warning for warning in warnings)
 
 
 def test_ship_data_with_missing_extent_omits_main_dimension_attrs_and_warns() -> None:
@@ -98,7 +98,9 @@ def test_frame_table_emits_offset_and_spacing_rows_in_metres() -> None:
         spacing_rows=[(frame0, 800.0), (frame1, 900.0)],
     )
 
-    frame_table = _frame_table(ft)
+    warnings: list[str] = []
+
+    frame_table = _frame_table(ft, warnings)
 
     assert frame_table.tag == "FrameTable"
     assert frame_table.attrib == {"FrameOffset": "1.2", "FrameRef": "AP"}
@@ -106,6 +108,24 @@ def test_frame_table_emits_offset_and_spacing_rows_in_metres() -> None:
         {"FrameNo": "Stern", "Spacing": "0.8"},
         {"FrameNo": "FR1", "Spacing": "0.9"},
     ]
+    assert warnings == []
+
+
+def test_frame_table_emits_fallback_spacing_row_when_empty_and_warns() -> None:
+    ft = FrameTable(
+        frame0_offset_mm=0.0,
+        positions=[],
+        entries=[],
+        spacing_rows=[],
+    )
+    warnings: list[str] = []
+
+    frame_table = _frame_table(ft, warnings)
+
+    assert [dict(row.attrib) for row in frame_table] == [
+        {"FrameNo": "Stern", "Spacing": "0.8"},
+    ]
+    assert any("fallback" in warning and "FrameTable" in warning for warning in warnings)
 
 
 def test_compartments_maps_types_emits_bbox_and_skips_unbounded_compartment() -> None:
@@ -168,6 +188,60 @@ def test_compartments_maps_types_emits_bbox_and_skips_unbounded_compartment() ->
     }
     assert any("unsupported tank type" in warning for warning in warnings)
     assert any("extent is empty; skipped" in warning for warning in warnings)
+
+
+def test_compartments_emits_csrh_choice_child_with_overpressure() -> None:
+    vessel = IrVessel(id="vessel")
+    vessel.compartments["ballast"] = _compartment(
+        "ballast",
+        "Ballast Tank",
+        "BALLASTWATERTANK",
+        [(0.0, -2.0, 0.0), (10.0, -2.0, 0.0), (10.0, 2.0, 3.0), (0.0, 2.0, 3.0)],
+        relief_kpa=12.5,
+    )
+    warnings: list[str] = []
+
+    compartments, _boxes = _compartments(vessel, warnings, rule_set="CSR-H")
+
+    assert compartments is not None
+    ballast = compartments[0]
+    assert ballast.find("RV5") is None
+    csrh = ballast.find("CSRH")
+    assert csrh is not None
+    assert dict(csrh.attrib) == {"OverPressure": "12.5"}
+
+
+def test_compartments_warns_and_keeps_first_box_for_duplicate_names() -> None:
+    vessel = IrVessel(id="vessel")
+    vessel.compartments["first"] = _compartment(
+        "first",
+        "Same Name",
+        "VOIDSPACE",
+        [(0.0, -2.0, 0.0), (10.0, -2.0, 0.0), (10.0, 2.0, 3.0), (0.0, 2.0, 3.0)],
+    )
+    vessel.compartments["second"] = _compartment(
+        "second",
+        "Same Name",
+        "VOIDSPACE",
+        [(20.0, 5.0, 1.0), (30.0, 5.0, 1.0), (30.0, 6.0, 2.0), (20.0, 6.0, 2.0)],
+    )
+    warnings: list[str] = []
+
+    compartments, boxes = _compartments(vessel, warnings)
+
+    assert compartments is not None
+    assert [child.get("Name") for child in compartments] == ["Same Name", "Same Name"]
+    assert [child.get("Id") for child in compartments] == ["1", "2"]
+    assert boxes["Same Name"] == {
+        "id": "1",
+        "min_x": 0.0,
+        "max_x": 10000.0,
+        "min_y": -2000.0,
+        "max_y": 2000.0,
+        "min_z": 0.0,
+        "max_z": 3000.0,
+    }
+    assert any("duplicate compartment name" in warning and "Same Name" in warning for warning in warnings)
 
 
 def test_compartments_returns_none_when_no_rows_survive() -> None:

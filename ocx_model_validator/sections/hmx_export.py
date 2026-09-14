@@ -285,6 +285,7 @@ def _ship_data(
     if rule_set == "DNV":
         applicable_attrs["RuleSet"] = "DNV-1A1"
     etree.SubElement(rule_child, "ApplicableRules", **applicable_attrs)
+    warnings.append("ShipData ApplicableRules RuleEdition uses placeholder value 2024")
 
     etree.SubElement(rule_child, "MainDimensions", **_main_dimensions_attrs(extent, warnings))
 
@@ -294,7 +295,7 @@ def _ship_data(
         "ShipData GeneralShipData uses placeholder values for required attributes"
     )
 
-    etree.SubElement(rule_child, "MaterialData", **_material_data_attrs(materials))
+    etree.SubElement(rule_child, "MaterialData", **_material_data_attrs(materials, warnings))
 
     if rule_set != "DNV":
         etree.SubElement(rule_child, "IceClassData")
@@ -302,7 +303,7 @@ def _ship_data(
     return ship_data
 
 
-def _frame_table(ft) -> etree._Element:
+def _frame_table(ft, warnings: list[str]) -> etree._Element:
     """Build the HMX FrameTable block."""
     frame_table = etree.Element(
         "FrameTable",
@@ -314,6 +315,12 @@ def _frame_table(ft) -> etree._Element:
         if ft.spacing_rows
         else list(ft.entries)
     )
+    if not rows:
+        rows = [("Stern", 800.0)]
+        warnings.append(
+            "FrameTable has no spacing rows; emitted fallback Stern spacing 0.8 m"
+        )
+
     for idx, (label, spacing_mm) in enumerate(rows):
         frame_no = "Stern" if idx == 0 else label
         etree.SubElement(
@@ -325,7 +332,11 @@ def _frame_table(ft) -> etree._Element:
     return frame_table
 
 
-def _compartments(vessel, warnings: list[str]) -> tuple[etree._Element | None, dict[str, dict]]:
+def _compartments(
+    vessel,
+    warnings: list[str],
+    rule_set: str = "DNV",
+) -> tuple[etree._Element | None, dict[str, dict]]:
     """Build HMX Compartments and compartment boxes for later segment tagging."""
     rows, row_warnings = build_compartments_block(vessel)
     warnings.extend(row_warnings)
@@ -349,11 +360,18 @@ def _compartments(vessel, warnings: list[str]) -> tuple[etree._Element | None, d
             Id=comp_id,
         )
         etree.SubElement(compartment, "General", **_compartment_general_attrs(row, extent))
-        rv5_attrs = _rv5_compartment_attrs(row)
-        etree.SubElement(compartment, "RV5", **rv5_attrs)
+        if rule_set == "CSR-H":
+            etree.SubElement(compartment, "CSRH", **_csrh_compartment_attrs(row))
+        else:
+            etree.SubElement(compartment, "RV5", **_rv5_compartment_attrs(row))
         geometry = etree.SubElement(compartment, "Geometry")
         etree.SubElement(geometry, "BoundingBox", **_bounding_box_attrs(extent))
-        boxes[name] = {"id": comp_id, **extent}
+        if name in boxes:
+            warnings.append(
+                f"duplicate compartment name {name!r}; keeping first bounding box for segment tagging"
+            )
+        else:
+            boxes[name] = {"id": comp_id, **extent}
 
     if len(compartments) == 0:
         return None, {}
@@ -405,11 +423,12 @@ def _main_dimensions_attrs(
     }
 
 
-def _material_data_attrs(materials: _MaterialIds | None) -> dict[str, str]:
+def _material_data_attrs(materials: _MaterialIds | None, warnings: list[str]) -> dict[str, str]:
     first_yield = None
     if materials is not None:
         first_yield = next((yield_mpa for yield_mpa, _ in materials.items()), None)
     sigma = _fmt(first_yield if first_yield is not None else 235.0)
+    warnings.append("ShipData MaterialData SigmaF* uses placeholder values")
     return {
         "E": "206000",
         "SigmaFBott": sigma,
@@ -457,6 +476,13 @@ def _rv5_compartment_attrs(row: dict) -> dict[str, str]:
         "OverPressure": _fmt(pressure),
         "PressureValveFitted": "true",
     }
+
+
+def _csrh_compartment_attrs(row: dict) -> dict[str, str]:
+    pressure = row.get("relief_valve_pressure_kpa")
+    if pressure is None:
+        return {}
+    return {"OverPressure": _fmt(pressure)}
 
 
 def _bounding_box_attrs(extent: dict) -> dict[str, str]:
