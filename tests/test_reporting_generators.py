@@ -292,3 +292,48 @@ def test_compartments_report_includes_compartment_properties():
     assert row[idx_fh] == 9000.0
     assert row[idx_ap] == 10500.0
     assert row[idx_rv] == 25.0
+
+
+def _vessel_with_frames_and_compartment() -> IrVessel:
+    from ocx_model_validator.model.ir.geometry import IrLine3D, IrPoint3D
+
+    vessel = _vessel_with_frames()  # grid frames FR0/FR1/FR2 at 0/800/1600 mm
+    vessel.compartments["C1"] = IrCompartment(
+        id="C1", name="Tank 1", compartment_purpose="void",
+        face_boundary_curves=[
+            IrLine3D(curve_length=None,
+                     start=IrPoint3D(1.0, -3.0, 0.5, "Um"),
+                     end=IrPoint3D(1.6, 3.0, 2.5, "Um")),
+        ],
+    )
+    return vessel
+
+
+def test_compartment_extent_x_shown_as_frame_position():
+    report = compartments_gen.build(_vessel_with_frames_and_compartment(),
+                                    source_file="m.3docx")
+    table = report.sections[0].tables[0]
+    row = table.rows[0]
+    idx_min = table.columns.index("min x (frame)")
+    idx_max = table.columns.index("max x (frame)")
+    # 1000 mm is 200 mm beyond FR1 (800); 1600 mm is exactly FR2
+    assert row[idx_min] == "#FR1+200"
+    assert row[idx_max] == "#FR2"
+
+
+def test_compartment_extent_x_falls_back_to_mm_without_frame_table():
+    vessel = IrVessel(id="V1", name="MV Test")
+    from ocx_model_validator.model.ir.geometry import IrLine3D, IrPoint3D
+    vessel.compartments["C1"] = IrCompartment(
+        id="C1", name="Tank 1", compartment_purpose="void",
+        face_boundary_curves=[
+            IrLine3D(curve_length=None,
+                     start=IrPoint3D(1.0, 0.0, 0.0, "Um"),
+                     end=IrPoint3D(2.0, 1.0, 1.0, "Um")),
+        ],
+    )
+    report = compartments_gen.build(vessel, source_file="m.3docx")
+    table = report.sections[0].tables[0]
+    row = table.rows[0]
+    assert row[table.columns.index("min x (frame)")] == 1000.0
+    assert row[table.columns.index("max x (frame)")] == 2000.0
