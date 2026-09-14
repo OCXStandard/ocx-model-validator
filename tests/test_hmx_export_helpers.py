@@ -1,0 +1,210 @@
+from __future__ import annotations
+
+import math
+
+import pytest
+
+from ocx_model_validator.sections.hmx_export import (
+    _LSTIFF_TYPE,
+    _MaterialIds,
+    _angles,
+    _arc_length_of,
+    _arc_position,
+    _chain_segments,
+    _level1_code,
+    _side,
+    _signed_radius,
+)
+from ocx_model_validator.sections.section_builder import (
+    SectionPlate,
+    SectionStiffener,
+    build_cross_section,
+)
+from tests.section_fixtures import make_synthetic_vessel
+
+
+def plate(
+    name: str,
+    y1: float,
+    z1: float,
+    y2: float,
+    z2: float,
+    *,
+    radius: float | None = None,
+    center: tuple[float, float] | None = None,
+) -> SectionPlate:
+    return SectionPlate(
+        name=name,
+        y1_mm=y1,
+        z1_mm=z1,
+        y2_mm=y2,
+        z2_mm=z2,
+        thickness_mm=10.0,
+        material_reh_mpa=315.0,
+        panel="Panel",
+        radius_mm=radius,
+        arc_center_y_mm=None if center is None else center[0],
+        arc_center_z_mm=None if center is None else center[1],
+    )
+
+
+def stiffener(web_y: float | None, web_z: float | None) -> SectionStiffener:
+    return SectionStiffener(
+        name="S",
+        y_mm=0.0,
+        z_mm=0.0,
+        panel="Panel",
+        profile_type=None,
+        profile_dimensions=None,
+        material_reh_mpa=None,
+        spacing_mm=None,
+        web_dir_y=web_y,
+        web_dir_z=web_z,
+    )
+
+
+def test_chaining_two_touching_plates_keeps_vertices_and_plate_order() -> None:
+    first = plate("first", 0.0, 0.0, 1000.0, 0.0)
+    second = plate("second", 1000.0, 0.0, 1000.0, 500.0)
+
+    chains = _chain_segments([first, second])
+
+    assert len(chains) == 1
+    assert chains[0].points == pytest.approx([(0.0, 0.0), (1000.0, 0.0), (1000.0, 500.0)])
+    assert chains[0].plates == [first, second]
+
+
+def test_chaining_flips_reversed_plate_to_continue_chain() -> None:
+    first = plate("first", 0.0, 0.0, 1000.0, 0.0)
+    reversed_second = plate("second", 1000.0, 500.0, 1000.0, 0.0)
+
+    chains = _chain_segments([first, reversed_second])
+
+    assert len(chains) == 1
+    assert chains[0].points == pytest.approx([(0.0, 0.0), (1000.0, 0.0), (1000.0, 500.0)])
+    assert chains[0].plates == [first, reversed_second]
+
+
+def test_chaining_disjoint_groups_returns_two_chains() -> None:
+    plates = [
+        plate("a1", 0.0, 0.0, 100.0, 0.0),
+        plate("b1", 1000.0, 0.0, 1100.0, 0.0),
+        plate("a2", 100.0, 0.0, 200.0, 0.0),
+    ]
+
+    chains = _chain_segments(plates)
+
+    assert [len(chain.plates) for chain in chains] == [2, 1]
+    assert [p.name for p in chains[0].plates] == ["a1", "a2"]
+    assert chains[1].points == pytest.approx([(1000.0, 0.0), (1100.0, 0.0)])
+
+
+def test_signed_radius_uses_center_side_of_segment_travel() -> None:
+    arc_above = plate("arc", 0.0, 0.0, 100.0, 0.0, radius=25.0, center=(50.0, 10.0))
+    arc_below = plate("arc", 0.0, 0.0, 100.0, 0.0, radius=25.0, center=(50.0, -10.0))
+
+    assert _signed_radius(arc_above, (0.0, 0.0), (100.0, 0.0)) == pytest.approx(25.0)
+    assert _signed_radius(arc_below, (0.0, 0.0), (100.0, 0.0)) == pytest.approx(-25.0)
+    assert (
+        _signed_radius(plate("straight", 0.0, 0.0, 100.0, 0.0), (0.0, 0.0), (100.0, 0.0))
+        is None
+    )
+
+
+def test_arc_length_uses_circular_arc_and_straight_chord_length() -> None:
+    arc = plate("arc", 0.0, 0.0, 200.0, 0.0, radius=100.0, center=(100.0, 0.0))
+    straight = plate("straight", 0.0, 0.0, 3.0, 4.0)
+
+    assert _arc_length_of(arc, (0.0, 0.0), (200.0, 0.0)) == pytest.approx(math.pi * 100.0)
+    assert _arc_length_of(straight, (0.0, 0.0), (3.0, 4.0)) == pytest.approx(5.0)
+
+
+def test_arc_position_projects_to_nearest_segment_with_arc_aware_prefix() -> None:
+    arc = plate("arc", 0.0, 0.0, 200.0, 0.0, radius=100.0, center=(100.0, 0.0))
+    straight = plate("straight", 200.0, 0.0, 200.0, 100.0)
+    chain = _chain_segments([arc, straight])[0]
+
+    assert _arc_position(chain, 205.0, 50.0) == pytest.approx(math.pi * 100.0 + 50.0)
+
+
+def test_level1_code_classifies_bottom_deck_side_bilge_and_undefined() -> None:
+    extent = {"min_y": -1000.0, "max_y": 1000.0, "min_z": 0.0, "max_z": 1000.0}
+
+    assert (
+        _level1_code(plate("bottom", -500.0, 0.0, 500.0, 0.0), (-500.0, 0.0), (500.0, 0.0), extent)
+        == "GBOTTOM"
+    )
+    assert (
+        _level1_code(
+            plate("deck", -500.0, 1000.0, 500.0, 1000.0),
+            (-500.0, 1000.0),
+            (500.0, 1000.0),
+            extent,
+        )
+        == "STRDECK"
+    )
+    assert (
+        _level1_code(plate("side", 980.0, 100.0, 980.0, 900.0), (980.0, 100.0), (980.0, 900.0), extent)
+        == "SIDE"
+    )
+    assert (
+        _level1_code(plate("bilge", 0.0, 0.0, 100.0, 100.0, radius=100.0), (0.0, 0.0), (100.0, 100.0), {})
+        == "BILGE"
+    )
+    assert (
+        _level1_code(plate("slanted", 0.0, 200.0, 100.0, 300.0), (0.0, 200.0), (100.0, 300.0), extent)
+        == "Undefined"
+    )
+    assert (
+        _level1_code(plate("no-extent", 0.0, 0.0, 100.0, 0.0), (0.0, 0.0), (100.0, 0.0), None)
+        == "Undefined"
+    )
+
+
+def test_side_uses_mean_y_of_chain_vertices() -> None:
+    assert _side(_chain_segments([plate("left", 10.0, 0.0, 20.0, 0.0)])[0]) == "LEFT"
+    assert _side(_chain_segments([plate("right", -10.0, 0.0, -20.0, 0.0)])[0]) == "RIGHT"
+    assert _side(_chain_segments([plate("center", -1.0, 0.0, 1.0, 0.0)])[0]) == "CENTER"
+
+
+def test_angles_use_web_direction_with_fallback() -> None:
+    assert _angles(stiffener(0.0, 1.0)) == pytest.approx((90.0, 90.0))
+    assert _angles(stiffener(-1.0, 0.0)) == pytest.approx((180.0, 270.0))
+    assert _angles(stiffener(None, 1.0)) == pytest.approx((90.0, 270.0))
+
+
+def test_material_ids_are_sequential_and_stable() -> None:
+    ids = _MaterialIds()
+
+    assert ids.id_for(315.0) == "1"
+    assert ids.id_for(355.0) == "2"
+    assert ids.id_for(315.0) == "1"
+    assert list(ids.items()) == [(315.0, "1"), (355.0, "2")]
+
+
+def test_lstiff_type_constant_contains_expected_hmx_codes() -> None:
+    assert _LSTIFF_TYPE == {
+        "flat_bar": 10,
+        "bulb_flat": 20,
+        "l_section": 31,
+        "l_overshoot_flange": 35,
+        "l_overshoot_web": 36,
+        "t_section": 40,
+    }
+
+
+def test_synthetic_vessel_plates_chain_sensibly() -> None:
+    section = build_cross_section(make_synthetic_vessel(), 5000.0)
+
+    assert [(p.name, p.y1_mm, p.z1_mm, p.y2_mm, p.z2_mm) for p in section.plates] == [
+        ("Plate A1", 0.0, 0.0, 2000.0, 0.0),
+        ("Plate A2", 0.0, 1000.0, 2000.0, 1000.0),
+    ]
+    chains = _chain_segments(section.plates)
+
+    assert len(chains) == 2
+    assert [chain.points for chain in chains] == [
+        [(0.0, 0.0), (2000.0, 0.0)],
+        [(0.0, 1000.0), (2000.0, 1000.0)],
+    ]
+    assert [[p.name for p in chain.plates] for chain in chains] == [["Plate A1"], ["Plate A2"]]
