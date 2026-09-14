@@ -60,6 +60,7 @@ class FrameTable:
     entries: list[tuple[str, float]]        # (label, spacing_mm) at spacing changes
     warnings: list[str] = field(default_factory=list)
     frames: list[FrameRow] = field(default_factory=list)  # full rows, sorted by x
+    spacing_rows: list[tuple[FrameRow, float]] = field(default_factory=list)
 
     def frame_to_x(self, frame: str) -> float:
         """Return x location in mm for a frame label."""
@@ -135,12 +136,12 @@ def build_frame_table(vessel: IrVessel) -> FrameTable:
     # Emit entries at spacing changes — only planes with displayGrid=True
     # participate in the frame grid (missing attribute counts as grid).
     grid = [r for r in rows if r.display_grid is not False]
-    entries: list[tuple[str, float]] = []
+    spacing_rows: list[tuple[FrameRow, float]] = []
     prev_spacing = None
     for i in range(len(grid) - 1):
         spacing = grid[i + 1].x_mm - grid[i].x_mm
         if prev_spacing is None or abs(spacing - prev_spacing) > _SPACING_TOL_MM:
-            entries.append((grid[i].label, spacing))
+            spacing_rows.append((grid[i], spacing))
             prev_spacing = spacing
 
     # frame0_offset: find frame 0 by numeric match (label parses to 0.0), else lowest x
@@ -156,7 +157,8 @@ def build_frame_table(vessel: IrVessel) -> FrameTable:
     return FrameTable(
         frame0_offset_mm=frame0_x,
         positions=[(r.label, r.x_mm) for r in rows],
-        entries=entries,
+        entries=[(r.label, s) for r, s in spacing_rows],
         warnings=warnings,
         frames=rows,
+        spacing_rows=spacing_rows,
     )

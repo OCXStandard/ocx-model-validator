@@ -88,18 +88,20 @@ def test_frame_table_report():
     titles = [t.title for t in section.tables]
     assert titles == ["Spacing entries", "Frame positions"]
     positions = section.tables[1]
-    assert positions.columns == ["Frame", "Name", "x (mm)", "Display grid"]
-    assert positions.rows == [["FR0", "FR0", 0.0, "yes"],
-                              ["FR1", "FR1", 800.0, "yes"],
-                              ["AUX", "AUX", 1200.0, "no"],
-                              ["FR2", "FR2", 1600.0, "yes"]]
+    assert positions.columns == ["#", "Frame", "Name", "x (mm)", "Display grid"]
+    # counter numbers grid frames only; displayGrid=false rows get no number
+    assert positions.rows == [[1, "FR0", "FR0", 0.0, "yes"],
+                              [2, "FR1", "FR1", 800.0, "yes"],
+                              ["", "AUX", "AUX", 1200.0, "no"],
+                              [3, "FR2", "FR2", 1600.0, "yes"]]
 
 
 def test_frame_table_spacing_only_from_display_grid_planes():
     report = frame_table_gen.build(_vessel_with_frames(), source_file="m.3docx")
     spacing = report.sections[0].tables[0]
+    assert spacing.columns == ["From frame", "Name", "x (mm)", "Spacing (mm)"]
     # AUX (displayGrid=false) must not affect the grid spacing
-    assert spacing.rows == [["FR0", 800.0]]
+    assert spacing.rows == [["FR0", "FR0", 0.0, 800.0]]
 
 
 def test_frame_table_offset_names_frame():
@@ -107,6 +109,24 @@ def test_frame_table_offset_names_frame():
     intro = report.sections[0].intro
     assert "0.0 mm" in intro
     assert "FR0" in intro
+    # frame count includes only grid frames (AUX excluded)
+    assert "3 frames" in intro
+
+
+def test_frame_table_missing_display_grid_defaults_to_yes():
+    vessel = IrVessel(id="V1", name="MV Test", schema_version="3.1.0")
+    for i, x in enumerate([0.0, 0.8]):
+        rp = IrRefPlane(id=f"FR{i}", name=f"FR{i}", location=Quantity(x, "Um"))
+        vessel.ref_planes[rp.id] = rp
+    vessel.coordinate_systems["CS1"] = IrCoordinateSystem(
+        id="CS1", is_global=True, x_ref_plane_ids=["FR0", "FR1"],
+    )
+    report = frame_table_gen.build(vessel, source_file="m.3docx")
+    section = report.sections[0]
+    positions = section.tables[1]
+    assert positions.rows == [[1, "FR0", "FR0", 0.0, "yes"],
+                              [2, "FR1", "FR1", 800.0, "yes"]]
+    assert "2 frames" in section.intro
 
 
 def test_frame_table_report_empty_model():

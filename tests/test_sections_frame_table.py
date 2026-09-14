@@ -147,3 +147,14 @@ def test_spacing_excludes_display_grid_false_planes():
     assert ft.entries == [("0", pytest.approx(4000.0))]
     # positions still include the auxiliary plane
     assert len(ft.positions) == 4
+
+
+def test_spacing_rows_carry_frame_details():
+    ir = _vessel([_plane("a", "X0", 0.0, display_grid=True),
+                  _plane("b", "X4", 4.0, display_grid=True),
+                  _plane("c", "X8", 8.0, display_grid=True),
+                  _plane("d", "X8.8", 8.8, display_grid=True)])
+    ft = build_frame_table(ir)
+    assert [(r.label, r.name, r.x_mm) for r, _ in ft.spacing_rows] == [
+        ("0", "X0", pytest.approx(0.0)), ("8", "X8", pytest.approx(8000.0))]
+    assert [s for _, s in ft.spacing_rows] == pytest.approx([4000.0, 800.0])
