@@ -21,7 +21,8 @@ def test_extent_mm_returns_bounding_box():
     assert extent["min_z"] <= extent["max_z"]
 
     # Points are gathered in mm; smallest x-coordinate comes from stiffener
-    # traces starting at x=0.0 m, largest from stiff-a-no-cross end at x=4.0 m.
+    # traces starting at x=0.0 m, largest from the line() traces of
+    # stiff-a1/stiff-a2/stiff-b1, which end at the default x=10.0 m.
     assert extent["min_x"] == 0.0
     assert extent["max_x"] == 10000.0
 
