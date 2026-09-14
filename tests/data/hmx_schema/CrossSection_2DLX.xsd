@@ -1,0 +1,1063 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!--Created with Liquid Studio (https://www.liquid-technologies.com)-->
+<xs:schema attributeFormDefault="unqualified" elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:include schemaLocation="Base.xsd" />
+    <xs:element name="CROSS_SECTION" type="Section2DLX">
+        <xs:annotation>
+            <xs:documentation>Nauticus Hull cross section 2DLX format</xs:documentation>
+        </xs:annotation>
+    </xs:element>
+    <xs:complexType name="Section2DLX">
+        <xs:sequence>
+            <xs:element name="administrative" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="program" minOccurs="0">
+                            <xs:complexType>
+                                <xs:attribute name="name" type="xs:string" />
+                                <xs:attribute name="version" type="xs:string" />
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="session_info" minOccurs="0">
+                            <xs:complexType>
+                                <xs:attribute name="date" type="xs:string">
+                                    <xs:annotation>
+                                        <xs:documentation>Format: 15-Feb-2013</xs:documentation>
+                                    </xs:annotation>
+                                </xs:attribute>
+                                <xs:attribute name="time" type="xs:string">
+                                    <xs:annotation>
+                                        <xs:documentation>Format: 14:50:59</xs:documentation>
+                                    </xs:annotation>
+                                </xs:attribute>
+                                <xs:attribute name="user" type="xs:string" />
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="IDDATA">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="NAME" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>Name of cross section</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="DATE" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>Date of creation</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="SIGNATURE" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>User signature</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="COMMENTS" type="xs:string">
+                            <xs:annotation>
+                                <xs:documentation>User comments</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="POSITION">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="DISTAP" type="xs:double">
+                            <xs:annotation>
+                                <xs:documentation>Original distance from Aft Perpendicular (m)</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="MIDSHIP" type="xs:boolean">
+                            <xs:annotation>
+                                <xs:documentation>True if this is the midship section</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="FromFrame" type="xs:string" minOccurs="0" />
+                        <xs:element name="ToFrame" type="xs:string" minOccurs="0" />
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="MATERIAL">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="YIELDBOTT" type="xs:double">
+                            <xs:annotation>
+                                <xs:documentation>Yield at bottom (Strength group or yield)</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="YIELDDECK" type="xs:double">
+                            <xs:annotation>
+                                <xs:documentation>Yield at deck (Strength group or yield)</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="YIELDBETW" type="xs:double">
+                            <xs:annotation>
+                                <xs:documentation>Yield between bottom and deck (Strength group or yield)</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="YIELDABDECK" type="xs:double" minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation>Yield above strength deck</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="HHSBOTT" type="xs:double" minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation>Height of HS-steel zone at bottom (mm)</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="HHSDECK" type="xs:double" minOccurs="0">
+                            <xs:annotation>
+                                <xs:documentation>Height of HS-steel zone at deck (mm)</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="GlobalData" type="GlobalElements" minOccurs="0" maxOccurs="1" />
+            <xs:element name="CONTMEMBER" minOccurs="0">
+                <xs:annotation>
+                    <xs:documentation>Continuous strength member above the strength deck , if any.</xs:documentation>
+                </xs:annotation>
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="DISTCL" type="xs:double">
+                            <xs:annotation>
+                                <xs:documentation>Distance from the vertical centre line to  the most distant point on the strength member (mm).</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="HBL" type="xs:double">
+                            <xs:annotation>
+                                <xs:documentation>Height from base line to the highest point on the  strength member (mm).</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="MISC" minOccurs="0">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="STRUCTTYPE">
+                            <xs:annotation>
+                                <xs:documentation>Structure type: "SECTION" = Cross-section (default), "TRVBHD" = Transverse bulkhead, "PART" = 2D Part. </xs:documentation>
+                            </xs:annotation>
+                            <xs:simpleType>
+                                <xs:restriction base="xs:string">
+                                    <xs:enumeration value="SECTION" />
+                                    <xs:enumeration value="TRVBHD" />
+                                    <xs:enumeration value="PART" />
+                                </xs:restriction>
+                            </xs:simpleType>
+                        </xs:element>
+                        <xs:element name="HSIDE" type="xs:double">
+                            <xs:annotation>
+                                <xs:documentation>Height from baseline to top of ship’s side (mm).</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="STDSPAN" type="xs:double">
+                            <xs:annotation>
+                                <xs:documentation>Standard span of longitudinals in mm.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                        <xs:element name="STDSPACE" type="xs:double">
+                            <xs:annotation>
+                                <xs:documentation>Standard spacing betw. trv. stiffeners  in mm.</xs:documentation>
+                            </xs:annotation>
+                        </xs:element>
+                    </xs:sequence>
+                </xs:complexType>
+            </xs:element>
+            <xs:element name="PANEL" maxOccurs="unbounded">
+                <xs:complexType>
+                    <xs:sequence>
+                        <xs:element name="CORRUGATED" type="xs:string" />
+                        <xs:element name="BENDEFF" type="xs:double" />
+                        <xs:element name="SHEAREFF" type="xs:double" />
+                        <xs:element name="SHAPE">
+                            <xs:annotation>
+                                <xs:documentation>Geometry definition of the panel.</xs:documentation>
+                            </xs:annotation>
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="NODE">
+                                        <xs:complexType>
+                                            <xs:simpleContent>
+                                                <xs:extension base="xs:string">
+                                                    <xs:attribute name="Y" type="xs:double" use="required" />
+                                                    <xs:attribute name="Z" type="xs:double" use="required" />
+                                                </xs:extension>
+                                            </xs:simpleContent>
+                                        </xs:complexType>
+                                    </xs:element>
+                                    <xs:element name="SEGMENT" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:simpleContent>
+                                                <xs:extension base="xs:string">
+                                                    <xs:attribute name="Y" type="xs:double" use="required" />
+                                                    <xs:attribute name="Z" type="xs:double" use="required" />
+                                                    <xs:attribute name="Position" type="Level1Position" use="required">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Level 1 position code</xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                    <xs:attribute name="Girder" type="Level2Position" use="required">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Level 2 position code</xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                    <xs:attribute name="Radius" type="xs:double" use="required">
+                                                        <xs:annotation>
+                                                            <xs:documentation>For positive values the radius vector rotates counterclockwise when traversing the segment. Negative vauled for clockwise. 0 = straight line</xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                    <xs:attribute name="LeftCompartment" type="xs:string" use="optional">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Id of compartment to the left of segment. Optional. Only used in HMX files.</xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                    <xs:attribute name="RightCompartment" type="xs:string" use="optional">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Id of compartment to the right of segment. Optional. Only used in HMX files.</xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                </xs:extension>
+                                            </xs:simpleContent>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="PLATES">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="PLATE" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:simpleContent>
+                                                <xs:extension base="xs:string">
+                                                    <xs:attribute name="Width" type="xs:double" use="required">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Width or end position of plate according to RefCode.</xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                    <xs:attribute name="RefCode" type="PosRefCodeTypes" use="required">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Denotes how Position is measured, as for the width of plates. See the description of PosRefCodeTypes.</xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                    <xs:attribute name="Thickness" type="xs:double" use="required">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Plate thickness (mm)</xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                    <xs:attribute name="Yield" type="xs:double" use="required">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Yield point of the plate (N/mm2).</xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                    <xs:attribute name="MaterialId" type="xs:int">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Material Id</xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                    <xs:attribute name="Material" type="Materials" use="required" />
+                                                    <xs:attribute name="ExternalTag" type="xs:string" use="optional">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Intended as unique reference used by external programs.</xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                    <xs:attribute name="Side">
+                                                        <xs:annotation>
+                                                            <xs:documentation>”LEFT” if the plate is on the left side of the panel. ”RIGHT” if on the right side. ”CENTER” if centered.</xs:documentation>
+                                                        </xs:annotation>
+                                                        <xs:simpleType>
+                                                            <xs:restriction base="xs:string">
+                                                                <xs:enumeration value="LEFT" />
+                                                                <xs:enumeration value="RIGHT" />
+                                                                <xs:enumeration value="CENTER" />
+                                                            </xs:restriction>
+                                                        </xs:simpleType>
+                                                    </xs:attribute>
+                                                </xs:extension>
+                                            </xs:simpleContent>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="LONGS">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="LSTIFF" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="AftFrame" type="StiffenerFrameData" minOccurs="0" maxOccurs="1" />
+                                                <xs:element name="FwdFrame" type="StiffenerFrameData" minOccurs="0" maxOccurs="1" />
+                                            </xs:sequence>
+                                            <xs:attribute name="Name" type="xs:string" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Name of stiffener. Normally a number.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="Position" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>The distance to the stiffener, either from the previous stiffener or along one of the principal axes according to RefCode.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="RefCode" type="PosRefCodeTypes" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Denotes how Position is measured, as for the width of plates. See the description of PosRefCodeTypes.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="Type" type="xs:int" use="required" />
+                                            <xs:attribute name="RusCode" type="xs:string" use="required" />
+                                            <xs:attribute name="H" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Total height of the profile, including the flange (mm).</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="BF" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Breadth of flange (mm), =0 if no flange </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="T" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Thickness of web (mm).</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="TF" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Thickness of flange (mm), =0 if no flange</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="WebAngle" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>The angle between the Y-axis and the web ([0,360&gt;).</xs:documentation>
+                                                </xs:annotation>
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:double">
+                                                        <xs:minInclusive value="0" />
+                                                        <xs:maxExclusive value="360" />
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:attribute>
+                                            <xs:attribute name="FlAngle" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>The angle between the web and the flange (90/270).</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="Span" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Stiffener span (mm). It is by default the STDSPAN given under MISC at the beginning of the CROSS_SECTION.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="Yield" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Yield point of the steel (N/mm2).</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="MaterialId" type="xs:int">
+                                                <xs:annotation>
+                                                    <xs:documentation>Material Id</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="K" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Stress factor, relevant for side stiffeners only. See User Manual.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="BuckStiff" type="xs:boolean" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>True if the stiffener is a buckling stiffener</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="ExternalTag" type="xs:string" use="optional">
+                                                <xs:annotation>
+                                                    <xs:documentation>Intended as unique reference used by external programs.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="WeldingTgap" type="xs:double">
+                                                <xs:annotation>
+                                                    <xs:documentation>Welding, tgap</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="ConstructionType" type="xs:boolean">
+                                                <xs:annotation>
+                                                    <xs:documentation>Construction Type</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="YZContinuation" type="StiffenerYZContinuation" />
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="CUTOUTS">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="CUTOUT" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:simpleContent>
+                                                <xs:extension base="xs:string">
+                                                    <xs:attribute name="Position" type="xs:double" use="required">
+                                                        <xs:annotation>
+                                                            <xs:documentation>The distance to the start point of the cut-out (mm). It is measured as denoted by RefCode. </xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                    <xs:attribute name="RefCode" type="PosRefCodeTypes" use="required">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Denotes how Position is measured, as for the width of plates. See the description of PosRefCodeTypes.</xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                    <xs:attribute name="Width" type="xs:double" use="required">
+                                                        <xs:annotation>
+                                                            <xs:documentation>Width of the cut-out (mm).</xs:documentation>
+                                                        </xs:annotation>
+                                                    </xs:attribute>
+                                                </xs:extension>
+                                            </xs:simpleContent>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                        <xs:element name="TRVSTIFFS">
+                            <xs:complexType>
+                                <xs:sequence>
+                                    <xs:element name="TSTIFF" maxOccurs="unbounded">
+                                        <xs:complexType>
+                                            <xs:sequence>
+                                                <xs:element name="BRACKET1" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Bracket data for the upper end of the transverse stiffener. This data is relevant for main frames only, and optional even then.</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:complexType>
+                                                        <xs:attribute name="Arm" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Arm length of the end bracket (mm).</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                        <xs:attribute name="HW" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Web height of the end bracket, measured perpendicular to the flange (mm).</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                        <xs:attribute name="TW" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Web thickness of the end bracket (mm).</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                        <xs:attribute name="BF" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Flange width for the end bracket, =0 if no flange (mm).</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                        <xs:attribute name="TF" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Flange thickness for the end bracket, =0 if no flange (mm).</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                        <xs:attribute name="tb" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>(mm). CSR-H.</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                        <xs:attribute name="lb" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Arm length of the end bracket excluding soft toe (mm). CSR-H.</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                                <xs:element name="BRACKET2" minOccurs="0">
+                                                    <xs:annotation>
+                                                        <xs:documentation>Bracket data for the lower end of the transverse stiffener. This data is relevant for main frames only, and optional even then.</xs:documentation>
+                                                    </xs:annotation>
+                                                    <xs:complexType>
+                                                        <xs:attribute name="Arm" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Arm length of the end bracket (mm).</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                        <xs:attribute name="HW" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Web height of the end bracket, measured perpendicular to the flange (mm).</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                        <xs:attribute name="TW" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Web thickness of the end bracket (mm).</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                        <xs:attribute name="BF" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Flange width for the end bracket, =0 if no flange (mm).</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                        <xs:attribute name="TF" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Flange thickness for the end bracket, =0 if no flange (mm).</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                        <xs:attribute name="tb" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>(mm). CSR-H.</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                        <xs:attribute name="lb" type="xs:double" use="optional">
+                                                            <xs:annotation>
+                                                                <xs:documentation>Arm length of the end bracket excluding soft toe (mm). CSR-H.</xs:documentation>
+                                                            </xs:annotation>
+                                                        </xs:attribute>
+                                                    </xs:complexType>
+                                                </xs:element>
+                                            </xs:sequence>
+                                            <xs:attribute name="Pos1" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>The distance to the start point of the transverse stiffener (mm). It is measured as denoted by RefCode1.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="RefCode1" type="PosRefCodeTypes" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Denotes how Pos1 is measured. See the description of PosRefCodeTypes.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="Pos2" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>The distance to the end point of the transverse stiffener (mm). It is measured as denoted by RefCode2. </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="RefCode2" type="PosRefCodeTypes" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Denotes how Pos2 is measured. See the description of PosRefCodeTypes.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="Spacing" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Spacing between the transverse stiffeners. It is by default STDSPACE given under MISC at the beginnning of the CROSS_SECTION.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="Type" type="xs:int" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Profile type.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="RusCode" type="xs:string" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Russian code, if the stiffener is a Russian bulb bar. </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="H" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Total height of the profile, including the flange (mm)</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="BF" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Flange width (mm), =0 if no flange </xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="T" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Web thickness (mm)</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="TF" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Flange thickness (mm), =0 if no flange</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="Side" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>”LEFT” if the stiffener is on the left side of the panel. ”RIGHT” if on the right side.</xs:documentation>
+                                                </xs:annotation>
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:enumeration value="LEFT" />
+                                                        <xs:enumeration value="RIGHT" />
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:attribute>
+                                            <xs:attribute name="Category" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>”TSTIFF”  for transverse stiffeners in general. ”MFRAME” for main frame.”TDFRAME”  for 'tween deck frame. "GIRDER"  for floor/deep girder.</xs:documentation>
+                                                </xs:annotation>
+                                                <xs:simpleType>
+                                                    <xs:restriction base="xs:string">
+                                                        <xs:enumeration value="TSTIFF" />
+                                                        <xs:enumeration value="MFRAME" />
+                                                        <xs:enumeration value="TDFRAME" />
+                                                        <xs:enumeration value="GIRDER" />
+                                                    </xs:restriction>
+                                                </xs:simpleType>
+                                            </xs:attribute>
+                                            <xs:attribute name="Yield" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Yield point of the steel (N/mm2).</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="MaterialId" type="xs:int">
+                                                <xs:annotation>
+                                                    <xs:documentation>Material Id</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="K" type="xs:double" use="required">
+                                                <xs:annotation>
+                                                    <xs:documentation>Stress factor, relevant for side stiffeners only. See the User's Manual.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                            <xs:attribute name="ExternalTag" type="xs:string" use="optional">
+                                                <xs:annotation>
+                                                    <xs:documentation>Intended as unique reference used by external programs.</xs:documentation>
+                                                </xs:annotation>
+                                            </xs:attribute>
+                                        </xs:complexType>
+                                    </xs:element>
+                                </xs:sequence>
+                            </xs:complexType>
+                        </xs:element>
+                    </xs:sequence>
+                    <xs:attribute name="Name" type="xs:string" use="required" />
+                </xs:complexType>
+            </xs:element>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:simpleType name="PosRefCodeTypes" final="restriction">
+        <xs:annotation>
+            <xs:documentation>Used by Plates, stiffeners and segments</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="CURVE">
+                <xs:annotation>
+                    <xs:documentation>The position is measured along the curve.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ABS_Y">
+                <xs:annotation>
+                    <xs:documentation>The position is given by abs. Y-position.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ABS_Z">
+                <xs:annotation>
+                    <xs:documentation>The position is given by abs. Z-position.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="REL_Y">
+                <xs:annotation>
+                    <xs:documentation>The position is projected along the Y-axis.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="REL_Z">
+                <xs:annotation>
+                    <xs:documentation>The position is projected along the Z-axis.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="StiffenerYZContinuation" final="restriction">
+        <xs:annotation>
+            <xs:documentation>Y position, Z position or both of the stiffener are constant at different X positions</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="Horizontal">
+            </xs:enumeration>
+            <xs:enumeration value="Vertical">
+            </xs:enumeration>
+            <xs:enumeration value="Constant">
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Materials" final="restriction">
+        <xs:annotation>
+            <xs:documentation>Used by Plates, stiffeners and segments</xs:documentation>
+        </xs:annotation>
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="STDSTEEL">
+                <xs:annotation>
+                    <xs:documentation>Ordinary steel. Default</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="STAINLESS">
+                <xs:annotation>
+                    <xs:documentation>Stainless steel.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="CLADSTEEL">
+                <xs:annotation>
+                    <xs:documentation>Clad steel.</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Level1Position" final="restriction">
+        <xs:annotation>
+            <xs:documentation />
+        </xs:annotation>
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="Undefined">
+                <xs:annotation>
+                    <xs:documentation>Undefined</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="GBOTTOM">
+                <xs:annotation>
+                    <xs:documentation>Bottom (in general)</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="SBOTTOM">
+                <xs:annotation>
+                    <xs:documentation>Single bottom</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="DBOTTOM">
+                <xs:annotation>
+                    <xs:documentation>Bottom in a double bottom</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="BILGE">
+                <xs:annotation>
+                    <xs:documentation>Bilge</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="SIDE">
+                <xs:annotation>
+                    <xs:documentation>Side</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="SHEER">
+                <xs:annotation>
+                    <xs:documentation>Sheer</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="STRDECK">
+                <xs:annotation>
+                    <xs:documentation>Strength deck</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="LONGBHD">
+                <xs:annotation>
+                    <xs:documentation>Longitudinal WT bulkhead</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="LWASHBHD">
+                <xs:annotation>
+                    <xs:documentation>Longitudinal wash bulkhead</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="INNERBOTT">
+                <xs:annotation>
+                    <xs:documentation>Inner bottom</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="HOPPERTANKTOP">
+                <xs:annotation>
+                    <xs:documentation>Hopper tank top</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="INNERSIDE">
+                <xs:annotation>
+                    <xs:documentation>The long. bulkhead when double side</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="INNERDECK">
+                <xs:annotation>
+                    <xs:documentation>Inner deck in a double deck structure (similar to double bottom)</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="TOPSIDE">
+                <xs:annotation>
+                    <xs:documentation>Top side tank bottom</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="TRANSVBHD">
+                <xs:annotation>
+                    <xs:documentation>Transverse WT bulkhead</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="TWASHBHD">
+                <xs:annotation>
+                    <xs:documentation>Transverse wash bulkhead</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="TWEENDECK">
+                <xs:annotation>
+                    <xs:documentation>Tween deck</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="CARGODECK">
+                <xs:annotation>
+                    <xs:documentation>Deck for cargo</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="WEATHERDECK">
+                <xs:annotation>
+                    <xs:documentation>Weather deck</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="DECKHATCH">
+                <xs:annotation>
+                    <xs:documentation>Deck between hatches</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="FCLE_DECK">
+                <xs:annotation>
+                    <xs:documentation>Forecastle deck</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="POOP_DECK">
+                <xs:annotation>
+                    <xs:documentation>Poop deck</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="HSIDECOAMING">
+                <xs:annotation>
+                    <xs:documentation>Hatch side coaming</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="HENDCOAMING">
+                <xs:annotation>
+                    <xs:documentation>Hatch end coaming</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="LSTOOL_LBHD">
+                <xs:annotation>
+                    <xs:documentation>Lower stool, long bhd</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="USTOOL_LBHD">
+                <xs:annotation>
+                    <xs:documentation>Upper stool, long bhd</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="LSTOOL_TBHD">
+                <xs:annotation>
+                    <xs:documentation>Lower stool, trv bhd</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="USTOOL_TBHD">
+                <xs:annotation>
+                    <xs:documentation>Upper stool, trv bhd</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="LSTOOLTOP_LBHD">
+                <xs:annotation>
+                    <xs:documentation>Top of lower stool, long bhd</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="LSTOOLTOP_TBHD">
+                <xs:annotation>
+                    <xs:documentation>Top of lower stool, trv bhd</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="USTOOLBOT_LBHD">
+                <xs:annotation>
+                    <xs:documentation>Bottom of upper stool, long bhd</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="USTOOLBOT_TBHD">
+                <xs:annotation>
+                    <xs:documentation>Bottom of upper stool, trv bhd</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="HOUSE_FRONT">
+                <xs:annotation>
+                    <xs:documentation>Deck house, front bulkhead</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="HOUSE_SIDE">
+                <xs:annotation>
+                    <xs:documentation>Deck house, side</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="HOUSE_AFT">
+                <xs:annotation>
+                    <xs:documentation>Deck house, aft bulkhead</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="HOUSE_DECK">
+                <xs:annotation>
+                    <xs:documentation>Deck in a deckhouse</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="HOUSE_TOP">
+                <xs:annotation>
+                    <xs:documentation>Top of deckhouse</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="SUPER_FRONT">
+                <xs:annotation>
+                    <xs:documentation>Superstructure, front bulkhead</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="SUPER_SIDE">
+                <xs:annotation>
+                    <xs:documentation>Superstructure, side</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="SUPER_AFT">
+                <xs:annotation>
+                    <xs:documentation>Superstructure, aft bulkhead</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="SUPER_DECK">
+                <xs:annotation>
+                    <xs:documentation>Deck in a superstructure</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="SUPER_TOP">
+                <xs:annotation>
+                    <xs:documentation>Top of a superstructure</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="ACCOM_DECK">
+                <xs:annotation>
+                    <xs:documentation>Accomodation deck</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="PLATFORM_ENG">
+                <xs:annotation>
+                    <xs:documentation>Platform deck in engine room</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="CASING">
+                <xs:annotation>
+                    <xs:documentation>Machinery casing</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="HATCHCOVER_WD">
+                <xs:annotation>
+                    <xs:documentation>Hatch cover on weather deck</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="HATCHCOVER_SD">
+                <xs:annotation>
+                    <xs:documentation>Hatch cover on sheltered deck</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="STRINGER_DECK">
+                <xs:annotation>
+                    <xs:documentation>Stringer deck</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="BORDER_LINE">
+                <xs:annotation>
+                    <xs:documentation>Border line (for girders etc)</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="STIFFENER_PATH">
+                <xs:annotation>
+                    <xs:documentation>Path for stiffeners on transv. panels</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="UNDEF_POS">
+                <xs:annotation>
+                    <xs:documentation>Undefined (no rules)</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="TRUNKDECK">
+                <xs:annotation>
+                    <xs:documentation>Trunk deck</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="PLATFORM">
+                <xs:annotation>
+                    <xs:documentation>Platform</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="DUMMY_PANEL">
+                <xs:annotation>
+                    <xs:documentation>Dummy panel (to be excluded in all calculations)</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="WETDECK">
+                <xs:annotation>
+                    <xs:documentation>HSLC Bottom between multihulls</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:simpleType name="Level2Position" final="restriction">
+        <xs:annotation>
+            <xs:documentation />
+        </xs:annotation>
+        <xs:restriction base="xs:normalizedString">
+            <xs:enumeration value="Undefined">
+                <xs:annotation>
+                    <xs:documentation>Undefined</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="LGIRDER">
+                <xs:annotation>
+                    <xs:documentation>Long. girder</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="TGIRDER">
+                <xs:annotation>
+                    <xs:documentation>Transv. girder</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="VGIRDER">
+                <xs:annotation>
+                    <xs:documentation>Vertical girder</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="WEBFRAME">
+                <xs:annotation>
+                    <xs:documentation>Transverse web frame</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="TWEBFRAME">
+                <xs:annotation>
+                    <xs:documentation>The same, to keep name convention Txxx</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="LWEBFRAME">
+                <xs:annotation>
+                    <xs:documentation>Longitudinal web frame</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="STRINGER">
+                <xs:annotation>
+                    <xs:documentation>Stringer</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="FLOOR">
+                <xs:annotation>
+                    <xs:documentation>Floor</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="CROSSTIE">
+                <xs:annotation>
+                    <xs:documentation>Cross tie</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="BRACKET">
+                <xs:annotation>
+                    <xs:documentation>Bracket in general</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="UBRACKET">
+                <xs:annotation>
+                    <xs:documentation>Upper bracket (e.g. on vert. gir at deck)</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="LBRACKET">
+                <xs:annotation>
+                    <xs:documentation>Lower bracket (e.g. on vert. gir at bottom)</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="GIRDERFLG">
+                <xs:annotation>
+                    <xs:documentation>Girder flange (on long. girder)</xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:complexType name="StiffenerFrameData">
+        <xs:attribute name="EndConnectionId" type="xs:int" />
+        <xs:attribute name="SlotId" type="xs:int" />
+        <xs:attribute name="WeldingId" type="xs:int" />
+    </xs:complexType>
+</xs:schema>
