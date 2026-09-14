@@ -554,6 +554,7 @@ class OcxV3Builder(IOcxBuilder):
                                        id=rid,
                                        name=getattr(rp, "name", None),
                                        location=self._qty(getattr(rp, "reference_location", None)),
+                                       display_grid=getattr(rp, "display_grid", None),
                                    ),
                                    ir.duplicate_ids)
             return ids

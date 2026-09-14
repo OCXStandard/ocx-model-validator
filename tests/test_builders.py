@@ -151,3 +151,47 @@ def test_build_stiffener_without_inclination_defaults_empty():
     parent = ParentRef(kind=ParentKind.VESSEL, id="V1")
     s = builder._build_stiffener(_Bare(), parent)
     assert s.inclinations == []
+
+
+class _StubQuantity:
+    numericvalue = 10.0
+    unit = "Um"
+
+
+class _StubRefPlane:
+    def __init__(self, pid, display_grid=None):
+        self.id = pid
+        self.name = f"plane-{pid}"
+        self.reference_location = _StubQuantity()
+        self.display_grid = display_grid
+
+
+class _StubXRefPlanes:
+    def __init__(self, planes):
+        self.ref_plane = planes
+
+
+class _StubCoordinateSystem:
+    id = "cs1"
+    name = None
+    is_global = True
+    local_cartesian = None
+    yref_planes = None
+    zref_planes = None
+
+    def __init__(self, planes):
+        self.xref_planes = _StubXRefPlanes(planes)
+
+
+def test_build_coordinate_system_extracts_display_grid():
+    builder = OcxV3Builder()
+    ir = IrVessel(id="V1")
+    cs = _StubCoordinateSystem([
+        _StubRefPlane("rp1", display_grid=True),
+        _StubRefPlane("rp2", display_grid=False),
+        _StubRefPlane("rp3"),
+    ])
+    builder._build_coordinate_system(cs, ir)
+    assert ir.ref_planes["rp1"].display_grid is True
+    assert ir.ref_planes["rp2"].display_grid is False
+    assert ir.ref_planes["rp3"].display_grid is None

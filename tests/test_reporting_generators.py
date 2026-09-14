@@ -65,9 +65,14 @@ def _vessel_with_frames() -> IrVessel:
     vessel = IrVessel(id="V1", name="MV Test", schema_version="3.1.0")
     frame_ids: list[str] = []
     for i, x in enumerate([0.0, 0.8, 1.6]):
-        rp = IrRefPlane(id=f"FR{i}", name=f"FR{i}", location=Quantity(x, "Um"))
+        rp = IrRefPlane(id=f"FR{i}", name=f"FR{i}", location=Quantity(x, "Um"),
+                        display_grid=True)
         vessel.ref_planes[rp.id] = rp
         frame_ids.append(rp.id)
+    aux = IrRefPlane(id="AUX", name="AUX", location=Quantity(1.2, "Um"),
+                     display_grid=False)
+    vessel.ref_planes[aux.id] = aux
+    frame_ids.append(aux.id)
     vessel.coordinate_systems["CS1"] = IrCoordinateSystem(
         id="CS1",
         is_global=True,
@@ -83,8 +88,25 @@ def test_frame_table_report():
     titles = [t.title for t in section.tables]
     assert titles == ["Spacing entries", "Frame positions"]
     positions = section.tables[1]
-    assert positions.columns == ["Frame", "x (mm)"]
-    assert positions.rows == [["FR0", 0.0], ["FR1", 800.0], ["FR2", 1600.0]]
+    assert positions.columns == ["Frame", "Name", "x (mm)", "Display grid"]
+    assert positions.rows == [["FR0", "FR0", 0.0, "yes"],
+                              ["FR1", "FR1", 800.0, "yes"],
+                              ["AUX", "AUX", 1200.0, "no"],
+                              ["FR2", "FR2", 1600.0, "yes"]]
+
+
+def test_frame_table_spacing_only_from_display_grid_planes():
+    report = frame_table_gen.build(_vessel_with_frames(), source_file="m.3docx")
+    spacing = report.sections[0].tables[0]
+    # AUX (displayGrid=false) must not affect the grid spacing
+    assert spacing.rows == [["FR0", 800.0]]
+
+
+def test_frame_table_offset_names_frame():
+    report = frame_table_gen.build(_vessel_with_frames(), source_file="m.3docx")
+    intro = report.sections[0].intro
+    assert "0.0 mm" in intro
+    assert "FR0" in intro
 
 
 def test_frame_table_report_empty_model():

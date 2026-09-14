@@ -20,8 +20,9 @@ def _vessel(planes, x_ids=None):
     return ir
 
 
-def _plane(pid, name, x_m):
-    return IrRefPlane(id=pid, name=name, location=Quantity(x_m, "Um"))
+def _plane(pid, name, x_m, display_grid=None):
+    return IrRefPlane(id=pid, name=name, location=Quantity(x_m, "Um"),
+                      display_grid=display_grid)
 
 
 def test_positions_sorted_and_labeled():
@@ -124,3 +125,25 @@ def test_duplicate_labels_warning():
     # Warning should mention the duplicate label
     assert any("4" in w and ("duplicate" in w.lower() or "appears" in w.lower())
                for w in ft.warnings)
+
+
+def test_frames_carry_name_x_and_display_grid():
+    ir = _vessel([_plane("a", "X0", 0.0, display_grid=True),
+                  _plane("b", "X4", 4.0, display_grid=False),
+                  _plane("c", "X8", 8.0)])
+    ft = build_frame_table(ir)
+    assert [(f.label, f.name, f.display_grid) for f in ft.frames] == [
+        ("0", "X0", True), ("4", "X4", False), ("8", "X8", None)]
+    assert [f.x_mm for f in ft.frames] == pytest.approx([0.0, 4000.0, 8000.0])
+
+
+def test_spacing_excludes_display_grid_false_planes():
+    # grid frames 0, 4, 8 (spacing 4000); auxiliary plane at 6.0 excluded
+    ir = _vessel([_plane("a", "X0", 0.0, display_grid=True),
+                  _plane("b", "X4", 4.0, display_grid=True),
+                  _plane("x", "AUX", 6.0, display_grid=False),
+                  _plane("c", "X8", 8.0, display_grid=True)])
+    ft = build_frame_table(ir)
+    assert ft.entries == [("0", pytest.approx(4000.0))]
+    # positions still include the auxiliary plane
+    assert len(ft.positions) == 4

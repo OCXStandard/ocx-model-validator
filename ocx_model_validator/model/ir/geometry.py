@@ -175,6 +175,7 @@ class IrRefPlane:
     name: str | None = None
     reference_plane: IrPlane3D | None = None
     location: Quantity | None = None
+    display_grid: bool | None = None
 
 
 @dataclass(frozen=True)
