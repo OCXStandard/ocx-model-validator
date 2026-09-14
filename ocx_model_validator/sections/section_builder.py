@@ -5,9 +5,17 @@ from dataclasses import dataclass, replace
 from math import hypot
 from typing import Iterable
 
+import numpy as np
+
 from ocx_model_validator.exeptions import GeometryError, SectionError
-from ocx_model_validator.model.ir.base import Quantity, Ref
+from ocx_model_validator.model.ir.base import IrUnit, Quantity, Ref
 from ocx_model_validator.model.ir.catalogues import IrMaterial
+from ocx_model_validator.model.ir.geometry import (
+    IrCircle3D,
+    IrCircumArc3D,
+    IrCompositeCurve3D,
+    IrCurve3D,
+)
 from ocx_model_validator.model.ir.sections import (
     IrBulbFlatSection,
     IrFlatBarSection,
@@ -18,7 +26,7 @@ from ocx_model_validator.model.ir.sections import (
     IrTSection,
 )
 from ocx_model_validator.model.ir.structural import IrPanel, IrPlate, IrStiffener, IrVessel
-from ocx_model_validator.sections.geometry import intersect_curve_plane
+from ocx_model_validator.sections.geometry import _circle_from_three_points, intersect_curve_plane
 from ocx_model_validator.sections.units import point_mm, qty_mm, qty_mpa
 
 
@@ -53,6 +61,9 @@ class SectionPlate:
     thickness_mm: float | None
     material_reh_mpa: float | None
     panel: str | None
+    radius_mm: float | None = None
+    arc_center_y_mm: float | None = None
+    arc_center_z_mm: float | None = None
 
 
 @dataclass(frozen=True)
@@ -186,6 +197,8 @@ def _build_plates(
             thickness_mm = _safe_qty_mm(plate.thickness, vessel.unit_registry, "plate", name, "thickness", warnings)
             material_reh_mpa = _safe_material_reh_mpa(plate.material_ref, vessel, "plate", name, warnings)
             panel_name = _panel_name(panel_item.panel)
+            arc_info = _plate_arc_info(plate, x_mm, to_mm, vessel.unit_registry)
+            radius_mm, arc_center_y_mm, arc_center_z_mm = arc_info or (None, None, None)
             
             for left, right in zip(hits[0::2], hits[1::2]):
                 result.append(
@@ -198,6 +211,9 @@ def _build_plates(
                         thickness_mm=thickness_mm,
                         material_reh_mpa=material_reh_mpa,
                         panel=panel_name,
+                        radius_mm=radius_mm,
+                        arc_center_y_mm=arc_center_y_mm,
+                        arc_center_z_mm=arc_center_z_mm,
                     )
                 )
         except GeometryError as exc:
@@ -205,6 +221,84 @@ def _build_plates(
             continue
 
     return result
+
+
+def _plate_arc_info(
+    ir_plate: IrPlate,
+    x_mm: float,
+    to_mm,
+    registry: dict[str, IrUnit],
+) -> tuple[float, float, float] | None:
+    contour = getattr(ir_plate, "outer_contour", None)
+    if contour is None:
+        return None
+
+    accepted: list[tuple[float, float, float, float]] = []
+    for segment in _curve_segments(contour):
+        info = _arc_segment_info(segment, to_mm, registry)
+        if info is None:
+            continue
+        center, radius, normal = info
+        if abs(float(normal[0])) < 0.99:
+            continue
+        accepted.append(
+            (abs(float(center[0] - x_mm)), float(radius), float(center[1]), float(center[2]))
+        )
+
+    if not accepted:
+        return None
+    _, radius_mm, center_y_mm, center_z_mm = min(accepted, key=lambda item: item[0])
+    return radius_mm, center_y_mm, center_z_mm
+
+
+def _curve_segments(curve: IrCurve3D) -> Iterable[IrCurve3D]:
+    if isinstance(curve, IrCompositeCurve3D):
+        return getattr(curve, "segments", None) or []
+    return (curve,)
+
+
+def _arc_segment_info(
+    segment: IrCurve3D,
+    to_mm,
+    registry: dict[str, IrUnit],
+) -> tuple[np.ndarray, float, np.ndarray] | None:
+    try:
+        if isinstance(segment, IrCircumArc3D):
+            start = getattr(segment, "start", None)
+            intermediate = getattr(segment, "intermediate", None)
+            end = getattr(segment, "end", None)
+            if start is None or intermediate is None or end is None:
+                return None
+            center, radius, normal = _circle_from_three_points(
+                np.asarray(to_mm(start), dtype=float),
+                np.asarray(to_mm(intermediate), dtype=float),
+                np.asarray(to_mm(end), dtype=float),
+            )
+            return center, radius, normal
+        if isinstance(segment, IrCircle3D):
+            center_point = getattr(segment, "center", None)
+            diameter = getattr(segment, "diameter", None)
+            normal_vector = getattr(segment, "normal", None)
+            if center_point is None or diameter is None or normal_vector is None:
+                return None
+            diameter_mm = qty_mm(diameter, registry)
+            if diameter_mm is None or diameter_mm <= 0.0:
+                return None
+            normal = np.asarray(
+                [normal_vector.x, normal_vector.y, normal_vector.z],
+                dtype=float,
+            )
+            normal_length = float(np.linalg.norm(normal))
+            if normal_length < 1e-9:
+                return None
+            return (
+                np.asarray(to_mm(center_point), dtype=float),
+                diameter_mm / 2.0,
+                normal / normal_length,
+            )
+    except GeometryError:
+        return None
+    return None
 
 
 def _panel_stiffeners(vessel: IrVessel) -> Iterable[_PanelItem]:

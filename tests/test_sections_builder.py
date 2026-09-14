@@ -5,7 +5,15 @@ import pytest
 from ocx_model_validator.exeptions import SectionError
 from ocx_model_validator.model.ir.base import Ref
 from ocx_model_validator.model.ir.catalogues import IrMaterial
-from ocx_model_validator.model.ir.geometry import IrCurve3D, IrPolyLine3D
+from ocx_model_validator.model.ir.geometry import (
+    IrCircle3D,
+    IrCircumArc3D,
+    IrCompositeCurve3D,
+    IrCurve3D,
+    IrLine3D,
+    IrPolyLine3D,
+    IrVector3D,
+)
 from ocx_model_validator.model.ir.sections import (
     IrBulbFlatSection,
     IrFlatBarSection,
@@ -190,6 +198,99 @@ def test_plate_segments_are_paired_with_thickness_and_material(vessel: IrVessel)
     assert (plate.y1_mm, plate.z1_mm, plate.y2_mm, plate.z2_mm) == pytest.approx(
         (0.0, 0.0, 2000.0, 0.0)
     )
+
+
+def test_plate_records_transverse_arc_radius_and_center(vessel: IrVessel) -> None:
+    vessel.panels["panel-c"] = IrPanel(id="panel-c", name="Panel C", plate_ids=["bilge-plate"])
+    vessel.plates["bilge-plate"] = IrPlate(
+        id="bilge-plate",
+        parent_ref=parent("panel-c"),
+        name="Bilge plate",
+        material_ref=Ref("mat315"),
+        thickness=q(10.0, "Umm"),
+        outer_contour=IrCompositeCurve3D(
+            curve_length=None,
+            segments=[
+                IrLine3D(curve_length=None, start=p(4.0, 0.0, 0.0), end=p(6.0, 0.0, 0.0)),
+                IrLine3D(curve_length=None, start=p(4.0, 2.0, 0.0), end=p(6.0, 2.0, 0.0)),
+                IrCircumArc3D(
+                    curve_length=None,
+                    start=p(5.0, 1.0, 1.0),
+                    intermediate=p(5.0, 0.5 + 0.5 / 2**0.5, 1.0 + 0.5 / 2**0.5),
+                    end=p(5.0, 0.5, 1.5),
+                ),
+            ],
+        ),
+    )
+
+    section = build_cross_section(vessel, 5000.0)
+
+    plate = next(p for p in section.plates if p.name == "Bilge plate")
+    assert plate.radius_mm == pytest.approx(500.0)
+    assert plate.arc_center_y_mm == pytest.approx(500.0)
+    assert plate.arc_center_z_mm == pytest.approx(1000.0)
+
+
+def test_plate_ignores_longitudinal_arc_radius_and_center(vessel: IrVessel) -> None:
+    vessel.panels["panel-c"] = IrPanel(id="panel-c", name="Panel C", plate_ids=["longitudinal-arc-plate"])
+    vessel.plates["longitudinal-arc-plate"] = IrPlate(
+        id="longitudinal-arc-plate",
+        parent_ref=parent("panel-c"),
+        name="Longitudinal arc plate",
+        material_ref=Ref("mat315"),
+        thickness=q(10.0, "Umm"),
+        outer_contour=IrCompositeCurve3D(
+            curve_length=None,
+            segments=[
+                IrLine3D(curve_length=None, start=p(4.0, 0.0, 0.0), end=p(6.0, 0.0, 0.0)),
+                IrLine3D(curve_length=None, start=p(4.0, 2.0, 0.0), end=p(6.0, 2.0, 0.0)),
+                IrCircumArc3D(
+                    curve_length=None,
+                    start=p(5.5, 0.5, 1.0),
+                    intermediate=p(5.0 + 0.5 / 2**0.5, 0.5 + 0.5 / 2**0.5, 1.0),
+                    end=p(5.0, 1.0, 1.0),
+                ),
+            ],
+        ),
+    )
+
+    section = build_cross_section(vessel, 5000.0)
+
+    plate = next(p for p in section.plates if p.name == "Longitudinal arc plate")
+    assert plate.radius_mm is None
+    assert plate.arc_center_y_mm is None
+    assert plate.arc_center_z_mm is None
+
+
+def test_plate_records_transverse_circle_radius_and_center(vessel: IrVessel) -> None:
+    vessel.panels["panel-c"] = IrPanel(id="panel-c", name="Panel C", plate_ids=["circle-plate"])
+    vessel.plates["circle-plate"] = IrPlate(
+        id="circle-plate",
+        parent_ref=parent("panel-c"),
+        name="Circle plate",
+        material_ref=Ref("mat315"),
+        thickness=q(10.0, "Umm"),
+        outer_contour=IrCompositeCurve3D(
+            curve_length=None,
+            segments=[
+                IrLine3D(curve_length=None, start=p(4.0, 0.0, 0.0), end=p(6.0, 0.0, 0.0)),
+                IrLine3D(curve_length=None, start=p(4.0, 2.0, 0.0), end=p(6.0, 2.0, 0.0)),
+                IrCircle3D(
+                    curve_length=None,
+                    center=p(5.0, 0.75, 1.25),
+                    diameter=q(1.2, "Um"),
+                    normal=IrVector3D(1.0, 0.0, 0.0),
+                ),
+            ],
+        ),
+    )
+
+    section = build_cross_section(vessel, 5000.0)
+
+    plate = next(p for p in section.plates if p.name == "Circle plate")
+    assert plate.radius_mm == pytest.approx(600.0)
+    assert plate.arc_center_y_mm == pytest.approx(750.0)
+    assert plate.arc_center_z_mm == pytest.approx(1250.0)
 
 
 def test_plate_segments_with_non_monotonic_z_are_paired_along_principal_axis(vessel: IrVessel) -> None:
