@@ -261,11 +261,13 @@ def all_cmd(
         catalogues,
         compartments,
         frame_table,
+        model_extent,
     )
 
     vessel = _load_vessel(model)
     source = str(model)
     parts = [
+        model_extent.build(vessel, source_file=source),
         frame_table.build(vessel, source_file=source),
         compartments.build(vessel, source_file=source),
         catalogues.build(vessel, source_file=source),

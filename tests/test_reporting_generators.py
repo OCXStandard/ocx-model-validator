@@ -337,3 +337,48 @@ def test_compartment_extent_x_falls_back_to_mm_without_frame_table():
     row = table.rows[0]
     assert row[table.columns.index("min x (frame)")] == 1000.0
     assert row[table.columns.index("max x (frame)")] == 2000.0
+
+
+def test_model_extent_report():
+    from ocx_model_validator.model.ir.geometry import IrLine3D, IrPoint3D
+    from ocx_model_validator.model.ir.structural import IrStiffener
+    from ocx_model_validator.model.ir.base import ParentKind, ParentRef
+    from ocx_model_validator.reporting.generators import model_extent as extent_gen
+
+    parent = ParentRef(kind=ParentKind.VESSEL, id="V1")
+    vessel = IrVessel(id="V1", name="MV Test")
+    vessel.stiffeners["S1"] = IrStiffener(
+        id="S1", parent_ref=parent,
+        cog=IrCog(5.0, -1.0, 2.0, "Um"),
+        trace=IrLine3D(curve_length=None,
+                       start=IrPoint3D(0.0, -2.0, 0.0, "Um"),
+                       end=IrPoint3D(10.0, 2.0, 4.0, "Um")),
+    )
+    vessel.compartments["C1"] = IrCompartment(
+        id="C1", name="Tank", compartment_purpose="void",
+        face_boundary_curves=[
+            IrLine3D(curve_length=None,
+                     start=IrPoint3D(-1.0, 0.0, -0.5, "Um"),
+                     end=IrPoint3D(12.0, 3.0, 6.0, "Um")),
+        ],
+    )
+    report = extent_gen.build(vessel, source_file="m.3docx")
+    assert report.title == "Model extent report"
+    section = report.sections[0]
+    assert section.title == "Model extent"
+    table = section.tables[0]
+    assert table.columns == ["Axis", "min (mm)", "max (mm)", "size (mm)"]
+    assert table.rows == [
+        ["x", -1000.0, 12000.0, 13000.0],
+        ["y", -2000.0, 3000.0, 5000.0],
+        ["z", -500.0, 6000.0, 6500.0],
+    ]
+
+
+def test_model_extent_report_no_geometry_degrades():
+    from ocx_model_validator.reporting.generators import model_extent as extent_gen
+
+    report = extent_gen.build(IrVessel(id="V1"), source_file="m.3docx")
+    section = report.sections[0]
+    assert section.tables[0].rows == []
+    assert any("extent" in n.lower() for n in section.notes)

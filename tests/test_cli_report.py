@@ -84,6 +84,8 @@ def test_report_all(model_310: Path, tmp_path: Path):
     assert result.exit_code == 0
     text = dest.read_text(encoding="utf-8")
     assert text.startswith("# Model report")
-    for heading in ["## Frame table", "## Compartments", "## Materials",
-                    "## Bill of material"]:
+    for heading in ["## Model extent", "## Frame table", "## Compartments",
+                    "## Materials", "## Bill of material"]:
         assert heading in text
+    # model extent comes first
+    assert text.index("## Model extent") < text.index("## Frame table")
