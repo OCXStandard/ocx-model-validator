@@ -5,6 +5,9 @@ from dataclasses import dataclass
 from math import asin, atan2, degrees, hypot, pi, tau
 from typing import Iterable
 
+from lxml import etree
+
+from ocx_model_validator.sections.document import build_compartments_block
 from ocx_model_validator.sections.section_builder import SectionPlate, SectionStiffener
 
 
@@ -15,6 +18,29 @@ _LSTIFF_TYPE = {
     "l_overshoot_flange": 35,
     "l_overshoot_web": 36,
     "t_section": 40,
+}
+_SHIP_RULE_CHILD = {
+    "DNV": "DNV",
+    "RV5": "RV5",
+    "CSR-H": "CSR-H",
+}
+_COMPARTMENT_TYPE = {
+    "VOIDSPACE": "VoidSpace",
+    "BALLASTWATERTANK": "BallastWaterTank",
+    "FUELTANK": "FuelOilTank",
+    "FRESHWATERTANK": "FreshWaterTank",
+    "CARGOHOLD": "CargoHold",
+}
+_GENERAL_SHIP_DATA_ATTRS = {
+    "MaxServiceSpeed": "0",
+    "MinNormBalDraught": "0",
+    "HeavyBalDraught": "0",
+    "DeepestEqWLDamaged": "0",
+    "SlammingDraughtEmpty": "0",
+    "SlammingDraughtFull": "0",
+    "DeadWeightLT50000": "false",
+    "FreeboardType": "B",
+    "BilgKeel": "false",
 }
 
 
@@ -242,6 +268,247 @@ class _MaterialIds:
 
     def items(self):
         return self._ids.items()
+
+
+def _ship_data(
+    rule_set: str,
+    extent: dict[str, float | None] | None,
+    materials: _MaterialIds | None,
+    warnings: list[str],
+) -> etree._Element:
+    """Build the HMX ShipData block."""
+    rule_child_name = _SHIP_RULE_CHILD[rule_set]
+    ship_data = etree.Element("ShipData", VesselId="", ShipType="Other")
+    rule_child = etree.SubElement(ship_data, rule_child_name)
+
+    applicable_attrs = {"RuleEdition": "2024"}
+    if rule_set == "DNV":
+        applicable_attrs["RuleSet"] = "DNV-1A1"
+    etree.SubElement(rule_child, "ApplicableRules", **applicable_attrs)
+
+    etree.SubElement(rule_child, "MainDimensions", **_main_dimensions_attrs(extent, warnings))
+
+    general_tag = "GeneralShipDataType" if rule_set == "DNV" else "GeneralShipData"
+    etree.SubElement(rule_child, general_tag, **_GENERAL_SHIP_DATA_ATTRS)
+    warnings.append(
+        "ShipData GeneralShipData uses placeholder values for required attributes"
+    )
+
+    etree.SubElement(rule_child, "MaterialData", **_material_data_attrs(materials))
+
+    if rule_set != "DNV":
+        etree.SubElement(rule_child, "IceClassData")
+
+    return ship_data
+
+
+def _frame_table(ft) -> etree._Element:
+    """Build the HMX FrameTable block."""
+    frame_table = etree.Element(
+        "FrameTable",
+        FrameOffset=_fmt_m(ft.frame0_offset_mm),
+        FrameRef="AP",
+    )
+    rows = (
+        [(row.label, spacing_mm) for row, spacing_mm in ft.spacing_rows]
+        if ft.spacing_rows
+        else list(ft.entries)
+    )
+    for idx, (label, spacing_mm) in enumerate(rows):
+        frame_no = "Stern" if idx == 0 else label
+        etree.SubElement(
+            frame_table,
+            "Spacing",
+            FrameNo=frame_no,
+            Spacing=_fmt_m(spacing_mm),
+        )
+    return frame_table
+
+
+def _compartments(vessel, warnings: list[str]) -> tuple[etree._Element | None, dict[str, dict]]:
+    """Build HMX Compartments and compartment boxes for later segment tagging."""
+    rows, row_warnings = build_compartments_block(vessel)
+    warnings.extend(row_warnings)
+    compartments = etree.Element("Compartments")
+    boxes: dict[str, dict] = {}
+
+    for row in rows:
+        name = row.get("name") or ""
+        extent = row.get("extent_mm") or {}
+        if _is_empty_extent(extent):
+            warnings.append(f"compartment {name}: extent is empty; skipped")
+            continue
+
+        hmx_type = _hmx_compartment_type(row.get("tank_type"), name, warnings)
+        comp_id = str(len(compartments) + 1)
+        compartment = etree.SubElement(
+            compartments,
+            "Compartment",
+            Name=name,
+            Type=hmx_type,
+            Id=comp_id,
+        )
+        etree.SubElement(compartment, "General", **_compartment_general_attrs(row, extent))
+        rv5_attrs = _rv5_compartment_attrs(row)
+        etree.SubElement(compartment, "RV5", **rv5_attrs)
+        geometry = etree.SubElement(compartment, "Geometry")
+        etree.SubElement(geometry, "BoundingBox", **_bounding_box_attrs(extent))
+        boxes[name] = {"id": comp_id, **extent}
+
+    if len(compartments) == 0:
+        return None, {}
+    return compartments, boxes
+
+
+def _segment_compartments(
+    p_mid: tuple[float, float],
+    direction: tuple[float, float],
+    comp_boxes: dict[str, dict],
+    x_mm: float,
+) -> tuple[str | None, str | None]:
+    """Return names of compartments sampled 100 mm left and right of a segment."""
+    dy, dz = direction
+    length = hypot(dy, dz)
+    if length <= 0.0:
+        return (None, None)
+    left_normal = (-dz / length, dy / length)
+    left_point = (p_mid[0] + 100.0 * left_normal[0], p_mid[1] + 100.0 * left_normal[1])
+    right_point = (p_mid[0] - 100.0 * left_normal[0], p_mid[1] - 100.0 * left_normal[1])
+    return (
+        _matching_compartment(left_point, comp_boxes, x_mm),
+        _matching_compartment(right_point, comp_boxes, x_mm),
+    )
+
+
+def _main_dimensions_attrs(
+    extent: dict[str, float | None] | None,
+    warnings: list[str],
+) -> dict[str, str]:
+    if extent is None:
+        warnings.append("ShipData MainDimensions extent is missing; omitted dimensions")
+        return {}
+    required = ("min_x", "max_x", "min_y", "max_y", "min_z", "max_z")
+    if any(extent.get(key) is None for key in required):
+        warnings.append("ShipData MainDimensions extent is incomplete; omitted dimensions")
+        return {}
+
+    length_m = (extent["max_x"] - extent["min_x"]) / 1000.0  # type: ignore[operator]
+    breadth_m = (extent["max_y"] - extent["min_y"]) / 1000.0  # type: ignore[operator]
+    depth_m = (extent["max_z"] - extent["min_z"]) / 1000.0  # type: ignore[operator]
+    draught_m = 0.7 * depth_m
+    warnings.append("ShipData MainDimensions draught T uses placeholder 0.7*D")
+    return {
+        "Lbp": _fmt(length_m),
+        "B": _fmt(breadth_m),
+        "D": _fmt(depth_m),
+        "T": _fmt(draught_m),
+    }
+
+
+def _material_data_attrs(materials: _MaterialIds | None) -> dict[str, str]:
+    first_yield = None
+    if materials is not None:
+        first_yield = next((yield_mpa for yield_mpa, _ in materials.items()), None)
+    sigma = _fmt(first_yield if first_yield is not None else 235.0)
+    return {
+        "E": "206000",
+        "SigmaFBott": sigma,
+        "SigmaFDeck": sigma,
+        "SigmaFMid": sigma,
+    }
+
+
+def _is_empty_extent(extent: dict) -> bool:
+    keys = ("min_x", "max_x", "min_y", "max_y", "min_z", "max_z")
+    return any(extent.get(key) is None for key in keys)
+
+
+def _hmx_compartment_type(tank_type: str | None, name: str, warnings: list[str]) -> str:
+    if tank_type in _COMPARTMENT_TYPE:
+        return _COMPARTMENT_TYPE[tank_type]
+    warnings.append(f"compartment {name}: unsupported tank type {tank_type!r}; using Undefined")
+    return "Undefined"
+
+
+def _compartment_general_attrs(row: dict, extent: dict) -> dict[str, str]:
+    attrs: dict[str, str] = {}
+    length = _extent_length(extent)
+    if length is not None:
+        attrs["Length"] = _fmt_int(length)
+    air_pipe = row.get("air_pipe_height_mm")
+    if air_pipe is not None:
+        attrs["TopOfAirPipe"] = _fmt_int(air_pipe)
+    volume = row.get("volume_m3")
+    if volume is not None:
+        attrs["Volume"] = _fmt(volume)
+    cog = row.get("cog_mm")
+    if cog is not None and len(cog) == 3:
+        attrs["CgX"] = _fmt_int(cog[0])
+        attrs["CgY"] = _fmt_int(cog[1])
+        attrs["CgZ"] = _fmt_int(cog[2])
+    return attrs
+
+
+def _rv5_compartment_attrs(row: dict) -> dict[str, str]:
+    pressure = row.get("relief_valve_pressure_kpa")
+    if pressure is None:
+        return {"PressureValveFitted": "false"}
+    return {
+        "OverPressure": _fmt(pressure),
+        "PressureValveFitted": "true",
+    }
+
+
+def _bounding_box_attrs(extent: dict) -> dict[str, str]:
+    return {
+        "MinX": _fmt(extent["min_x"]),
+        "MaxX": _fmt(extent["max_x"]),
+        "MinY": _fmt(extent["min_y"]),
+        "MaxY": _fmt(extent["max_y"]),
+        "MinZ": _fmt(extent["min_z"]),
+        "MaxZ": _fmt(extent["max_z"]),
+    }
+
+
+def _extent_length(extent: dict) -> float | None:
+    min_x = extent.get("min_x")
+    max_x = extent.get("max_x")
+    if min_x is None or max_x is None:
+        return None
+    return max_x - min_x
+
+
+def _matching_compartment(
+    point: tuple[float, float],
+    comp_boxes: dict[str, dict],
+    x_mm: float,
+) -> str | None:
+    y, z = point
+    for name, box in comp_boxes.items():
+        min_y = box.get("min_y")
+        max_y = box.get("max_y")
+        min_z = box.get("min_z")
+        max_z = box.get("max_z")
+        if None in (min_y, max_y, min_z, max_z):
+            continue
+        min_x = box.get("min_x")
+        max_x = box.get("max_x")
+        in_x = (min_x is None or x_mm >= min_x) and (max_x is None or x_mm <= max_x)
+        if in_x and min_y <= y <= max_y and min_z <= z <= max_z:
+            return name
+    return None
+
+
+def _fmt_m(mm: float) -> str:
+    return _fmt(mm / 1000.0)
+
+
+def _fmt_int(value: float) -> str:
+    return str(int(round(value)))
+
+
+def _fmt(value: float) -> str:
+    return f"{value:g}"
 
 
 def _same_point(a: tuple[float, float], b: tuple[float, float], tol: float) -> bool:
