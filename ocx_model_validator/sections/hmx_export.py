@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from math import asin, atan2, degrees, hypot
+from math import asin, atan2, degrees, hypot, pi, tau
 from typing import Iterable
 
 from ocx_model_validator.sections.section_builder import SectionPlate, SectionStiffener
@@ -82,7 +82,12 @@ def _signed_radius(
     p1: tuple[float, float],
     p2: tuple[float, float],
 ) -> float | None:
-    """Return radius signed by arc center side relative to segment travel."""
+    """Return radius signed by arc center side relative to segment travel.
+
+    Arcs are assumed minor (<180°, chord-recoverable) per the OCX bilge use case:
+    bilge arcs are quarter-to-semi circles, and the chord formula degrades at exactly
+    180°.
+    """
     if plate.radius_mm is None:
         return None
     if plate.arc_center_y_mm is None or plate.arc_center_z_mm is None:
@@ -93,7 +98,7 @@ def _signed_radius(
     dy = y2 - y1
     dz = z2 - z1
     cross = dy * (plate.arc_center_z_mm - z1) - dz * (plate.arc_center_y_mm - y1)
-    return abs(plate.radius_mm) if cross > 0.0 else -abs(plate.radius_mm)
+    return abs(plate.radius_mm) if cross >= 0.0 else -abs(plate.radius_mm)
 
 
 def _arc_length_of(
@@ -101,7 +106,12 @@ def _arc_length_of(
     p1: tuple[float, float],
     p2: tuple[float, float],
 ) -> float:
-    """Return chord length for straight segments or circular arc length."""
+    """Return chord length for straight segments or circular arc length.
+
+    Arcs are assumed minor (<180°, chord-recoverable) per the OCX bilge use case:
+    bilge arcs are quarter-to-semi circles, and the chord formula degrades at exactly
+    180°.
+    """
     chord = _distance(p1, p2)
     if plate.radius_mm is None:
         return chord
@@ -131,11 +141,18 @@ def _arc_position(_chain: _Chain, y: float, z: float) -> float:
         _arc_length_of(plate, p1, p2)
         for plate, p1, p2 in zip(_chain.plates[:best_index], _chain.points, _chain.points[1:])
     )
-    seg_len = _arc_length_of(
-        _chain.plates[best_index],
-        _chain.points[best_index],
-        _chain.points[best_index + 1],
-    )
+    plate = _chain.plates[best_index]
+    p1 = _chain.points[best_index]
+    p2 = _chain.points[best_index + 1]
+    seg_len = _arc_length_of(plate, p1, p2)
+    if (
+        plate.radius_mm is not None
+        and plate.arc_center_y_mm is not None
+        and plate.arc_center_z_mm is not None
+        and abs(plate.radius_mm) > 0.0
+    ):
+        return prefix + _arc_station_on_segment(plate, p1, p2, (y, z), seg_len)
+
     return prefix + best_t * seg_len
 
 
@@ -205,7 +222,8 @@ def _angles(stiffener: SectionStiffener) -> tuple[float, float]:
         return (90.0, 270.0)
 
     web = degrees(atan2(stiffener.web_dir_z, stiffener.web_dir_y)) % 360.0
-    flange = 90.0 if web < 180.0 else 270.0
+    # Nauticus sample convention: FlAngle=90 for WebAngle in [0°,90°), otherwise 270.
+    flange = 90.0 if web < 90.0 else 270.0
     return (web, flange)
 
 
@@ -247,3 +265,43 @@ def _projection(
     t = max(0.0, min(1.0, t))
     projected = (p1[0] + t * vx, p1[1] + t * vz)
     return (t, _distance(point, projected))
+
+
+def _arc_station_on_segment(
+    plate: SectionPlate,
+    p1: tuple[float, float],
+    p2: tuple[float, float],
+    point: tuple[float, float],
+    seg_len: float,
+) -> float:
+    radius = abs(plate.radius_mm or 0.0)
+    if radius <= 0.0:
+        return 0.0
+
+    cy = plate.arc_center_y_mm
+    cz = plate.arc_center_z_mm
+    if cy is None or cz is None:
+        return 0.0
+
+    query_radius = _distance((cy, cz), point)
+    if query_radius <= 0.0:
+        return 0.0
+
+    start_angle = atan2(p1[1] - cz, p1[0] - cy)
+    end_angle = atan2(p2[1] - cz, p2[0] - cy)
+    query_angle = atan2(point[1] - cz, point[0] - cy)
+
+    total = _minor_sweep(start_angle, end_angle)
+    query_delta = _minor_sweep(start_angle, query_angle)
+    swept = query_delta if total >= 0.0 else -query_delta
+
+    theta_total = min(abs(total), seg_len / radius if radius > 0.0 else 0.0)
+    swept = max(0.0, min(theta_total, swept))
+    return radius * swept
+
+
+def _minor_sweep(start_angle: float, end_angle: float) -> float:
+    delta = (end_angle - start_angle) % tau
+    if delta > pi:
+        delta -= tau
+    return delta

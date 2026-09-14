@@ -99,6 +99,34 @@ def test_chaining_disjoint_groups_returns_two_chains() -> None:
     assert chains[1].points == pytest.approx([(1000.0, 0.0), (1100.0, 0.0)])
 
 
+def test_chaining_closed_loop_keeps_closing_vertex_and_invariant() -> None:
+    plates = [
+        plate("bottom", 0.0, 0.0, 100.0, 0.0),
+        plate("side", 100.0, 0.0, 50.0, 80.0),
+        plate("closing", 50.0, 80.0, 0.0, 0.0),
+    ]
+
+    chain = _chain_segments(plates)[0]
+
+    assert len(chain.plates) == 3
+    assert len(chain.points) == len(chain.plates) + 1
+    assert chain.points[0] == pytest.approx(chain.points[-1])
+    assert chain.points == pytest.approx([(0.0, 0.0), (100.0, 0.0), (50.0, 80.0), (0.0, 0.0)])
+
+
+def test_chaining_t_junction_branch_starts_second_chain() -> None:
+    plates = [
+        plate("main-1", 0.0, 0.0, 100.0, 0.0),
+        plate("main-2", 100.0, 0.0, 200.0, 0.0),
+        plate("branch", 100.0, 0.0, 100.0, 80.0),
+    ]
+
+    chains = _chain_segments(plates)
+
+    assert [[p.name for p in chain.plates] for chain in chains] == [["main-1", "main-2"], ["branch"]]
+    assert chains[1].points == pytest.approx([(100.0, 0.0), (100.0, 80.0)])
+
+
 def test_signed_radius_uses_center_side_of_segment_travel() -> None:
     arc_above = plate("arc", 0.0, 0.0, 100.0, 0.0, radius=25.0, center=(50.0, 10.0))
     arc_below = plate("arc", 0.0, 0.0, 100.0, 0.0, radius=25.0, center=(50.0, -10.0))
@@ -109,6 +137,12 @@ def test_signed_radius_uses_center_side_of_segment_travel() -> None:
         _signed_radius(plate("straight", 0.0, 0.0, 100.0, 0.0), (0.0, 0.0), (100.0, 0.0))
         is None
     )
+
+
+def test_signed_radius_uses_positive_radius_for_exact_semicircle() -> None:
+    semicircle = plate("semi", 0.0, 0.0, 200.0, 0.0, radius=100.0, center=(100.0, 0.0))
+
+    assert _signed_radius(semicircle, (0.0, 0.0), (200.0, 0.0)) == pytest.approx(100.0)
 
 
 def test_arc_length_uses_circular_arc_and_straight_chord_length() -> None:
@@ -125,6 +159,15 @@ def test_arc_position_projects_to_nearest_segment_with_arc_aware_prefix() -> Non
     chain = _chain_segments([arc, straight])[0]
 
     assert _arc_position(chain, 205.0, 50.0) == pytest.approx(math.pi * 100.0 + 50.0)
+
+
+def test_arc_position_uses_true_arc_station_for_curved_segment() -> None:
+    arc = plate("arc", 100.0, 0.0, 0.0, 100.0, radius=100.0, center=(0.0, 0.0))
+    chain = _chain_segments([arc])[0]
+    query_y = 100.0 * math.cos(math.radians(30.0))
+    query_z = 100.0 * math.sin(math.radians(30.0))
+
+    assert _arc_position(chain, query_y, query_z) == pytest.approx(100.0 * math.radians(30.0))
 
 
 def test_level1_code_classifies_bottom_deck_side_bilge_and_undefined() -> None:
@@ -168,7 +211,8 @@ def test_side_uses_mean_y_of_chain_vertices() -> None:
 
 
 def test_angles_use_web_direction_with_fallback() -> None:
-    assert _angles(stiffener(0.0, 1.0)) == pytest.approx((90.0, 90.0))
+    assert _angles(stiffener(0.0, 1.0)) == pytest.approx((90.0, 270.0))
+    assert _angles(stiffener(1.0, 0.5)) == pytest.approx((26.56505117707799, 90.0))
     assert _angles(stiffener(-1.0, 0.0)) == pytest.approx((180.0, 270.0))
     assert _angles(stiffener(None, 1.0)) == pytest.approx((90.0, 270.0))
 
