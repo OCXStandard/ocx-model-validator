@@ -47,10 +47,55 @@ One exported file contains exactly one `Scantling` (one section per `create` cal
 | `GeneralShipDataType` | required attributes set to `0` placeholders |
 | `MaterialData` | `E=206000`; `SigmaFBott`/`SigmaFDeck`/`SigmaFMid` from plate yields by z-band (bottom/deck/between); fallback 235 |
 | `FrameTable` | existing `FrameTable`: `FrameRef="AP"`, `FrameOffset` in m, `Spacing` rows (first entry `FrameNo="Stern"`), spacing in metres |
+| `Compartments` | one `Compartment` per IR compartment (see below) |
 | `CrossSections/Scantling` | see below |
 
 Non-fatal extraction warnings are logged via loguru and embedded as one XML comment
 near the document root (the schema has no warnings slot).
+
+## Compartments mapping
+
+One `Compartment` element per IR compartment:
+
+| HMX | Source |
+|---|---|
+| `@Id` | sequential integer string (`"1"`, `"2"`, …), stable within the document |
+| `@Name` | compartment name (fallback id) |
+| `@Type` | OCX `compartment_purpose` mapped to the HMX enum: ballast → `BallastWaterTank`, fuel/HFO/MDO → `FuelOilTank`, fresh → `FreshWaterTank`, cargo → `CargoHold`, void → `VoidSpace`; fallback `Undefined` + warning |
+| `General@Volume` | volume (m³) |
+| `General@CgX/CgY/CgZ` | COG (mm, rounded to int) |
+| `General@TopOfAirPipe` | air pipe height (mm) |
+| `General@Length` | extent Δx (mm) |
+| rule branch | `CSRH` when `--rule-set CSR-H`, else `RV5`; `OverPressure` = relief-valve pressure (kPa ≈ kN/m²), `PressureValveFitted=true` when a relief valve pressure is present |
+| `Geometry/BoundingBox` | compartment extent (required by schema); zeros + warning when unresolvable |
+
+**SEGMENT `LeftCompartment`/`RightCompartment`:** for each SHAPE segment, offset
+the midpoint ± ε along the in-plane segment normal and test the offset points
+against the bounding boxes of compartments whose x-range contains the section x.
+Left/right follows the traversal direction (2D cross product in the y-z plane).
+The attribute is omitted when no unique compartment matches (optional in schema).
+
+## Bilge arc (SEGMENT Radius)
+
+Goal: model the bilge — always a circular arc — correctly instead of a chord.
+
+- **Radius inference:** scan the plate `outer_contour` (composite curve) for
+  `IrCircumArc3D`/`IrCircle3D` segments whose circle-plane normal is ≈ parallel
+  to the global x-axis (the transverse edge arcs of the bilge strake). Radius and
+  centre come from the existing `_circle_from_three_points`; when several arcs
+  qualify, pick the one nearest in x to the section plane.
+- `SectionPlate` gains additive fields `radius_mm`, `arc_center_y_mm`,
+  `arc_center_z_mm` (unsigned radius + arc centre in section coordinates); the
+  JSON document includes them.
+- The HMX writer emits the chained SHAPE segment with `Radius=±r`: positive when
+  the radius vector rotates counterclockwise while traversing the segment (per
+  the XSD), computed from the traversal direction versus the arc centre. The
+  segment endpoint remains the arc end point.
+- `PLATE Width` for arc plates = arc length (r·θ from the endpoints and centre),
+  not the chord length.
+- Fallback: no transverse arc found → straight segment (`Radius=0`); a warning is
+  emitted when the contour contains arc segments (suspected curved plate).
+- The HMX importer/plot uses chord endpoints; SVG arc rendering is out of scope.
 
 ## Scantling mapping
 
@@ -61,8 +106,8 @@ The section builder yields per-panel disconnected plate segments
 **1 mm** into ordered polylines:
 
 - `NODE` = first point of the chain; one `SEGMENT` per subsequent vertex.
-- `Radius=0` for all segments (intersections are straight lines);
-  `Girder="Undefined"`.
+- `Radius=0` for straight segments; bilge/arc plates carry the inferred signed
+  radius (see *Bilge arc* above). `Girder="Undefined"`.
 - A panel producing several disconnected chains emits several `PANEL` elements
   with the same `Name` (as the sample does for port/starboard SHELL).
 - Required empty elements `CORRUGATED`, `CUTOUTS`, `TRVSTIFFS` are emitted;
@@ -138,7 +183,8 @@ Unsupported section types → skip stiffener with warning.
   PLATE widths along the SHAPE chain; stiffener (y,z) from arc-length positions),
   so `render_svg` and other JSON-document consumers stay untouched.
 - **`section_builder.py`**: add numeric `h_mm`, `bf_mm`, `tw_mm`, `tf_mm` fields to
-  `SectionStiffener` (additive; the JSON document gains these fields).
+  `SectionStiffener`, and `radius_mm`, `arc_center_y_mm`, `arc_center_z_mm` to
+  `SectionPlate` (all additive; the JSON document gains these fields).
 - **`cli.py`**: `--format`/`--rule-set` options on `section create`; plot loader
   dispatch by extension.
 
@@ -158,14 +204,19 @@ The HMX importer validates the root element and required blocks and raises
   schema set.
 - Unit tests: segment chaining (ordering, multiple chains, tolerance),
   arc-length positioning, type-code mapping, ShipData branch per `--rule-set`,
-  frame-table serialization, Level1Position heuristic.
+  frame-table serialization, Level1Position heuristic, compartment mapping
+  (type enum, bounding box, left/right segment assignment), bilge radius
+  inference (arc detection, signed radius, arc-length plate width, straight
+  fallback with warning).
 - Round-trip: create → export `.hmx` → `load_hmx_document` → `render_svg`
   succeeds; CLI integration test mirroring the existing JSON one.
 
 ## Out of scope
 
-- HMX `Loads`, `Compartments`, `GirderPositions`, `MomentsAndShearForces` blocks
+- HMX `Loads`, `GirderPositions`, `MomentsAndShearForces` blocks
   (all optional in the schema).
-- Curved SHAPE segments (Radius ≠ 0), cutouts, transverse stiffeners.
+- Curved SHAPE segments other than the inferred bilge/plate arcs, cutouts,
+  transverse stiffeners.
+- SVG rendering of arc segments (plot uses chord endpoints).
 - Importing HMX files not produced by this exporter (the importer targets
   round-trip/plot support, not general HMX ingestion).
