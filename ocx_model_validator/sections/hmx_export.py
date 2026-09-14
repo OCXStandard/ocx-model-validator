@@ -280,7 +280,12 @@ def build_hmx(
     frame_table,
     rule_set: str = "DNV",
 ) -> etree._Element:
-    """Build a schema-valid Nauticus Hull XML model with one Scantling section."""
+    """Build a Nauticus-compatible Hull XML model with one Scantling section.
+
+    Nauticus sample files leave some schema-required structural wrappers empty
+    when no real structure is present; the exporter mirrors that convention
+    instead of adding fake cutouts or stiffeners for strict XSD validity.
+    """
     if rule_set not in _SHIP_RULE_CHILD:
         raise ValueError(f"Unsupported rule set {rule_set!r}")
 
@@ -448,8 +453,8 @@ def _append_panel(
     _append_shape(panel, chain, extent, comp_boxes, x_mm)
     _append_plates(panel, chain, materials, warnings)
     _append_longs(panel, chain, stiffeners, stdspan, materials, warnings)
-    _append_schema_cutouts(panel, warnings)
-    _append_schema_trvstiffs(panel, chain, stdspace, warnings)
+    _append_schema_cutouts(panel)
+    _append_schema_trvstiffs(panel)
 
 
 def _append_shape(
@@ -523,10 +528,6 @@ def _append_longs(
 ) -> None:
     longs = etree.SubElement(panel, "LONGS")
     if not stiffeners:
-        warnings.append(
-            f"panel {panel.get('Name')}: emitted schema-required placeholder LSTIFF"
-        )
-        _append_placeholder_lstiff(longs, stdspan)
         return
 
     for stiffener in sorted(stiffeners, key=lambda item: _arc_position(chain, item.y_mm, item.z_mm)):
@@ -561,62 +562,12 @@ def _append_longs(
         )
 
 
-def _append_schema_cutouts(panel: etree._Element, warnings: list[str]) -> None:
-    cutouts = etree.SubElement(panel, "CUTOUTS")
-    warnings.append(f"panel {panel.get('Name')}: emitted schema-required placeholder CUTOUT")
-    etree.SubElement(cutouts, "CUTOUT", Position="0", RefCode="CURVE", Width="0")
+def _append_schema_cutouts(panel: etree._Element) -> None:
+    etree.SubElement(panel, "CUTOUTS")
 
 
-def _append_schema_trvstiffs(
-    panel: etree._Element,
-    chain: _Chain,
-    stdspace: float,
-    warnings: list[str],
-) -> None:
-    trvstiffs = etree.SubElement(panel, "TRVSTIFFS")
-    warnings.append(f"panel {panel.get('Name')}: emitted schema-required placeholder TSTIFF")
-    side = "RIGHT" if _side(chain) == "RIGHT" else "LEFT"
-    etree.SubElement(
-        trvstiffs,
-        "TSTIFF",
-        Pos1="0",
-        RefCode1="CURVE",
-        Pos2="0",
-        RefCode2="CURVE",
-        Spacing=_fmt(stdspace),
-        Type="10",
-        RusCode="",
-        H="0",
-        BF="0",
-        T="0",
-        TF="0",
-        Side=side,
-        Category="TSTIFF",
-        Yield="235",
-        K="0",
-    )
-
-
-def _append_placeholder_lstiff(parent: etree._Element, stdspan: float) -> None:
-    etree.SubElement(
-        parent,
-        "LSTIFF",
-        Name="__schema_placeholder__",
-        Position="0",
-        RefCode="CURVE",
-        Type="10",
-        RusCode="",
-        H="0",
-        BF="0",
-        T="0",
-        TF="0",
-        WebAngle="90",
-        FlAngle="270",
-        Span=_fmt(stdspan),
-        Yield="235",
-        K="0",
-        BuckStiff="false",
-    )
+def _append_schema_trvstiffs(panel: etree._Element) -> None:
+    etree.SubElement(panel, "TRVSTIFFS")
 
 
 def _register_section_materials(cross_section: CrossSection, materials: _MaterialIds) -> None:

@@ -23,9 +23,7 @@ def test_build_hmx_saves_schema_valid_scantling_document(tmp_path, hmx_schema) -
     path = tmp_path / "section.hmx"
     save_hmx(root, path)
 
-    errors = list(hmx_schema.iter_errors(str(path)))
-    assert errors == []
-    assert hmx_schema.is_valid(str(path))
+    _assert_only_nauticus_empty_wrapper_errors(hmx_schema, path)
     assert root.tag == "HullModel"
 
     scantlings = root.findall("./CrossSections/Scantling")
@@ -34,12 +32,11 @@ def test_build_hmx_saves_schema_valid_scantling_document(tmp_path, hmx_schema) -
     assert len(scantling.findall("./PANEL")) == 2
     assert len(scantling.findall(".//PLATE")) == 2
 
-    real_stiffeners = [
-        stiffener
-        for stiffener in scantling.findall(".//LSTIFF")
-        if not stiffener.get("Name", "").startswith("__schema_placeholder__")
-    ]
+    real_stiffeners = scantling.findall(".//LSTIFF")
     assert len(real_stiffeners) == 3
+    assert all(not stiffener.get("Name", "").startswith("__schema_placeholder__") for stiffener in real_stiffeners)
+    assert not scantling.findall(".//CUTOUT")
+    assert not scantling.findall(".//TSTIFF")
 
     material_ids_by_yield = {
         element.get("Yield"): element.get("MaterialId")
@@ -70,8 +67,7 @@ def test_build_hmx_emits_bilge_segment_for_arc_plate(hmx_schema, tmp_path) -> No
     path = tmp_path / "arc-section.hmx"
     save_hmx(root, path)
 
-    errors = list(hmx_schema.iter_errors(str(path)))
-    assert errors == []
+    _assert_only_nauticus_empty_wrapper_errors(hmx_schema, path)
     segment = root.find("./CrossSections/Scantling/PANEL/SHAPE/SEGMENT")
     assert segment is not None
     assert segment.get("Position") == "BILGE"
@@ -87,7 +83,7 @@ def test_build_hmx_sanitizes_warning_comment_text(hmx_schema, tmp_path) -> None:
     path = tmp_path / "warnings.hmx"
     save_hmx(root, path)
 
-    assert hmx_schema.is_valid(str(path))
+    _assert_only_nauticus_empty_wrapper_errors(hmx_schema, path)
     assert "--" not in root[0].text
     assert not root[0].text.endswith("-")
 
@@ -128,3 +124,25 @@ def _frame_table() -> FrameTable:
         frames=[frame0, frame5, frame10],
         spacing_rows=[(frame0, 5000.0)],
     )
+
+
+def _assert_only_nauticus_empty_wrapper_errors(hmx_schema, path) -> None:
+    # Nauticus Hull's own docs/ISSCFrame170.hmx leaves these wrappers empty,
+    # producing the same strict-schema cardinality pattern pinned in
+    # tests/test_hmx_schema.py. We allow only those compatibility errors.
+    allowed_tags = {"CUTOUTS", "TRVSTIFFS", "LONGS"}
+    errors = list(hmx_schema.iter_errors(str(path)))
+
+    assert errors, "strict schema should report the known empty-wrapper cardinality errors"
+    for error in errors:
+        elem_tag = getattr(getattr(error, "elem", None), "tag", "")
+        reason = getattr(error, "reason", "")
+        path_text = getattr(error, "path", "")
+        message = " ".join(str(part) for part in (elem_tag, reason, path_text))
+
+        assert elem_tag in allowed_tags or any(tag in message for tag in allowed_tags), (
+            f"unexpected schema error outside Nauticus empty wrappers: {error}"
+        )
+        assert "content" in reason.lower() or "expected" in reason.lower(), (
+            f"unexpected non-cardinality schema error: {error}"
+        )
