@@ -2,13 +2,17 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from datetime import date
 from math import asin, atan2, degrees, hypot, pi, tau
+from pathlib import Path
+from statistics import median
 from typing import Iterable
 
 from lxml import etree
 
+from ocx_model_validator.reporting.generators.model_extent import extent_mm
 from ocx_model_validator.sections.document import build_compartments_block
-from ocx_model_validator.sections.section_builder import SectionPlate, SectionStiffener
+from ocx_model_validator.sections.section_builder import CrossSection, SectionPlate, SectionStiffener
 
 
 _LSTIFF_TYPE = {
@@ -270,6 +274,50 @@ class _MaterialIds:
         return self._ids.items()
 
 
+def build_hmx(
+    vessel,
+    cross_section: CrossSection,
+    frame_table,
+    rule_set: str = "DNV",
+) -> etree._Element:
+    """Build a schema-valid Nauticus Hull XML model with one Scantling section."""
+    if rule_set not in _SHIP_RULE_CHILD:
+        raise ValueError(f"Unsupported rule set {rule_set!r}")
+
+    warnings = [*getattr(frame_table, "warnings", []), *cross_section.warnings]
+    if not cross_section.plates:
+        raise ValueError("HMX Scantling export requires at least one plate")
+    extent = extent_mm(vessel)
+    materials = _MaterialIds()
+    _register_section_materials(cross_section, materials)
+
+    root = etree.Element("HullModel")
+    root.append(_ship_data(rule_set, extent, materials, warnings))
+    root.append(_frame_table(frame_table, warnings))
+    compartments, comp_boxes = _compartments(vessel, warnings, rule_set=rule_set)
+    if compartments is not None:
+        root.append(compartments)
+
+    cross_sections = etree.SubElement(root, "CrossSections")
+    cross_sections.append(
+        _scantling(vessel, cross_section, frame_table, extent, comp_boxes, materials, warnings)
+    )
+
+    if warnings:
+        root.insert(0, etree.Comment(_xml_comment_text("warnings: " + "; ".join(dict.fromkeys(warnings)))))
+    return root
+
+
+def save_hmx(root: etree._Element, path: str | Path) -> None:
+    """Save an HMX XML document with declaration and stable pretty printing."""
+    etree.ElementTree(root).write(
+        str(path),
+        xml_declaration=True,
+        encoding="UTF-8",
+        pretty_print=True,
+    )
+
+
 def _ship_data(
     rule_set: str,
     extent: dict[str, float | None] | None,
@@ -301,6 +349,422 @@ def _ship_data(
         etree.SubElement(rule_child, "IceClassData")
 
     return ship_data
+
+
+def _scantling(
+    vessel,
+    cross_section: CrossSection,
+    frame_table,
+    extent: dict[str, float] | None,
+    comp_boxes: dict[str, dict],
+    materials: _MaterialIds,
+    warnings: list[str],
+) -> etree._Element:
+    scantling = etree.Element("Scantling")
+    _append_iddata(scantling, vessel, cross_section)
+    _append_position(scantling, cross_section, extent)
+    _append_material(scantling, cross_section)
+
+    stdspan = _standard_span_mm(frame_table, cross_section.x_mm, warnings)
+    stdspace = _standard_spacing_mm(cross_section)
+    _append_misc(scantling, extent, stdspan, stdspace)
+
+    chains = _chain_segments(cross_section.plates)
+    assigned_stiffeners = _assign_stiffeners_to_chains(cross_section.stiffeners, chains)
+    for index, chain in enumerate(chains):
+        _append_panel(
+            scantling,
+            chain,
+            assigned_stiffeners.get(index, []),
+            extent,
+            comp_boxes,
+            cross_section.x_mm,
+            stdspan,
+            stdspace,
+            materials,
+            warnings,
+        )
+    return scantling
+
+
+def _append_iddata(parent: etree._Element, vessel, cross_section: CrossSection) -> None:
+    iddata = etree.SubElement(parent, "IDDATA")
+    section_name = getattr(vessel, "name", None) or getattr(vessel, "id", None)
+    if not section_name:
+        section_name = f"Section at x={_fmt(cross_section.x_mm)}"
+    etree.SubElement(iddata, "NAME").text = str(section_name)
+    etree.SubElement(iddata, "DATE").text = date.today().isoformat()
+    etree.SubElement(iddata, "SIGNATURE").text = "ocx-model-validator"
+    etree.SubElement(iddata, "COMMENTS").text = ""
+
+
+def _append_position(
+    parent: etree._Element,
+    cross_section: CrossSection,
+    extent: dict[str, float] | None,
+) -> None:
+    position = etree.SubElement(parent, "POSITION")
+    etree.SubElement(position, "DISTAP").text = _fmt_m(cross_section.x_mm)
+    etree.SubElement(position, "MIDSHIP").text = "true" if _is_midship(cross_section.x_mm, extent) else "false"
+
+
+def _append_material(parent: etree._Element, cross_section: CrossSection) -> None:
+    material = etree.SubElement(parent, "MATERIAL")
+    bottom, deck, between = _yield_bands(cross_section)
+    etree.SubElement(material, "YIELDBOTT").text = _fmt(bottom)
+    etree.SubElement(material, "YIELDDECK").text = _fmt(deck)
+    etree.SubElement(material, "YIELDBETW").text = _fmt(between)
+
+
+def _append_misc(
+    parent: etree._Element,
+    extent: dict[str, float] | None,
+    stdspan: float,
+    stdspace: float,
+) -> None:
+    misc = etree.SubElement(parent, "MISC")
+    etree.SubElement(misc, "STRUCTTYPE").text = "SECTION"
+    etree.SubElement(misc, "HSIDE").text = _fmt(_hside_mm(extent))
+    etree.SubElement(misc, "STDSPAN").text = _fmt(stdspan)
+    etree.SubElement(misc, "STDSPACE").text = _fmt(stdspace)
+
+
+def _append_panel(
+    parent: etree._Element,
+    chain: _Chain,
+    stiffeners: list[SectionStiffener],
+    extent: dict[str, float] | None,
+    comp_boxes: dict[str, dict],
+    x_mm: float,
+    stdspan: float,
+    stdspace: float,
+    materials: _MaterialIds,
+    warnings: list[str],
+) -> None:
+    panel = etree.SubElement(parent, "PANEL", Name=chain.plates[0].panel or chain.plates[0].name)
+    etree.SubElement(panel, "CORRUGATED")
+    etree.SubElement(panel, "BENDEFF").text = "100"
+    etree.SubElement(panel, "SHEAREFF").text = "100"
+    _append_shape(panel, chain, extent, comp_boxes, x_mm)
+    _append_plates(panel, chain, materials, warnings)
+    _append_longs(panel, chain, stiffeners, stdspan, materials, warnings)
+    _append_schema_cutouts(panel, warnings)
+    _append_schema_trvstiffs(panel, chain, stdspace, warnings)
+
+
+def _append_shape(
+    panel: etree._Element,
+    chain: _Chain,
+    extent: dict[str, float] | None,
+    comp_boxes: dict[str, dict],
+    x_mm: float,
+) -> None:
+    shape = etree.SubElement(panel, "SHAPE")
+    first_y, first_z = chain.points[0]
+    etree.SubElement(shape, "NODE", Y=_fmt(first_y), Z=_fmt(first_z))
+
+    for plate, p1, p2 in zip(chain.plates, chain.points, chain.points[1:]):
+        attrs = {
+            "Y": _fmt(p2[0]),
+            "Z": _fmt(p2[1]),
+            "Position": _level1_code(plate, p1, p2, extent),
+            "Girder": "Undefined",
+            "Radius": _fmt(_signed_radius(plate, p1, p2) or 0.0),
+        }
+        left, right = _segment_compartments(
+            ((p1[0] + p2[0]) / 2.0, (p1[1] + p2[1]) / 2.0),
+            (p2[0] - p1[0], p2[1] - p1[1]),
+            comp_boxes,
+            x_mm,
+        )
+        if left is not None:
+            attrs["LeftCompartment"] = str(comp_boxes.get(left, {}).get("id", left))
+        if right is not None:
+            attrs["RightCompartment"] = str(comp_boxes.get(right, {}).get("id", right))
+        etree.SubElement(shape, "SEGMENT", **attrs)
+
+
+def _append_plates(
+    panel: etree._Element,
+    chain: _Chain,
+    materials: _MaterialIds,
+    warnings: list[str],
+) -> None:
+    plates = etree.SubElement(panel, "PLATES")
+    side = _side(chain)
+    for plate, p1, p2 in zip(chain.plates, chain.points, chain.points[1:]):
+        yield_mpa = _yield_or_default(plate.material_reh_mpa)
+        thickness = _required_numeric(
+            plate.thickness_mm,
+            0.0,
+            f"plate {plate.name}: thickness is missing; emitted 0",
+            warnings,
+        )
+        etree.SubElement(
+            plates,
+            "PLATE",
+            Width=_fmt(_arc_length_of(plate, p1, p2)),
+            RefCode="CURVE",
+            Thickness=_fmt(thickness),
+            Yield=_fmt(yield_mpa),
+            MaterialId=materials.id_for(yield_mpa),
+            Material="STDSTEEL",
+            Side=side,
+        )
+
+
+def _append_longs(
+    panel: etree._Element,
+    chain: _Chain,
+    stiffeners: list[SectionStiffener],
+    stdspan: float,
+    materials: _MaterialIds,
+    warnings: list[str],
+) -> None:
+    longs = etree.SubElement(panel, "LONGS")
+    if not stiffeners:
+        warnings.append(
+            f"panel {panel.get('Name')}: emitted schema-required placeholder LSTIFF"
+        )
+        _append_placeholder_lstiff(longs, stdspan)
+        return
+
+    for stiffener in sorted(stiffeners, key=lambda item: _arc_position(chain, item.y_mm, item.z_mm)):
+        yield_mpa = _yield_or_default(stiffener.material_reh_mpa)
+        type_code = _LSTIFF_TYPE.get(stiffener.section_kind or "")
+        if type_code is None:
+            type_code = 10
+            warnings.append(
+                f"stiffener {stiffener.name}: unsupported section kind "
+                f"{stiffener.section_kind!r}; using HMX type 10"
+            )
+        web_angle, flange_angle = _angles(stiffener)
+        etree.SubElement(
+            longs,
+            "LSTIFF",
+            Name=stiffener.name,
+            Position=_fmt(_arc_position(chain, stiffener.y_mm, stiffener.z_mm)),
+            RefCode="CURVE",
+            Type=str(type_code),
+            RusCode="",
+            H=_fmt(stiffener.h_mm or 0.0),
+            BF=_fmt(stiffener.bf_mm or 0.0),
+            T=_fmt(stiffener.tw_mm or 0.0),
+            TF=_fmt(stiffener.tf_mm or 0.0),
+            WebAngle=_fmt(web_angle),
+            FlAngle=_fmt(flange_angle),
+            Span=_fmt(stdspan),
+            Yield=_fmt(yield_mpa),
+            MaterialId=materials.id_for(yield_mpa),
+            K="0",
+            BuckStiff="false",
+        )
+
+
+def _append_schema_cutouts(panel: etree._Element, warnings: list[str]) -> None:
+    cutouts = etree.SubElement(panel, "CUTOUTS")
+    warnings.append(f"panel {panel.get('Name')}: emitted schema-required placeholder CUTOUT")
+    etree.SubElement(cutouts, "CUTOUT", Position="0", RefCode="CURVE", Width="0")
+
+
+def _append_schema_trvstiffs(
+    panel: etree._Element,
+    chain: _Chain,
+    stdspace: float,
+    warnings: list[str],
+) -> None:
+    trvstiffs = etree.SubElement(panel, "TRVSTIFFS")
+    warnings.append(f"panel {panel.get('Name')}: emitted schema-required placeholder TSTIFF")
+    side = "RIGHT" if _side(chain) == "RIGHT" else "LEFT"
+    etree.SubElement(
+        trvstiffs,
+        "TSTIFF",
+        Pos1="0",
+        RefCode1="CURVE",
+        Pos2="0",
+        RefCode2="CURVE",
+        Spacing=_fmt(stdspace),
+        Type="10",
+        RusCode="",
+        H="0",
+        BF="0",
+        T="0",
+        TF="0",
+        Side=side,
+        Category="TSTIFF",
+        Yield="235",
+        K="0",
+    )
+
+
+def _append_placeholder_lstiff(parent: etree._Element, stdspan: float) -> None:
+    etree.SubElement(
+        parent,
+        "LSTIFF",
+        Name="__schema_placeholder__",
+        Position="0",
+        RefCode="CURVE",
+        Type="10",
+        RusCode="",
+        H="0",
+        BF="0",
+        T="0",
+        TF="0",
+        WebAngle="90",
+        FlAngle="270",
+        Span=_fmt(stdspan),
+        Yield="235",
+        K="0",
+        BuckStiff="false",
+    )
+
+
+def _register_section_materials(cross_section: CrossSection, materials: _MaterialIds) -> None:
+    for plate in cross_section.plates:
+        materials.id_for(_yield_or_default(plate.material_reh_mpa))
+    for stiffener in cross_section.stiffeners:
+        materials.id_for(_yield_or_default(stiffener.material_reh_mpa))
+
+
+def _yield_bands(cross_section: CrossSection) -> tuple[float, float, float]:
+    if not cross_section.plates:
+        return (235.0, 235.0, 235.0)
+    z_values = [z for plate in cross_section.plates for z in (plate.z1_mm, plate.z2_mm)]
+    min_z = min(z_values)
+    max_z = max(z_values)
+    span = max_z - min_z
+    if span <= 0.0:
+        mode = _mode_or_default(plate.material_reh_mpa for plate in cross_section.plates)
+        return (mode, mode, mode)
+
+    low_limit = min_z + 0.15 * span
+    high_limit = max_z - 0.15 * span
+    bottom: list[float | None] = []
+    deck: list[float | None] = []
+    between: list[float | None] = []
+    for plate in cross_section.plates:
+        mid_z = (plate.z1_mm + plate.z2_mm) / 2.0
+        if mid_z <= low_limit:
+            bottom.append(plate.material_reh_mpa)
+        elif mid_z >= high_limit:
+            deck.append(plate.material_reh_mpa)
+        else:
+            between.append(plate.material_reh_mpa)
+
+    all_yields = [plate.material_reh_mpa for plate in cross_section.plates]
+    fallback = _mode_or_default(all_yields)
+    return (
+        _mode_or_default(bottom, fallback),
+        _mode_or_default(deck, fallback),
+        _mode_or_default(between, fallback),
+    )
+
+
+def _mode_or_default(values: Iterable[float | None], default: float = 235.0) -> float:
+    counts: dict[float, int] = {}
+    for value in values:
+        if value is None:
+            continue
+        counts[value] = counts.get(value, 0) + 1
+    if not counts:
+        return default
+    return max(counts.items(), key=lambda item: (item[1], -item[0]))[0]
+
+
+def _standard_span_mm(frame_table, x_mm: float, warnings: list[str]) -> float:
+    rows = getattr(frame_table, "spacing_rows", None) or []
+    if rows:
+        current = rows[0][1]
+        for row, spacing in rows:
+            if getattr(row, "x_mm", float("-inf")) <= x_mm:
+                current = spacing
+            else:
+                break
+        return current
+
+    entries = getattr(frame_table, "entries", None) or []
+    if entries:
+        return entries[0][1]
+
+    warnings.append("FrameTable has no spacing data; Scantling STDSPAN uses fallback 800 mm")
+    return 800.0
+
+
+def _standard_spacing_mm(cross_section: CrossSection) -> float:
+    spacings = [
+        stiffener.spacing_mm
+        for stiffener in cross_section.stiffeners
+        if stiffener.spacing_mm is not None and stiffener.spacing_mm > 0.0
+    ]
+    if not spacings:
+        return 800.0
+    return float(median(spacings))
+
+
+def _assign_stiffeners_to_chains(
+    stiffeners: list[SectionStiffener],
+    chains: list[_Chain],
+) -> dict[int, list[SectionStiffener]]:
+    assignments: dict[int, list[SectionStiffener]] = {idx: [] for idx in range(len(chains))}
+    if not chains:
+        return assignments
+    for stiffener in stiffeners:
+        idx = min(
+            range(len(chains)),
+            key=lambda chain_idx: _distance_to_chain((stiffener.y_mm, stiffener.z_mm), chains[chain_idx]),
+        )
+        assignments[idx].append(stiffener)
+    return assignments
+
+
+def _distance_to_chain(point: tuple[float, float], chain: _Chain) -> float:
+    return min(_projection(point, p1, p2)[1] for p1, p2 in zip(chain.points, chain.points[1:]))
+
+
+def _is_midship(x_mm: float, extent: dict[str, float] | None) -> bool:
+    if extent is None:
+        return False
+    min_x = extent.get("min_x")
+    max_x = extent.get("max_x")
+    if min_x is None or max_x is None:
+        return False
+    lbp = max_x - min_x
+    if lbp <= 0.0:
+        return False
+    return abs(x_mm - min_x - lbp / 2.0) <= 0.05 * lbp
+
+
+def _hside_mm(extent: dict[str, float] | None) -> float:
+    if extent is None:
+        return 0.0
+    min_z = extent.get("min_z")
+    max_z = extent.get("max_z")
+    if min_z is None or max_z is None:
+        return 0.0
+    return max_z - min_z
+
+
+def _yield_or_default(value: float | None) -> float:
+    return 235.0 if value is None else value
+
+
+def _required_numeric(
+    value: float | None,
+    default: float,
+    warning: str,
+    warnings: list[str],
+) -> float:
+    if value is not None:
+        return value
+    warnings.append(warning)
+    return default
+
+
+def _xml_comment_text(text: str) -> str:
+    safe = text.replace("--", "- -")
+    if safe.endswith("-"):
+        safe += " "
+    return safe
 
 
 def _frame_table(ft, warnings: list[str]) -> etree._Element:
