@@ -222,7 +222,9 @@ def _angles(stiffener: SectionStiffener) -> tuple[float, float]:
         return (90.0, 270.0)
 
     web = degrees(atan2(stiffener.web_dir_z, stiffener.web_dir_y)) % 360.0
-    # Nauticus sample convention: FlAngle=90 for WebAngle in [0°,90°), otherwise 270.
+    # Heuristic: FlAngle=90 for WebAngle in [0°,90°), otherwise 270. Matches the
+    # ISSCFrame170.hmx sample away from vertical webs; the true flange side is not
+    # derivable from web direction alone (ambiguous at 90°/270°).
     flange = 90.0 if web < 90.0 else 270.0
     return (web, flange)
 
