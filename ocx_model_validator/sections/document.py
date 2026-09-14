@@ -12,7 +12,7 @@ from ocx_model_validator.model.ir.arrangement import IrCompartment
 from ocx_model_validator.model.ir.base import IrCog, Ref
 from ocx_model_validator.model.ir.structural import IrPanel, IrVessel
 from ocx_model_validator.sections.frame_table import FrameTable, build_frame_table
-from ocx_model_validator.sections.section_builder import build_cross_section
+from ocx_model_validator.sections.section_builder import CrossSection, build_cross_section
 from ocx_model_validator.sections.units import point_mm, qty_kpa, qty_m3, qty_mm
 
 SCHEMA = "nh-cross-section/1"
@@ -27,13 +27,12 @@ _NULL_EXTENT = {
 }
 
 
-def build_document(
+def resolve_section(
     vessel: IrVessel,
-    source_file: str,
     x_mm: float | None = None,
     frame: str | None = None,
-) -> dict[str, Any]:
-    """Build a cross-section JSON document for exactly one x-location or frame."""
+) -> tuple[FrameTable, CrossSection]:
+    """Resolve a frame/x-position to a FrameTable and CrossSection for one vessel location."""
     if (x_mm is None) == (frame is None):
         raise SectionError("Exactly one of x_mm or frame must be provided")
 
@@ -49,6 +48,17 @@ def build_document(
         section_frame = nearest_label if abs(nearest_x - x_mm) <= 1.0 else None
 
     cross_section = build_cross_section(vessel, section_x_mm, frame=section_frame)
+    return frame_table, cross_section
+
+
+def build_document(
+    vessel: IrVessel,
+    source_file: str,
+    x_mm: float | None = None,
+    frame: str | None = None,
+) -> dict[str, Any]:
+    """Build a cross-section JSON document for exactly one x-location or frame."""
+    frame_table, cross_section = resolve_section(vessel, x_mm=x_mm, frame=frame)
     compartments, compartment_warnings = build_compartments_block(vessel)
     warnings = [*frame_table.warnings, *cross_section.warnings, *compartment_warnings]
 
