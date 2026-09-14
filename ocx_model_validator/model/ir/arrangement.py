@@ -15,7 +15,10 @@ class IrCompartment:
     compartment_purpose: str | None = None
     volume: Quantity | None = None
     filling_height: Quantity | None = None
+    air_pipe_height: Quantity | None = None
+    relief_valve_pressure: Quantity | None = None
     face_refs: list[Ref] = field(default_factory=list)
+    face_boundary_curves: list = field(default_factory=list)  # IrCurve3D per face
     cog: IrCog | None = None
 
 

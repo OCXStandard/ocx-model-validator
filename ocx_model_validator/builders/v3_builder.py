@@ -1253,6 +1253,11 @@ class OcxV3Builder(IOcxBuilder):
                 )
                 for f in getattr(raw, "compartment_face", [])
             ]
+            face_curves = []
+            for f in getattr(raw, "compartment_face", []):
+                curve = self._build_contour(getattr(f, "face_boundary_curve", None))
+                if curve is not None:
+                    face_curves.append(curve)
             ir_c = IrCompartment(
                 id=cid,
                 name=getattr(raw, "name", None),
@@ -1260,7 +1265,10 @@ class OcxV3Builder(IOcxBuilder):
                 compartment_purpose=self._enum(getattr(raw, "compartment_purpose", None)),
                 volume=self._qty(getattr(cp, "volume", None) if cp else None),
                 filling_height=self._qty(getattr(cp, "filling_height", None) if cp else None),
+                air_pipe_height=self._qty(getattr(cp, "air_pipe_height", None) if cp else None),
+                relief_valve_pressure=self._qty(getattr(cp, "relief_valve_pressure", None) if cp else None),
                 face_refs=face_refs,
+                face_boundary_curves=face_curves,
                 cog=self._cog(cp),
             )
             self._register(ir.compartments, cid, ir_c, ir.duplicate_ids)

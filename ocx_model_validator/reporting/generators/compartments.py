@@ -10,6 +10,7 @@ _COLUMNS = [
     "Name", "Tank type", "Volume (m³)",
     "COG x (mm)", "COG y (mm)", "COG z (mm)",
     "min x (mm)", "max x (mm)", "min y (mm)", "max y (mm)", "min z (mm)", "max z (mm)",
+    "Filling height (mm)", "Air pipe height (mm)", "Relief valve pressure (kPa)",
 ]
 
 
@@ -25,6 +26,8 @@ def build(vessel: IrVessel, source_file: str = "") -> Report:
             ext.get("min_x"), ext.get("max_x"),
             ext.get("min_y"), ext.get("max_y"),
             ext.get("min_z"), ext.get("max_z"),
+            r.get("filling_height_mm"), r.get("air_pipe_height_mm"),
+            r.get("relief_valve_pressure_kpa"),
         ])
     section = ReportSection(
         title="Compartments",

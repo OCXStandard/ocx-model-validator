@@ -13,7 +13,7 @@ from ocx_model_validator.model.ir.base import IrCog, Ref
 from ocx_model_validator.model.ir.structural import IrPanel, IrVessel
 from ocx_model_validator.sections.frame_table import FrameTable, build_frame_table
 from ocx_model_validator.sections.section_builder import build_cross_section
-from ocx_model_validator.sections.units import point_mm, qty_m3
+from ocx_model_validator.sections.units import point_mm, qty_kpa, qty_m3, qty_mm
 
 SCHEMA = "nh-cross-section/1"
 _REQUIRED_TOP_LEVEL_KEYS = {"schema", "frame_table", "cross_section", "compartments"}
@@ -130,7 +130,20 @@ def _compartment_row(
         "cog_mm": _cog_mm(compartment.cog, vessel, name, warnings),
         "volume_m3": _volume_m3(compartment, vessel, name, warnings),
         "extent_mm": _extent_mm(compartment, vessel, name, warnings),
+        "filling_height_mm": _safe_qty(qty_mm, compartment.filling_height, vessel, name, warnings),
+        "air_pipe_height_mm": _safe_qty(qty_mm, compartment.air_pipe_height, vessel, name, warnings),
+        "relief_valve_pressure_kpa": _safe_qty(qty_kpa, compartment.relief_valve_pressure, vessel, name, warnings),
     }
+
+
+def _safe_qty(convert, qty, vessel: IrVessel, name: str, warnings: list[str]) -> float | None:
+    if qty is None:
+        return None
+    try:
+        return convert(qty, vessel.unit_registry)
+    except GeometryError as exc:
+        warnings.append(f"compartment {name}: {exc}")
+        return None
 
 
 def _tank_type(compartment: IrCompartment, name: str, warnings: list[str]) -> str:
@@ -191,10 +204,84 @@ def _extent_mm(
     name: str,
     warnings: list[str],
 ) -> dict[str, float | None]:
+    # Preferred: bounding box over the face boundary curves of all faces
+    points = _boundary_points_mm(compartment, vessel, name, warnings)
+
+    if not points:
+        # Fallback: plate COGs of panels matched via face references
+        points = _panel_cog_points_mm(compartment, vessel, name, warnings)
+
+    if not points:
+        return dict(_NULL_EXTENT)
+
+    xs = [point[0] for point in points]
+    ys = [point[1] for point in points]
+    zs = [point[2] for point in points]
+    return {
+        "min_x": min(xs),
+        "max_x": max(xs),
+        "min_y": min(ys),
+        "max_y": max(ys),
+        "min_z": min(zs),
+        "max_z": max(zs),
+    }
+
+
+def _boundary_points_mm(
+    compartment: IrCompartment,
+    vessel: IrVessel,
+    name: str,
+    warnings: list[str],
+) -> list[tuple[float, float, float]]:
+    points: list[tuple[float, float, float]] = []
+    for curve in compartment.face_boundary_curves:
+        try:
+            points.extend(_curve_points_mm(curve, vessel.unit_registry))
+        except GeometryError as exc:
+            warnings.append(f"compartment {name}: face boundary curve: {exc}")
+    return points
+
+
+def _curve_points_mm(curve, registry) -> list[tuple[float, float, float]]:
+    """Return points in mm bounding a boundary curve (conservative superset)."""
+    points: list[tuple[float, float, float]] = []
+
+    for attr in ("start", "intermediate", "end"):
+        p = getattr(curve, attr, None)
+        if p is not None:
+            points.append(point_mm(p, registry))
+    for p in getattr(curve, "vertices", None) or []:
+        if p is not None:
+            points.append(point_mm(p, registry))
+    for p in getattr(curve, "control_points", None) or []:
+        if p is not None:
+            points.append(point_mm(p, registry))
+    for segment in getattr(curve, "segments", None) or []:
+        points.extend(_curve_points_mm(segment, registry))
+
+    # Circles/ellipses: center +/- radius in every axis (axis-aligned superset)
+    center = getattr(curve, "center", None)
+    if center is not None:
+        cx, cy, cz = point_mm(center, registry)
+        diameter = (getattr(curve, "diameter", None)
+                    or getattr(curve, "major_diameter", None))
+        r = (qty_mm(diameter, registry) or 0.0) / 2.0
+        points.append((cx - r, cy - r, cz - r))
+        points.append((cx + r, cy + r, cz + r))
+
+    return points
+
+
+def _panel_cog_points_mm(
+    compartment: IrCompartment,
+    vessel: IrVessel,
+    name: str,
+    warnings: list[str],
+) -> list[tuple[float, float, float]]:
     panels = _referenced_panels(compartment.face_refs, vessel)
     if not panels:
         warnings.append(f"compartment {name}: extent unavailable; no face references matched panels")
-        return dict(_NULL_EXTENT)
+        return []
 
     points: list[tuple[float, float, float]] = []
     for panel in panels:
@@ -209,19 +296,7 @@ def _extent_mm(
 
     if not points:
         warnings.append(f"compartment {name}: extent unavailable; no plate cogs found")
-        return dict(_NULL_EXTENT)
-
-    xs = [point[0] for point in points]
-    ys = [point[1] for point in points]
-    zs = [point[2] for point in points]
-    return {
-        "min_x": min(xs),
-        "max_x": max(xs),
-        "min_y": min(ys),
-        "max_y": max(ys),
-        "min_z": min(zs),
-        "max_z": max(zs),
-    }
+    return points
 
 
 def _referenced_panels(face_refs: list[Ref], vessel: IrVessel) -> list[IrPanel]:

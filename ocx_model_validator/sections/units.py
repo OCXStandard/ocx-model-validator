@@ -46,6 +46,10 @@ def qty_m3(qty: Quantity | None, registry: dict[str, IrUnit]) -> float | None:
     return None if qty is None else to_si(qty, registry)
 
 
+def qty_kpa(qty: Quantity | None, registry: dict[str, IrUnit]) -> float | None:
+    return None if qty is None else to_si(qty, registry) / 1e3
+
+
 def point_mm(p: IrPoint3D, registry: dict[str, IrUnit]) -> tuple[float, float, float]:
     """Convert an IrPoint3D to an (x, y, z) tuple in millimetres."""
     unit = getattr(p, "unit", "") or ""

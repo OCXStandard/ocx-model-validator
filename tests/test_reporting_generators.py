@@ -272,3 +272,23 @@ def test_catalogues_bulb_angle_unknown_unit_noted():
 def test_catalogues_invalid_which_raises_value_error():
     with pytest.raises(ValueError, match="unknown catalogue"):
         catalogues_gen.build(IrVessel(id="V1"), which="materials")
+
+
+def test_compartments_report_includes_compartment_properties():
+    vessel = IrVessel(id="V1", name="MV Test")
+    vessel.compartments["C1"] = IrCompartment(
+        id="C1", name="WB Tank 1", compartment_purpose="ballast",
+        volume=Quantity(120.0, "Um3"), cog=IrCog(10.0, 0.0, 2.0, "Um"),
+        filling_height=Quantity(9.0, "Um"),
+        air_pipe_height=Quantity(10.5, "Um"),
+        relief_valve_pressure=Quantity(25000.0, "UPa"),
+    )
+    report = compartments_gen.build(vessel, source_file="m.3docx")
+    table = report.sections[0].tables[0]
+    idx_fh = table.columns.index("Filling height (mm)")
+    idx_ap = table.columns.index("Air pipe height (mm)")
+    idx_rv = table.columns.index("Relief valve pressure (kPa)")
+    row = table.rows[0]
+    assert row[idx_fh] == 9000.0
+    assert row[idx_ap] == 10500.0
+    assert row[idx_rv] == 25.0

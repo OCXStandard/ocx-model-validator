@@ -195,3 +195,77 @@ def test_build_coordinate_system_extracts_display_grid():
     assert ir.ref_planes["rp1"].display_grid is True
     assert ir.ref_planes["rp2"].display_grid is False
     assert ir.ref_planes["rp3"].display_grid is None
+
+
+class _Line3D:
+    def __init__(self, p1, p2):
+        self.start_point = _StubPoint3D(p1)
+        self.end_point = _StubPoint3D(p2)
+        self.curve_length = None
+        self.id = None
+
+
+class _StubFaceBoundaryCurve:
+    def __init__(self, lines):
+        self.line3_d = lines
+
+
+class _StubCompartmentFace:
+    def __init__(self, fid, lines):
+        self.id = fid
+        self.guidref = None
+        self.face_boundary_curve = _StubFaceBoundaryCurve(lines)
+
+
+class _StubCompartmentQty:
+    def __init__(self, value, unit):
+        self.numericvalue = value
+        self.unit = unit
+
+
+class _StubCompartmentProperties:
+    center_of_gravity = None
+    volume = None
+
+    def __init__(self):
+        self.filling_height = _StubCompartmentQty(9.0, "Um")
+        self.air_pipe_height = _StubCompartmentQty(10.5, "Um")
+        self.relief_valve_pressure = _StubCompartmentQty(25.0, "UkPa")
+
+
+class _StubCompartment:
+    id = "C1"
+    name = "Tank 1"
+    guidref = None
+    compartment_purpose = None
+    liquid_cargo = None
+    gaseous_cargo = None
+    bulk_cargo = None
+    unit_cargo = None
+
+    def __init__(self):
+        self.compartment_properties = _StubCompartmentProperties()
+        self.compartment_face = [
+            _StubCompartmentFace("F1", [_Line3D([0.0, 0.0, 0.0], [10.0, 0.0, 0.0])]),
+            _StubCompartmentFace("F2", [_Line3D([10.0, 5.0, 2.0], [0.0, 5.0, 2.0])]),
+        ]
+
+
+class _StubArrangement:
+    def __init__(self):
+        self.compartment = [_StubCompartment()]
+        self.physical_space = []
+
+
+def test_build_compartment_extracts_face_boundary_curves_and_properties():
+    builder = OcxV3Builder()
+    ir = IrVessel(id="V1")
+    builder._build_compartments(_StubArrangement(), ir)
+    c = ir.compartments["C1"]
+    assert len(c.face_boundary_curves) == 2
+    assert c.face_boundary_curves[0].start.x == 0.0
+    assert c.face_boundary_curves[0].end.x == 10.0
+    assert c.air_pipe_height.value == 10.5
+    assert c.air_pipe_height.unit == "Um"
+    assert c.relief_valve_pressure.value == 25.0
+    assert c.relief_valve_pressure.unit == "UkPa"

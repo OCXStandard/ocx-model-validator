@@ -180,3 +180,70 @@ def test_load_rejects_wrong_schema() -> None:
             load_document(path)
     finally:
         path.unlink(missing_ok=True)
+
+
+def test_extent_from_face_boundary_curves(vessel) -> None:
+    from ocx_model_validator.model.ir.geometry import (
+        IrCircle3D, IrLine3D, IrPoint3D, IrPolyLine3D,
+    )
+
+    vessel.compartments["fbc"] = IrCompartment(
+        id="fbc", name="FBC Tank", compartment_purpose="void",
+        face_boundary_curves=[
+            IrLine3D(curve_length=None,
+                     start=IrPoint3D(0.0, 0.0, 0.0, "Um"),
+                     end=IrPoint3D(10.0, 0.0, 0.0, "Um")),
+            IrPolyLine3D(curve_length=None,
+                         vertices=[IrPoint3D(10.0, 2.0, 1.0, "Um"),
+                                   IrPoint3D(0.0, 2.0, 3.0, "Um")]),
+            IrCircle3D(curve_length=None,
+                       center=IrPoint3D(5.0, 1.0, 1.0, "Um"),
+                       diameter=q(2.0, "Um")),
+        ],
+    )
+
+    compartments, warnings = build_compartments_block(vessel)
+
+    row = next(c for c in compartments if c["name"] == "FBC Tank")
+    assert row["extent_mm"] == {
+        "min_x": 0.0, "max_x": 10000.0,
+        "min_y": 0.0, "max_y": 2000.0,
+        "min_z": 0.0, "max_z": 3000.0,
+    }
+    assert not any("FBC Tank" in w and "extent" in w.lower() for w in warnings)
+
+
+def test_extent_prefers_boundary_curves_over_panel_fallback(vessel) -> None:
+    from ocx_model_validator.model.ir.geometry import IrLine3D, IrPoint3D
+
+    # ballast compartment resolves panels today; boundary curves must win
+    vessel.compartments["ballast"].face_boundary_curves = [
+        IrLine3D(curve_length=None,
+                 start=IrPoint3D(1.0, -3.0, 0.5, "Um"),
+                 end=IrPoint3D(2.0, 3.0, 2.5, "Um")),
+    ]
+
+    compartments, _warnings = build_compartments_block(vessel)
+
+    ballast = next(c for c in compartments if c["name"] == "Ballast Tank")
+    assert ballast["extent_mm"] == {
+        "min_x": 1000.0, "max_x": 2000.0,
+        "min_y": -3000.0, "max_y": 3000.0,
+        "min_z": 500.0, "max_z": 2500.0,
+    }
+
+
+def test_compartment_row_includes_compartment_properties(vessel) -> None:
+    vessel.compartments["props"] = IrCompartment(
+        id="props", name="Props Tank", compartment_purpose="void",
+        filling_height=q(9.0, "Um"),
+        air_pipe_height=q(10.5, "Um"),
+        relief_valve_pressure=q(25000.0, "UPa"),
+    )
+
+    compartments, _warnings = build_compartments_block(vessel)
+
+    row = next(c for c in compartments if c["name"] == "Props Tank")
+    assert row["filling_height_mm"] == 9000.0
+    assert row["air_pipe_height_mm"] == 10500.0
+    assert row["relief_valve_pressure_kpa"] == 25.0
