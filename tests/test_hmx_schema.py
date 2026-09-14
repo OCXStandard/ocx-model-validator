@@ -25,8 +25,9 @@ def test_sample_hmx_validation(hmx_schema):
     (e.g. ``GirderPositions``, ``CUTOUTS``, ``TRVSTIFFS``) left empty where
     the schema requires ``minOccurs="1"`` children. This indicates the
     sample predates/diverges from the current schema's cardinality rules
-    rather than a fixture-loading problem, so we relax the assertion here
-    to bound the known error count instead of requiring full validity.
+    rather than a fixture-loading problem, so we pin the known error count
+        (a drift detector for schema/sample changes) instead of requiring full
+        validity.
     The hard requirement for this task is that the schema itself loads.
     """
     errors = list(hmx_schema.iter_errors(str(SAMPLE_HMX)))
