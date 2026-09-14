@@ -23,6 +23,13 @@ class _Chain:
     points: list[tuple[float, float]]
     plates: list[SectionPlate]
 
+    def __post_init__(self) -> None:
+        if len(self.points) != len(self.plates) + 1:
+            raise ValueError(
+                f"chain invariant violated: {len(self.points)} points "
+                f"for {len(self.plates)} plates (expected plates + 1)"
+            )
+
 
 def _chain_segments(plates: Iterable[SectionPlate], tol: float = 1.0) -> list[_Chain]:
     """Greedily connect plate segments whose endpoints touch within ``tol`` mm."""
