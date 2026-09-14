@@ -1072,6 +1072,7 @@ class OcxV3Builder(IOcxBuilder):
             guidref=getattr(raw, "guidref", None),
             material_ref=self._ref(getattr(raw, "material_ref", None)),
             section_ref=self._ref(getattr(raw, "section_ref", None)),
+            dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
             cog=self._cog(pp),
             function_type=self._enum(getattr(raw, "function_type", None)),
         )

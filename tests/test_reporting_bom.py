@@ -3,6 +3,7 @@ from ocx_model_validator.model.ir.base import ParentKind, ParentRef, Quantity, R
 from ocx_model_validator.model.ir.catalogues import IrMaterial
 from ocx_model_validator.model.ir.sections import IrFlatBarSection
 from ocx_model_validator.model.ir.structural import (
+    IrPillar,
     IrPlate,
     IrStiffener,
     IrVessel,
@@ -31,6 +32,10 @@ def _vessel() -> IrVessel:
                                       material_ref=Ref("M1"),
                                       section_ref=Ref("S1"),
                                       dry_weight=Quantity(250.0, "UKg"))
+    v.pillars["PI1"] = IrPillar(id="PI1", parent_ref=_PARENT, name="PI1",
+                                material_ref=Ref("M1"),
+                                section_ref=Ref("S1"),
+                                dry_weight=Quantity(300.0, "UKg"))
     v.plates["P4"] = IrPlate(id="P4", parent_ref=_PARENT, name="P4",
                              thickness=Quantity(12.0, "Umm"),
                              dry_weight=Quantity(2000.0, "UKg"))  # no material
@@ -46,11 +51,12 @@ def test_bom_summary_grouping_and_totals():
     assert table.rows == [
         ["(no material)", "Plate", "t=12.0 mm", 1, 2.0, 0],
         ["Subtotal — (no material)", None, None, 1, 2.0, 0],
+        ["NV A36", "Pillar", "FB200x20", 1, 0.3, 0],
         ["NV A36", "Plate", "t=10.0 mm", 3, 1.5, 1],
         ["NV A36", "Stiffener", "FB200x20", 1, 0.25, 0],
-        ["Subtotal — NV A36", None, None, 4, 1.75, 1],
+        ["Subtotal — NV A36", None, None, 5, 2.05, 1],
     ]
-    assert table.footer_rows == [["Grand total", None, None, 5, 3.75, 1]]
+    assert table.footer_rows == [["Grand total", None, None, 6, 4.05, 1]]
     assert any("1 item" in n and "missing" in n for n in report.sections[0].notes)
 
 
@@ -107,4 +113,4 @@ def test_bom_detailed_items_table():
 
 def test_bom_detailed_item_count():
     report = bom_gen.build(_vessel(), detailed=True)
-    assert len(report.sections[0].tables[1].rows) == 5
+    assert len(report.sections[0].tables[1].rows) == 6

@@ -1,9 +1,9 @@
 """Bill-of-material report generator.
 
 Grouping hierarchy: material → part type → sub-group (thickness for plates
-and brackets, cross-section for stiffeners and edge reinforcements). Items
-without dry_weight show N/A, are excluded from totals, and are counted per
-group in the "Missing weight" column.
+and brackets, cross-section for stiffeners, pillars and edge
+reinforcements). Items without dry_weight show N/A, are excluded from
+totals, and are counted per group in the "Missing weight" column.
 """
 from __future__ import annotations
 
@@ -25,6 +25,7 @@ _NO_SECTION = "(no section)"
 _PART_TYPES = [
     ("Plate", "plates", "thickness"),
     ("Stiffener", "stiffeners", "section"),
+    ("Pillar", "pillars", "section"),
     ("Edge reinforcement", "edge_reinforcements", "section"),
     ("Bracket", "brackets", "thickness"),
 ]

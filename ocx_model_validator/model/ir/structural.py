@@ -122,6 +122,7 @@ class IrPillar:
     guidref: str | None = None
     material_ref: Ref | None = None
     section_ref: Ref | None = None
+    dry_weight: Quantity | None = None
     cog: IrCog | None = None
     function_type: str | None = None
 

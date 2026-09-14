@@ -269,3 +269,28 @@ def test_build_compartment_extracts_face_boundary_curves_and_properties():
     assert c.air_pipe_height.unit == "Um"
     assert c.relief_valve_pressure.value == 25.0
     assert c.relief_valve_pressure.unit == "UkPa"
+
+
+def test_build_pillar_extracts_dry_weight():
+    class _PP:
+        center_of_gravity = None
+
+        def __init__(self):
+            self.dry_weight = _StubCompartmentQty(300.0, "UKg")
+
+    class _StubPillar:
+        id = "PI1"
+        name = "Pillar 1"
+        guidref = None
+        material_ref = None
+        section_ref = None
+        function_type = None
+
+        def __init__(self):
+            self.physical_properties = _PP()
+
+    builder = OcxV3Builder()
+    parent = ParentRef(kind=ParentKind.VESSEL, id="V1")
+    p = builder._build_pillar(_StubPillar(), parent)
+    assert p.dry_weight.value == 300.0
+    assert p.dry_weight.unit == "UKg"
