@@ -8,7 +8,7 @@ Usage::
     validator report bom MODEL.3docx [--detailed] ...
     validator report all MODEL.3docx ...
     validator section create MODEL.3docx --frame FR20 -o section.json
-    validator section export MODEL.3docx --frame FR20 [--rule-set DNV] -o section.hmx
+    validator section export MODEL.3docx --frame FR20 [--format 2dlx|hmx] -o section.2dlx
     validator section plot section.json -o section.svg
     validator generate-stubs [--force]
 """
@@ -121,6 +121,9 @@ def _default_section_output(model: Path, frame: str | None,
     return Path(f"{model.stem}-{tag}{suffix}")
 
 
+_EXPORT_SUFFIX = {"2dlx": ".2dlx", "hmx": ".hmx"}
+
+
 @section_app.command("create")
 def section_create_cmd(
     model: Path = _MODEL_ARG,
@@ -159,35 +162,51 @@ def section_export_cmd(
                                      help="Frame label, e.g. FR20."),
     x_mm: float | None = typer.Option(None, "--x",
                                       help="Section x-position in mm."),
-    rule_set: str = typer.Option("DNV", "--rule-set",
-                                 help="Classification rule set: DNV, RV5 or CSR-H."),
+    fmt: str = typer.Option("2dlx", "--format",
+                            help="Export format: 2dlx (default) or hmx."),
+    rule_set: str | None = typer.Option(None, "--rule-set",
+                                        help="Classification rule set (hmx only): "
+                                             "DNV (default), RV5 or CSR-H."),
     output: Path | None = typer.Option(None, "--output", "-o",
-                                       help="Output Nauticus Hull XML (.hmx) file."),
+                                       help="Output XML file (.2dlx or .hmx)."),
 ) -> None:
-    """Export a transverse cross-section as a Nauticus Hull XML (.hmx) document."""
+    """Export a transverse cross-section as Nauticus Hull XML (2DLX or HMX)."""
     from ocx_model_validator.exeptions import GeometryError, SectionError
+    from ocx_model_validator.sections.dlx_export import build_2dlx, save_2dlx
     from ocx_model_validator.sections.document import resolve_section
     from ocx_model_validator.sections.hmx_export import RULE_SETS, build_hmx, save_hmx
 
     if (frame is None) == (x_mm is None):
         raise typer.BadParameter("Provide exactly one of --frame or --x")
-    if rule_set not in RULE_SETS:
+    if fmt not in _EXPORT_SUFFIX:
         raise typer.BadParameter(
-            f"Unsupported rule set {rule_set!r}; choose one of {', '.join(RULE_SETS)}")
+            f"Unsupported format {fmt!r}; choose one of {', '.join(_EXPORT_SUFFIX)}")
+    if fmt == "2dlx" and rule_set is not None:
+        raise typer.BadParameter("--rule-set only applies to --format hmx")
+    if fmt == "hmx":
+        rule_set = rule_set or "DNV"
+        if rule_set not in RULE_SETS:
+            raise typer.BadParameter(
+                f"Unsupported rule set {rule_set!r}; choose one of {', '.join(RULE_SETS)}")
+
     vessel = _load_vessel(model)
     try:
         frame_table, cross_section = resolve_section(vessel, x_mm=x_mm, frame=frame)
-        root = build_hmx(vessel, cross_section, frame_table, rule_set=rule_set)
+        if fmt == "2dlx":
+            root = build_2dlx(vessel, cross_section, frame_table)
+        else:
+            root = build_hmx(vessel, cross_section, frame_table, rule_set=rule_set)
     except (GeometryError, SectionError, ValueError) as exc:
-        logger.error("Cannot export HMX section for {}: {}", model, exc)
+        logger.error("Cannot export {} section for {}: {}", fmt, model, exc)
         raise typer.Exit(code=1) from exc
-    out = output or _default_section_output(model, frame, x_mm, suffix=".hmx")
+    out = output or _default_section_output(model, frame, x_mm,
+                                            suffix=_EXPORT_SUFFIX[fmt])
     try:
-        save_hmx(root, out)
+        save_2dlx(root, out) if fmt == "2dlx" else save_hmx(root, out)
     except OSError as exc:
         logger.error("Cannot write {}: {}", out, exc)
         raise typer.Exit(code=1) from exc
-    typer.echo(f"HMX section written to {out}")
+    typer.echo(f"{fmt.upper()} section written to {out}")
 
 
 @section_app.command("plot")

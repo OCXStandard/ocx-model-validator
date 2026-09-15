@@ -109,9 +109,29 @@ def test_section_export_missing_model_exits_nonzero():
 
 def test_section_export_rejects_unknown_rule_set(model_310: Path):
     result = runner.invoke(app, ["section", "export", str(model_310),
+                                 "--format", "hmx",
                                  "--x", "1000", "--rule-set", "BOGUS"])
     # BadParameter (usage error, exit 2), not a geometry failure (exit 1)
     assert result.exit_code == 2
+
+
+def test_section_export_rejects_unknown_format(model_310: Path):
+    result = runner.invoke(app, ["section", "export", str(model_310),
+                                 "--x", "1000", "--format", "svg"])
+    assert result.exit_code == 2
+
+
+def test_section_export_rejects_rule_set_with_2dlx(model_310: Path):
+    result = runner.invoke(app, ["section", "export", str(model_310),
+                                 "--x", "1000", "--rule-set", "DNV"])
+    # default format is 2dlx, which has no rule-set concept
+    assert result.exit_code == 2
+
+
+def test_export_default_output_suffix_follows_format():
+    from ocx_model_validator.cli import _EXPORT_SUFFIX
+
+    assert _EXPORT_SUFFIX == {"2dlx": ".2dlx", "hmx": ".hmx"}
 
 
 def test_export_default_output_name():
