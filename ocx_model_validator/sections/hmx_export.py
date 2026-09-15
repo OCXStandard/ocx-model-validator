@@ -568,7 +568,7 @@ def _append_longs(
             type_code = 10
             warnings.append(
                 f"stiffener {stiffener.name}: unsupported section kind "
-                f"{stiffener.section_kind!r}; using HMX type 10"
+                f"{stiffener.section_kind!r}; using type 10"
             )
         web_angle, flange_angle = _angles(stiffener)
         attrs = {
