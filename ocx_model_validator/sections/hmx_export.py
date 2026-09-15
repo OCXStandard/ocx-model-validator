@@ -316,6 +316,10 @@ def build_hmx(
 
 def save_hmx(root: etree._Element, path: str | Path) -> None:
     """Save an HMX XML document with declaration and stable pretty printing."""
+    _write_pretty_xml(root, path)
+
+
+def _write_pretty_xml(root: etree._Element, path: str | Path) -> None:
     etree.ElementTree(root).write(
         str(path),
         xml_declaration=True,
@@ -367,19 +371,42 @@ def _scantling(
     warnings: list[str],
 ) -> etree._Element:
     scantling = etree.Element("Scantling")
-    _append_iddata(scantling, vessel, cross_section)
-    _append_position(scantling, cross_section, extent)
-    _append_material(scantling, cross_section)
+    _append_section_body(
+        scantling, vessel, cross_section, frame_table, extent,
+        comp_boxes, materials, warnings, _LSTIFF_TYPE,
+    )
+    return scantling
+
+
+def _append_section_body(
+    parent: etree._Element,
+    vessel,
+    cross_section: CrossSection,
+    frame_table,
+    extent: dict[str, float] | None,
+    comp_boxes: dict[str, dict] | None,
+    materials: _MaterialIds | None,
+    warnings: list[str],
+    lstiff_types: dict[str, int],
+) -> None:
+    """Append the shared IDDATA/POSITION/MATERIAL/MISC/PANEL section body.
+
+    ``comp_boxes=None`` suppresses SEGMENT compartment refs and
+    ``materials=None`` suppresses MaterialId attributes (2DLX mode).
+    """
+    _append_iddata(parent, vessel, cross_section)
+    _append_position(parent, cross_section, extent)
+    _append_material(parent, cross_section)
 
     stdspan = _standard_span_mm(frame_table, cross_section.x_mm, warnings)
     stdspace = _standard_spacing_mm(cross_section)
-    _append_misc(scantling, extent, stdspan, stdspace)
+    _append_misc(parent, extent, stdspan, stdspace)
 
     chains = _chain_segments(cross_section.plates)
     assigned_stiffeners = _assign_stiffeners_to_chains(cross_section.stiffeners, chains)
     for index, chain in enumerate(chains):
         _append_panel(
-            scantling,
+            parent,
             chain,
             assigned_stiffeners.get(index, []),
             extent,
@@ -389,8 +416,8 @@ def _scantling(
             stdspace,
             materials,
             warnings,
+            lstiff_types,
         )
-    return scantling
 
 
 def _append_iddata(parent: etree._Element, vessel, cross_section: CrossSection) -> None:
@@ -440,12 +467,13 @@ def _append_panel(
     chain: _Chain,
     stiffeners: list[SectionStiffener],
     extent: dict[str, float] | None,
-    comp_boxes: dict[str, dict],
+    comp_boxes: dict[str, dict] | None,
     x_mm: float,
     stdspan: float,
     stdspace: float,
-    materials: _MaterialIds,
+    materials: _MaterialIds | None,
     warnings: list[str],
+    lstiff_types: dict[str, int],
 ) -> None:
     panel = etree.SubElement(parent, "PANEL", Name=chain.plates[0].panel or chain.plates[0].name)
     etree.SubElement(panel, "CORRUGATED")
@@ -453,7 +481,7 @@ def _append_panel(
     etree.SubElement(panel, "SHEAREFF").text = "100"
     _append_shape(panel, chain, extent, comp_boxes, x_mm)
     _append_plates(panel, chain, materials, warnings)
-    _append_longs(panel, chain, stiffeners, stdspan, materials, warnings)
+    _append_longs(panel, chain, stiffeners, stdspan, materials, warnings, lstiff_types)
     _append_schema_cutouts(panel)
     _append_schema_trvstiffs(panel)
 
@@ -462,7 +490,7 @@ def _append_shape(
     panel: etree._Element,
     chain: _Chain,
     extent: dict[str, float] | None,
-    comp_boxes: dict[str, dict],
+    comp_boxes: dict[str, dict] | None,
     x_mm: float,
 ) -> None:
     shape = etree.SubElement(panel, "SHAPE")
@@ -477,23 +505,24 @@ def _append_shape(
             "Girder": "Undefined",
             "Radius": _fmt(_signed_radius(plate, p1, p2) or 0.0),
         }
-        left, right = _segment_compartments(
-            ((p1[0] + p2[0]) / 2.0, (p1[1] + p2[1]) / 2.0),
-            (p2[0] - p1[0], p2[1] - p1[1]),
-            comp_boxes,
-            x_mm,
-        )
-        if left is not None:
-            attrs["LeftCompartment"] = str(comp_boxes.get(left, {}).get("id", left))
-        if right is not None:
-            attrs["RightCompartment"] = str(comp_boxes.get(right, {}).get("id", right))
+        if comp_boxes is not None:
+            left, right = _segment_compartments(
+                ((p1[0] + p2[0]) / 2.0, (p1[1] + p2[1]) / 2.0),
+                (p2[0] - p1[0], p2[1] - p1[1]),
+                comp_boxes,
+                x_mm,
+            )
+            if left is not None:
+                attrs["LeftCompartment"] = str(comp_boxes.get(left, {}).get("id", left))
+            if right is not None:
+                attrs["RightCompartment"] = str(comp_boxes.get(right, {}).get("id", right))
         etree.SubElement(shape, "SEGMENT", **attrs)
 
 
 def _append_plates(
     panel: etree._Element,
     chain: _Chain,
-    materials: _MaterialIds,
+    materials: _MaterialIds | None,
     warnings: list[str],
 ) -> None:
     plates = etree.SubElement(panel, "PLATES")
@@ -506,17 +535,17 @@ def _append_plates(
             f"plate {plate.name}: thickness is missing; emitted 0",
             warnings,
         )
-        etree.SubElement(
-            plates,
-            "PLATE",
-            Width=_fmt(_arc_length_of(plate, p1, p2)),
-            RefCode="CURVE",
-            Thickness=_fmt(thickness),
-            Yield=_fmt(yield_mpa),
-            MaterialId=materials.id_for(yield_mpa),
-            Material="STDSTEEL",
-            Side=side,
-        )
+        attrs = {
+            "Width": _fmt(_arc_length_of(plate, p1, p2)),
+            "RefCode": "CURVE",
+            "Thickness": _fmt(thickness),
+            "Yield": _fmt(yield_mpa),
+        }
+        if materials is not None:
+            attrs["MaterialId"] = materials.id_for(yield_mpa)
+        attrs["Material"] = "STDSTEEL"
+        attrs["Side"] = side
+        etree.SubElement(plates, "PLATE", **attrs)
 
 
 def _append_longs(
@@ -524,8 +553,9 @@ def _append_longs(
     chain: _Chain,
     stiffeners: list[SectionStiffener],
     stdspan: float,
-    materials: _MaterialIds,
+    materials: _MaterialIds | None,
     warnings: list[str],
+    lstiff_types: dict[str, int],
 ) -> None:
     longs = etree.SubElement(panel, "LONGS")
     if not stiffeners:
@@ -533,7 +563,7 @@ def _append_longs(
 
     for stiffener in sorted(stiffeners, key=lambda item: _arc_position(chain, item.y_mm, item.z_mm)):
         yield_mpa = _yield_or_default(stiffener.material_reh_mpa)
-        type_code = _LSTIFF_TYPE.get(stiffener.section_kind or "")
+        type_code = lstiff_types.get(stiffener.section_kind or "")
         if type_code is None:
             type_code = 10
             warnings.append(
@@ -541,26 +571,26 @@ def _append_longs(
                 f"{stiffener.section_kind!r}; using HMX type 10"
             )
         web_angle, flange_angle = _angles(stiffener)
-        etree.SubElement(
-            longs,
-            "LSTIFF",
-            Name=stiffener.name,
-            Position=_fmt(_arc_position(chain, stiffener.y_mm, stiffener.z_mm)),
-            RefCode="CURVE",
-            Type=str(type_code),
-            RusCode="",
-            H=_fmt(stiffener.h_mm or 0.0),
-            BF=_fmt(stiffener.bf_mm or 0.0),
-            T=_fmt(stiffener.tw_mm or 0.0),
-            TF=_fmt(stiffener.tf_mm or 0.0),
-            WebAngle=_fmt(web_angle),
-            FlAngle=_fmt(flange_angle),
-            Span=_fmt(stdspan),
-            Yield=_fmt(yield_mpa),
-            MaterialId=materials.id_for(yield_mpa),
-            K="0",
-            BuckStiff="false",
-        )
+        attrs = {
+            "Name": stiffener.name,
+            "Position": _fmt(_arc_position(chain, stiffener.y_mm, stiffener.z_mm)),
+            "RefCode": "CURVE",
+            "Type": str(type_code),
+            "RusCode": "",
+            "H": _fmt(stiffener.h_mm or 0.0),
+            "BF": _fmt(stiffener.bf_mm or 0.0),
+            "T": _fmt(stiffener.tw_mm or 0.0),
+            "TF": _fmt(stiffener.tf_mm or 0.0),
+            "WebAngle": _fmt(web_angle),
+            "FlAngle": _fmt(flange_angle),
+            "Span": _fmt(stdspan),
+            "Yield": _fmt(yield_mpa),
+        }
+        if materials is not None:
+            attrs["MaterialId"] = materials.id_for(yield_mpa)
+        attrs["K"] = "0"
+        attrs["BuckStiff"] = "false"
+        etree.SubElement(longs, "LSTIFF", **attrs)
 
 
 def _append_schema_cutouts(panel: etree._Element) -> None:
