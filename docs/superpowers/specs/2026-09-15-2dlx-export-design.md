@@ -175,5 +175,7 @@ a 2DLX example.
 
 1. `validator section export model.3docx --frame FRnn` writes a `.2dlx` file
    that Nauticus Hull imports cleanly.
-2. `--format hmx` output is byte-identical to the pre-change HMX exporter.
+2. `--format hmx` output is byte-identical to the pre-change HMX exporter
+   (accepted exception: the fallback warning text in the leading XML comment
+   changed from "using HMX type 10" to the format-neutral "using type 10").
 3. All tests pass (`uv run pytest`).
