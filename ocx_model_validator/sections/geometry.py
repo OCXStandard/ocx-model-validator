@@ -70,6 +70,187 @@ def intersect_curve_plane(
     raise GeometryError(f"Unsupported curve type {type(curve).__name__}")
 
 
+def trace_profile(
+    curve: IrCurve3D | None,
+    x_mm: float,
+    to_mm: PointToMm,
+    tol: float = 0.1,
+) -> list[tuple[float, float]] | None:
+    """Return the full ``(y, z)`` section trace of a prismatic closed contour.
+
+    Plate outer contours of prismatic plates carry the transverse profile
+    (e.g. a tessellated bilge arc) on their transverse edges. Walking the
+    contour between its two crossings of the plane ``X=x_mm`` through the
+    nearest transverse edge and dropping the x coordinate recovers the true
+    section trace instead of the corner-cutting chord between the crossings.
+
+    Returns ``None`` when the contour is not a single connected closed loop
+    crossing the plane exactly twice — callers fall back to the plain
+    plane-hit pairing in that case.
+    """
+    if curve is None:
+        return None
+    try:
+        polyline = _contour_polyline(curve, to_mm, tol)
+    except GeometryError:
+        return None
+    if polyline is None or len(polyline) < 4:
+        return None
+    if float(np.linalg.norm(polyline[0] - polyline[-1])) > max(tol, 1.0):
+        return None
+
+    points = polyline[:-1]
+    count = len(points)
+    crossings: list[tuple[int, np.ndarray]] = []
+    for index in range(count):
+        a = points[index]
+        b = points[(index + 1) % count]
+        da = float(a[0] - x_mm)
+        db = float(b[0] - x_mm)
+        if abs(da) < _PLANE_EPS and abs(db) < _PLANE_EPS:
+            return None
+        if abs(da) < _PLANE_EPS:
+            crossings.append((index, a.copy()))
+        elif abs(db) >= _PLANE_EPS and da * db < 0.0:
+            alpha = da / (da - db)
+            crossings.append((index, a + alpha * (b - a)))
+    if len(crossings) != 2 or crossings[0][0] == crossings[1][0]:
+        return None
+
+    (first_edge, first_hit), (second_edge, second_hit) = crossings
+    forward = _walk_ring(points, first_edge, first_hit, second_edge, second_hit)
+    backward = _walk_ring(points, second_edge, second_hit, first_edge, first_hit)
+
+    def x_reach(path: list[np.ndarray]) -> float:
+        return max(abs(float(point[0]) - x_mm) for point in path)
+
+    chosen = forward if x_reach(forward) <= x_reach(backward) else list(reversed(backward))
+    trace: list[tuple[float, float]] = []
+    for point in chosen:
+        yz = (float(point[1]), float(point[2]))
+        if not trace or ((yz[0] - trace[-1][0]) ** 2 + (yz[1] - trace[-1][1]) ** 2) ** 0.5 > tol:
+            trace.append(yz)
+    if len(trace) < 2:
+        return None
+    trace[-1] = (float(chosen[-1][1]), float(chosen[-1][2]))
+    return trace
+
+
+def _walk_ring(
+    points: list[np.ndarray],
+    start_edge: int,
+    start_hit: np.ndarray,
+    stop_edge: int,
+    stop_hit: np.ndarray,
+) -> list[np.ndarray]:
+    count = len(points)
+    path = [start_hit]
+    index = (start_edge + 1) % count
+    while True:
+        path.append(points[index])
+        if index == stop_edge:
+            break
+        index = (index + 1) % count
+    path.append(stop_hit)
+    return path
+
+
+def _contour_polyline(
+    curve: IrCurve3D,
+    to_mm: PointToMm,
+    tol: float,
+) -> list[np.ndarray] | None:
+    """Return the contour as a connected 3D polyline, or ``None`` if unsupported."""
+    if isinstance(curve, IrLine3D):
+        if curve.start is None or curve.end is None:
+            return None
+        return [_point_array(curve.start, to_mm), _point_array(curve.end, to_mm)]
+    if isinstance(curve, IrPolyLine3D):
+        if not curve.vertices or any(point is None for point in curve.vertices):
+            return None
+        points = [_point_array(point, to_mm) for point in curve.vertices]
+        if curve.is_closed and len(points) > 1:
+            points.append(points[0].copy())
+        return points
+    if isinstance(curve, IrNurbs3D):
+        evaluator, t0, t1, _ = _nurbs_evaluator(curve, to_mm)
+        knots = sorted({float(k) for k in curve.knot_vector if t0 <= k <= t1})
+        straight_tol = max(tol, 0.25)
+        points: list[np.ndarray] = []
+        for left, right in zip(knots, knots[1:]):
+            samples = [evaluator(left + (right - left) * step / 4.0) for step in range(4)]
+            end = evaluator(right)
+            # Polygon-encoded NURBS have straight knot spans; interior samples
+            # then sit on the chord (off any true circle) and must be dropped
+            # so arc decomposition sees only the tessellation vertices.
+            if _points_on_chord(samples[1:], samples[0], end, straight_tol):
+                points.append(samples[0])
+            else:
+                points.extend(samples)
+        points.append(evaluator(t1))
+        return points
+    if isinstance(curve, IrCircumArc3D):
+        return _circumarc_polyline(curve, to_mm)
+    if isinstance(curve, IrCompositeCurve3D):
+        join_tol = max(tol, 1.0)
+        chain: list[np.ndarray] | None = None
+        for segment in curve.segments:
+            piece = _contour_polyline(segment, to_mm, tol)
+            if piece is None or len(piece) < 2:
+                return None
+            if chain is None:
+                chain = list(piece)
+            elif float(np.linalg.norm(chain[-1] - piece[0])) <= join_tol:
+                chain.extend(piece[1:])
+            elif float(np.linalg.norm(chain[-1] - piece[-1])) <= join_tol:
+                chain.extend(reversed(piece[:-1]))
+            else:
+                return None
+        return chain
+    return None
+
+
+def _points_on_chord(
+    interior: list[np.ndarray],
+    start: np.ndarray,
+    end: np.ndarray,
+    tol: float,
+) -> bool:
+    chord = end - start
+    length = float(np.linalg.norm(chord))
+    if length <= 0.0:
+        return True
+    return all(
+        float(np.linalg.norm(np.cross(point - start, chord))) / length <= tol
+        for point in interior
+    )
+
+
+def _circumarc_polyline(
+    curve: IrCircumArc3D,
+    to_mm: PointToMm,
+    samples: int = 16,
+) -> list[np.ndarray] | None:
+    if curve.start is None or curve.intermediate is None or curve.end is None:
+        return None
+    start = _point_array(curve.start, to_mm)
+    middle = _point_array(curve.intermediate, to_mm)
+    end = _point_array(curve.end, to_mm)
+    try:
+        center, radius, normal = _circle_from_three_points(start, middle, end)
+        u = _normalize(start - center, "IrCircumArc3D has zero radius")
+    except GeometryError:
+        return None
+    v = np.cross(normal, u)
+    middle_angle = _angle_on_axes(middle - center, u, v)
+    end_angle = _angle_on_axes(end - center, u, v)
+    sweep = _arc_sweep_containing_middle(middle_angle, end_angle)
+    return [
+        center + radius * (cos(theta) * u + sin(theta) * v)
+        for theta in np.linspace(0.0, sweep, samples)
+    ]
+
+
 def _segments_hits(
     points: Sequence[IrPoint3D],
     x_mm: float,

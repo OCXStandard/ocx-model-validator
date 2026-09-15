@@ -26,7 +26,11 @@ from ocx_model_validator.model.ir.sections import (
     IrTSection,
 )
 from ocx_model_validator.model.ir.structural import IrPanel, IrPlate, IrStiffener, IrVessel
-from ocx_model_validator.sections.geometry import _circle_from_three_points, intersect_curve_plane
+from ocx_model_validator.sections.geometry import (
+    _circle_from_three_points,
+    intersect_curve_plane,
+    trace_profile,
+)
 from ocx_model_validator.sections.units import point_mm, qty_mm, qty_mpa
 
 
@@ -197,6 +201,28 @@ def _build_plates(
             thickness_mm = _safe_qty_mm(plate.thickness, vessel.unit_registry, "plate", name, "thickness", warnings)
             material_reh_mpa = _safe_material_reh_mpa(plate.material_ref, vessel, "plate", name, warnings)
             panel_name = _panel_name(panel_item.panel)
+
+            if len(hits) == 2:
+                trace = trace_profile(plate.outer_contour, x_mm, to_mm, tol)
+                if trace is not None and len(trace) > 2 and _trace_matches_hits(trace, hits, tol):
+                    for p1, p2, radius_mm, center in _decompose_trace(trace):
+                        result.append(
+                            SectionPlate(
+                                name=name,
+                                y1_mm=p1[0],
+                                z1_mm=p1[1],
+                                y2_mm=p2[0],
+                                z2_mm=p2[1],
+                                thickness_mm=thickness_mm,
+                                material_reh_mpa=material_reh_mpa,
+                                panel=panel_name,
+                                radius_mm=radius_mm,
+                                arc_center_y_mm=center[0] if center else None,
+                                arc_center_z_mm=center[1] if center else None,
+                            )
+                        )
+                    continue
+
             arc_info = _plate_arc_info(plate, x_mm, to_mm, vessel.unit_registry)
             radius_mm, arc_center_y_mm, arc_center_z_mm = arc_info or (None, None, None)
             
@@ -221,6 +247,135 @@ def _build_plates(
             continue
 
     return result
+
+
+def _trace_matches_hits(
+    trace: list[tuple[float, float]],
+    hits: list[tuple[float, float]],
+    tol: float,
+) -> bool:
+    match_tol = max(1.0, 10.0 * tol)
+    starts = (hypot(trace[0][0] - hits[0][0], trace[0][1] - hits[0][1]) <= match_tol
+              and hypot(trace[-1][0] - hits[1][0], trace[-1][1] - hits[1][1]) <= match_tol)
+    reversed_match = (hypot(trace[0][0] - hits[1][0], trace[0][1] - hits[1][1]) <= match_tol
+                      and hypot(trace[-1][0] - hits[0][0], trace[-1][1] - hits[0][1]) <= match_tol)
+    return starts or reversed_match
+
+
+def _decompose_trace(
+    trace: list[tuple[float, float]],
+    fit_tol: float = 0.5,
+) -> list[tuple[tuple[float, float], tuple[float, float], float | None, tuple[float, float] | None]]:
+    """Split a section trace polyline into straight and circular-arc segments.
+
+    Returns ``(start, end, radius_mm, center)`` tuples; ``radius_mm``/``center``
+    are ``None`` for straight segments. Arc runs need at least four trace
+    points on a common circle so tessellated bilge arcs recover their
+    canonical radius while knuckles and seams stay straight segments.
+    """
+    segments: list[tuple[tuple[float, float], tuple[float, float], float | None, tuple[float, float] | None]] = []
+    runs: list[tuple[int, int, float | None, tuple[float, float] | None]] = []
+    index = 0
+    count = len(trace)
+    while index < count - 1:
+        arc = _longest_arc_run(trace, index, fit_tol)
+        if arc is not None:
+            stop, radius, center = arc
+            # Vertex noise near fit_tol can break one physical arc into
+            # adjacent runs; refit the combined range with a relaxed tolerance
+            # and merge when the points still share a single circle.
+            if runs and runs[-1][2] is not None:
+                prev_start = runs[-1][0]
+                refit = _fit_circle_2d(trace[prev_start : stop + 1], 2.0 * fit_tol)
+                if refit is not None:
+                    runs[-1] = (prev_start, stop, refit[0], refit[1])
+                    index = stop
+                    continue
+            runs.append((index, stop, radius, center))
+            index = stop
+            continue
+        stop = index + 1
+        while stop + 1 < count and _run_is_straight(trace, index, stop + 1, fit_tol):
+            stop += 1
+        runs.append((index, stop, None, None))
+        index = stop
+    for start, stop, radius, center in runs:
+        segments.append((trace[start], trace[stop], radius, center))
+    return segments
+
+
+def _longest_arc_run(
+    trace: list[tuple[float, float]],
+    start: int,
+    fit_tol: float,
+) -> tuple[int, float, tuple[float, float]] | None:
+    best: tuple[int, float, tuple[float, float]] | None = None
+    stop = start + 3
+    while stop < len(trace):
+        fit = _fit_circle_2d(trace[start : stop + 1], fit_tol)
+        if fit is None:
+            break
+        best = (stop, fit[0], fit[1])
+        stop += 1
+    if best is None:
+        return None
+    stop, radius, center = best
+    chord = hypot(trace[stop][0] - trace[start][0], trace[stop][1] - trace[start][1])
+    if radius <= 0.0 or chord <= 0.0:
+        return None
+    half_chord = min(chord / 2.0, radius)
+    sagitta = radius - (radius * radius - half_chord * half_chord) ** 0.5
+    if sagitta < 4.0 * fit_tol:
+        return None
+    return best
+
+
+def _run_is_straight(
+    trace: list[tuple[float, float]],
+    start: int,
+    stop: int,
+    fit_tol: float,
+) -> bool:
+    (x1, y1), (x2, y2) = trace[start], trace[stop]
+    length = hypot(x2 - x1, y2 - y1)
+    if length <= 0.0:
+        return False
+    for x, y in trace[start + 1 : stop]:
+        if abs((x2 - x1) * (y1 - y) - (x1 - x) * (y2 - y1)) / length > fit_tol:
+            return False
+    return True
+
+
+def _fit_circle_2d(
+    points: list[tuple[float, float]],
+    fit_tol: float,
+) -> tuple[float, tuple[float, float]] | None:
+    """Least-squares circle fit; ``None`` for collinear points or poor fits."""
+    arr = np.asarray(points, dtype=float)
+    chord = float(np.linalg.norm(arr[-1] - arr[0]))
+    if chord <= 0.0:
+        return None
+    deviation = max(
+        float(abs((arr[-1][0] - arr[0][0]) * (arr[0][1] - y) - (arr[0][0] - x) * (arr[-1][1] - arr[0][1]))) / chord
+        for x, y in arr[1:-1]
+    )
+    if deviation <= fit_tol:
+        return None
+    design = np.column_stack([2.0 * arr, np.ones(len(arr))])
+    target = (arr**2).sum(axis=1)
+    try:
+        solution, *_ = np.linalg.lstsq(design, target, rcond=None)
+    except np.linalg.LinAlgError:
+        return None
+    cy, cz, constant = (float(v) for v in solution)
+    radius_sq = constant + cy * cy + cz * cz
+    if radius_sq <= 0.0:
+        return None
+    radius = radius_sq**0.5
+    residual = float(np.abs(np.hypot(arr[:, 0] - cy, arr[:, 1] - cz) - radius).max())
+    if residual > fit_tol:
+        return None
+    return radius, (cy, cz)
 
 
 def _plate_arc_info(

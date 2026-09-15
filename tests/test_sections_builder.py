@@ -11,6 +11,7 @@ from ocx_model_validator.model.ir.geometry import (
     IrCompositeCurve3D,
     IrCurve3D,
     IrLine3D,
+    IrNurbs3D,
     IrPolyLine3D,
     IrVector3D,
 )
@@ -198,6 +199,114 @@ def test_plate_segments_are_paired_with_thickness_and_material(vessel: IrVessel)
     assert (plate.y1_mm, plate.z1_mm, plate.y2_mm, plate.z2_mm) == pytest.approx(
         (0.0, 0.0, 2000.0, 0.0)
     )
+
+
+def _bilge_profile_mm() -> list[tuple[float, float]]:
+    """Bottom-arc-side profile with the arc discretized on a R=500 circle."""
+    from math import cos, radians, sin
+
+    points = [(0.0, 0.0), (1000.0, 0.0)]
+    for deg in (-67.5, -45.0, -22.5):
+        points.append((1000.0 + 500.0 * cos(radians(deg)), 500.0 + 500.0 * sin(radians(deg))))
+    points += [(1500.0, 500.0), (1500.0, 1500.0)]
+    return points
+
+
+def test_prismatic_polyline_contour_decomposes_into_bottom_arc_and_side(vessel: IrVessel) -> None:
+    # OCX models often tessellate the bilge arc into a polyline (or a
+    # polygon-encoded NURBS). The section trace must keep the full profile —
+    # straight bottom, canonical-radius bilge arc, straight side — instead of
+    # collapsing the plate to a single corner-cutting chord.
+    profile = _bilge_profile_mm()
+    forward = [p(4.0, y / 1000.0, z / 1000.0) for y, z in profile]
+    aft = [p(6.0, y / 1000.0, z / 1000.0) for y, z in reversed(profile)]
+    vessel.panels["panel-c"] = IrPanel(id="panel-c", name="Panel C", plate_ids=["shell-plate"])
+    vessel.plates["shell-plate"] = IrPlate(
+        id="shell-plate",
+        parent_ref=parent("panel-c"),
+        name="Shell plate",
+        material_ref=Ref("mat315"),
+        thickness=q(15.0, "Umm"),
+        outer_contour=IrPolyLine3D(curve_length=None, vertices=forward + aft, is_closed=True),
+    )
+
+    section = build_cross_section(vessel, 5000.0)
+
+    plates = [pl for pl in section.plates if pl.name == "Shell plate"]
+    assert len(plates) == 3
+
+    def endpoints(pl) -> set[tuple[float, float]]:
+        return {(round(pl.y1_mm, 1), round(pl.z1_mm, 1)), (round(pl.y2_mm, 1), round(pl.z2_mm, 1))}
+
+    bottom = next(pl for pl in plates if endpoints(pl) == {(0.0, 0.0), (1000.0, 0.0)})
+    arc = next(pl for pl in plates if endpoints(pl) == {(1000.0, 0.0), (1500.0, 500.0)})
+    side = next(pl for pl in plates if endpoints(pl) == {(1500.0, 500.0), (1500.0, 1500.0)})
+    assert bottom.radius_mm is None
+    assert side.radius_mm is None
+    assert arc.radius_mm == pytest.approx(500.0, abs=0.5)
+    assert arc.arc_center_y_mm == pytest.approx(1000.0, abs=0.5)
+    assert arc.arc_center_z_mm == pytest.approx(500.0, abs=0.5)
+    assert all(pl.thickness_mm == pytest.approx(15.0) for pl in plates)
+    assert all(pl.panel == "Panel C" for pl in plates)
+
+
+def test_prismatic_polygon_encoded_nurbs_contour_decomposes_into_bottom_arc_and_side(
+    vessel: IrVessel,
+) -> None:
+    # Real OCX models encode the tessellated contour as a NURBS whose knot
+    # spans are all straight. Sampling inside those spans puts points on the
+    # polygon chords (off the true circle), so the trace must collapse straight
+    # spans to their endpoints before arc decomposition.
+    profile = _bilge_profile_mm()
+    ring = [p(4.0, y / 1000.0, z / 1000.0) for y, z in profile]
+    ring += [p(6.0, y / 1000.0, z / 1000.0) for y, z in reversed(profile)]
+    ring.append(ring[0])
+    count = len(ring)
+    knots = [0.0, 0.0] + [float(i) for i in range(1, count - 1)] + [float(count - 1)] * 2
+    vessel.panels["panel-c"] = IrPanel(id="panel-c", name="Panel C", plate_ids=["shell-plate"])
+    vessel.plates["shell-plate"] = IrPlate(
+        id="shell-plate",
+        parent_ref=parent("panel-c"),
+        name="Shell plate",
+        material_ref=Ref("mat315"),
+        thickness=q(15.0, "Umm"),
+        outer_contour=IrNurbs3D(
+            curve_length=None,
+            degree=1,
+            knot_vector=knots,
+            control_points=ring,
+        ),
+    )
+
+    section = build_cross_section(vessel, 5000.0)
+
+    plates = [pl for pl in section.plates if pl.name == "Shell plate"]
+    assert len(plates) == 3
+    arc = next(pl for pl in plates if pl.radius_mm is not None)
+    assert arc.radius_mm == pytest.approx(500.0, abs=0.5)
+    assert arc.arc_center_y_mm == pytest.approx(1000.0, abs=0.5)
+    assert arc.arc_center_z_mm == pytest.approx(500.0, abs=0.5)
+
+
+def test_decompose_trace_merges_arc_runs_split_by_vertex_noise() -> None:
+    # Real tessellations carry ~0.5 mm radial noise on the arc vertices, which
+    # breaks the greedy arc fit mid-arc. Adjacent arc runs on the same circle
+    # must be merged back into a single canonical arc.
+    from math import cos, radians, sin
+
+    from ocx_model_validator.sections.section_builder import _decompose_trace
+
+    trace = [(0.0, 0.0), (1000.0, 0.0)]
+    for index in range(1, 26):
+        deg = -90.0 + 90.0 * index / 26.0
+        radius = 2600.0 + 0.5 * sin(radians(360.0 * index / 9.0))
+        trace.append((1000.0 + radius * cos(radians(deg)), 2600.0 + radius * sin(radians(deg))))
+    trace += [(3600.0, 2600.0), (3600.0, 5000.0)]
+
+    segments = _decompose_trace(trace)
+    arcs = [seg for seg in segments if seg[2] is not None]
+    assert len(arcs) == 1
+    assert arcs[0][2] == pytest.approx(2600.0, abs=2.0)
 
 
 def test_plate_records_transverse_arc_radius_and_center(vessel: IrVessel) -> None:
