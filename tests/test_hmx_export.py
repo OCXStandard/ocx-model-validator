@@ -88,6 +88,50 @@ def test_build_hmx_sanitizes_warning_comment_text(hmx_schema, tmp_path) -> None:
     assert not root[0].text.endswith("-")
 
 
+def test_build_hmx_splits_closed_shell_ring_into_two_open_panels(hmx_schema, tmp_path) -> None:
+    # Nauticus Hull cannot import a PANEL whose SHAPE is a closed loop
+    # ("Could not find start of panel"); the shell must be two open panels
+    # split at the centerline, each starting at the bottom-CL node.
+    vessel = make_synthetic_vessel()
+    ring_plates = [
+        SectionPlate(
+            name=name,
+            y1_mm=y1,
+            z1_mm=z1,
+            y2_mm=y2,
+            z2_mm=z2,
+            thickness_mm=10.0,
+            material_reh_mpa=315.0,
+            panel="SHELL",
+        )
+        for name, y1, z1, y2, z2 in [
+            ("bot-s", 0.0, 0.0, 10000.0, 0.0),
+            ("side-s", 10000.0, 0.0, 10000.0, 8000.0),
+            ("deck", 10000.0, 8000.0, -10000.0, 8000.0),
+            ("side-p", -10000.0, 8000.0, -10000.0, 0.0),
+            ("bot-p", -10000.0, 0.0, 0.0, 0.0),
+        ]
+    ]
+    cross_section = replace(
+        build_cross_section(vessel, 5000.0), plates=ring_plates, stiffeners=[]
+    )
+
+    root = build_hmx(vessel, cross_section, _frame_table())
+    path = tmp_path / "ring-section.hmx"
+    save_hmx(root, path)
+
+    _assert_only_nauticus_empty_wrapper_errors(hmx_schema, path)
+    panels = root.findall("./CrossSections/Scantling/PANEL")
+    assert len(panels) == 2
+    for panel in panels:
+        node = panel.find("./SHAPE/NODE")
+        segments = panel.findall("./SHAPE/SEGMENT")
+        assert (float(node.get("Y")), float(node.get("Z"))) == pytest.approx((0.0, 0.0))
+        last = segments[-1]
+        assert (float(last.get("Y")), float(last.get("Z"))) == pytest.approx((0.0, 8000.0))
+        assert len(panel.findall("./PLATES/PLATE")) == len(segments)
+
+
 def test_build_hmx_rejects_plate_less_cross_section() -> None:
     vessel = make_synthetic_vessel()
     cross_section = CrossSection(

@@ -14,6 +14,7 @@ from ocx_model_validator.sections.hmx_export import (
     _level1_code,
     _side,
     _signed_radius,
+    _split_closed_chains,
 )
 from ocx_model_validator.sections.section_builder import (
     SectionPlate,
@@ -112,6 +113,51 @@ def test_chaining_closed_loop_keeps_closing_vertex_and_invariant() -> None:
     assert len(chain.points) == len(chain.plates) + 1
     assert chain.points[0] == pytest.approx(chain.points[-1])
     assert chain.points == pytest.approx([(0.0, 0.0), (100.0, 0.0), (50.0, 80.0), (0.0, 0.0)])
+
+
+def test_split_closed_chains_opens_ring_at_centerline_crossings() -> None:
+    # Closed ring crossing the centerline in the bottom (vertex at Y=0) and
+    # in the deck (crossing between vertices) — like a full outer shell.
+    plates = [
+        plate("bot-s", 0.0, 0.0, 100.0, 0.0),
+        plate("side-s", 100.0, 0.0, 100.0, 100.0),
+        plate("deck", 100.0, 100.0, -100.0, 100.0),
+        plate("side-p", -100.0, 100.0, -100.0, 0.0),
+        plate("bot-p", -100.0, 0.0, 0.0, 0.0),
+    ]
+    ring = _chain_segments(plates)[0]
+    assert ring.points[0] == pytest.approx(ring.points[-1])
+
+    chains = _split_closed_chains([ring])
+
+    assert len(chains) == 2
+    for chain in chains:
+        # Open, starting at the bottom centerline point, ending at deck CL.
+        assert chain.points[0] == pytest.approx((0.0, 0.0))
+        assert chain.points[-1] == pytest.approx((0.0, 100.0))
+        assert len(chain.points) == len(chain.plates) + 1
+    sides = sorted(sum(y for y, _ in chain.points) for chain in chains)
+    assert sides[0] < 0 < sides[1]
+    # The deck plate crossing the CL is shared by both halves.
+    assert [p.name for p in chains[0].plates].count("deck") == 1
+    assert [p.name for p in chains[1].plates].count("deck") == 1
+
+
+def test_split_closed_chains_leaves_open_chain_unchanged() -> None:
+    chain = _chain_segments([plate("a", 0.0, 0.0, 100.0, 0.0)])[0]
+
+    assert _split_closed_chains([chain]) == [chain]
+
+
+def test_split_closed_chains_leaves_off_centre_loop_unchanged() -> None:
+    plates = [
+        plate("a", 10.0, 0.0, 110.0, 0.0),
+        plate("b", 110.0, 0.0, 60.0, 80.0),
+        plate("c", 60.0, 80.0, 10.0, 0.0),
+    ]
+    ring = _chain_segments(plates)[0]
+
+    assert _split_closed_chains([ring]) == [ring]
 
 
 def test_chaining_t_junction_branch_starts_second_chain() -> None:

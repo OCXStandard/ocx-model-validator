@@ -108,6 +108,77 @@ def _chain_segments(plates: Iterable[SectionPlate], tol: float = 1.0) -> list[_C
     return chains
 
 
+def _split_closed_chains(chains: list[_Chain], tol: float = 1.0) -> list[_Chain]:
+    """Split closed chains at their two centerline (Y=0) crossings.
+
+    Nauticus Hull cannot import a PANEL whose SHAPE forms a closed loop
+    ("Could not find start of panel"); its own exports model the shell as two
+    open port/starboard panels split at the centerline, each starting at the
+    bottom-CL node. Closed chains without exactly two centerline crossings
+    are returned unchanged.
+    """
+    result: list[_Chain] = []
+    for chain in chains:
+        result.extend(_split_closed_chain(chain, tol))
+    return result
+
+
+def _split_closed_chain(chain: _Chain, tol: float) -> list[_Chain]:
+    if len(chain.plates) < 2 or not _same_point(chain.points[0], chain.points[-1], tol):
+        return [chain]
+
+    # Ring representation: vertices[i] -> vertices[(i + 1) % n] via edges[i].
+    vertices = list(chain.points[:-1])
+    edges = list(chain.plates)
+
+    # Insert a vertex where an edge crosses the centerline strictly between
+    # its endpoints (linear interpolation on the chord); the plate is shared
+    # by both resulting edges.
+    i = 0
+    while i < len(edges):
+        y1, z1 = vertices[i]
+        y2, z2 = vertices[(i + 1) % len(vertices)]
+        if abs(y1) > tol and abs(y2) > tol and (y1 > 0.0) != (y2 > 0.0):
+            t = y1 / (y1 - y2)
+            vertices.insert(i + 1, (0.0, z1 + t * (z2 - z1)))
+            edges.insert(i + 1, edges[i])
+            i += 2
+        else:
+            i += 1
+
+    crossings = [idx for idx, (y, _) in enumerate(vertices) if abs(y) <= tol]
+    if len(crossings) != 2:
+        return [chain]
+
+    first, second = crossings
+    return [
+        _oriented_from_bottom(_ring_slice(vertices, edges, first, second)),
+        _oriented_from_bottom(_ring_slice(vertices, edges, second, first)),
+    ]
+
+
+def _ring_slice(
+    vertices: list[tuple[float, float]],
+    edges: list[SectionPlate],
+    start: int,
+    stop: int,
+) -> _Chain:
+    n = len(vertices)
+    indices = [start]
+    while indices[-1] != stop:
+        indices.append((indices[-1] + 1) % n)
+    return _Chain(
+        points=[vertices[i] for i in indices],
+        plates=[edges[i] for i in indices[:-1]],
+    )
+
+
+def _oriented_from_bottom(chain: _Chain) -> _Chain:
+    if chain.points[0][1] > chain.points[-1][1]:
+        return _Chain(points=list(reversed(chain.points)), plates=list(reversed(chain.plates)))
+    return chain
+
+
 def _signed_radius(
     plate: SectionPlate,
     p1: tuple[float, float],
@@ -402,7 +473,7 @@ def _append_section_body(
     stdspace = _standard_spacing_mm(cross_section)
     _append_misc(parent, extent, stdspan, stdspace)
 
-    chains = _chain_segments(cross_section.plates)
+    chains = _split_closed_chains(_chain_segments(cross_section.plates))
     assigned_stiffeners = _assign_stiffeners_to_chains(cross_section.stiffeners, chains)
     for index, chain in enumerate(chains):
         _append_panel(
