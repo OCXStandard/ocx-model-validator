@@ -36,6 +36,9 @@ parameterized so both formats reuse them. HMX output is unchanged.
   `None`, no `LeftCompartment`/`RightCompartment` attributes are emitted.
 - `_append_plates` / `_append_longs`: accept `materials: _MaterialIds | None`.
   When `None`, no `MaterialId` attribute is emitted.
+- `_append_longs`: additionally accepts the `LSTIFF` type map to use
+  (`_LSTIFF_TYPE` for HMX, `_LSTIFF_TYPE_2DLX` for 2DLX — see
+  "Profile type mapping" below).
 - The scantling body loop (chain segmentation, stiffener assignment, and
   emission of `IDDATA`/`POSITION`/`MATERIAL`/`MISC`/`PANEL`s) is extracted
   into `_append_section_body(parent, vessel, cross_section, frame_table,
@@ -90,6 +93,35 @@ Content rules:
   Nauticus empty-wrapper convention (same as HMX). Empty `LONGS` is likewise
   tolerated when a chain has no stiffeners.
 
+## Profile type mapping (OCX → 2DLX)
+
+Per the 2DL format documentation (see the comment block at the end of
+`docs/superpowers/ProfileTypesEnum.cs`), 2DLX recognizes only these `LSTIFF`
+`Type` codes: 10, 20, 21, 23, 24, 25, 26, 27, 28, 29, 30, 31, 33, 35, 36, 37,
+42, 43. The HMX map's `t_section → 40` (BuiltUpTbar) is **not** in this set,
+so 2DLX uses its own map, `_LSTIFF_TYPE_2DLX`, passed into the shared
+`_append_longs` (HMX keeps `_LSTIFF_TYPE` unchanged):
+
+| OCX bar section | IR `section_kind` | 2DLX `Type` | 2DLX description | HMX code |
+|---|---|---|---|---|
+| `BulbFlat` | `bulb_flat` | 20 | HP bulb (DIN 1019, form HP) | 20 |
+| `FlatBar` | `flat_bar` | 10 | Flatbar | 10 |
+| `TBar` | `t_section` | **43** | Welded T-bar | 40 |
+| `LBar` | `l_section` | 31 | Big rolled angle | 31 |
+| `LBarOF` | `l_overshoot_flange` | 35 | Welded angle bar, flange on top | 35 |
+| `LBarOW` | `l_overshoot_web` | 36 | Welded angle bar, flange to web | 36 |
+
+Unmapped codes and fallbacks:
+
+- OCX bar sections with no 2DLX equivalent (`RectangularTube`, `SquareBar`,
+  `RoundBar`, `HalfRoundBar`, `HexagonBar`, `OctagonBar`, `UBar`, `IBar`,
+  `ZBar`, `Tube`) and any unknown `section_kind` fall back to `Type=10`
+  (Flatbar) with a warning — same convention as the HMX exporter.
+- 2DLX codes 21, 23–29 (bulb variants), 30, 33, 37 and 42 have no OCX bar
+  section counterpart in the current IR and are never emitted.
+- Russian bulbs (27/28 per the 2DL doc) would require `RusCode`; since they
+  are never emitted, `RusCode` stays `""` as today.
+
 ## CLI
 
 `validator section export` gains a format option:
@@ -120,6 +152,9 @@ validator section export MODEL.3docx (--frame FR20 | --x MM)
   - bilge arc plate produces a signed-radius `SEGMENT`
   - `SEGMENT` elements carry no `LeftCompartment`/`RightCompartment`;
     `PLATE`/`LSTIFF` carry no `MaterialId`
+  - a `t_section` stiffener is emitted with `Type="43"` (2DLX) while the HMX
+    export of the same section keeps `Type="40"`
+  - an unsupported section kind falls back to `Type="10"` with a warning
   - `administrative` block present with program name/version
   - plate-less cross-section raises `ValueError`
 - CLI tests in `tests/test_cli_section.py`:
