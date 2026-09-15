@@ -291,6 +291,47 @@ def test_arc_position_uses_true_arc_station_for_curved_segment() -> None:
     assert _arc_position(chain, query_y, query_z) == pytest.approx(100.0 * math.radians(30.0))
 
 
+def test_station_and_distance_uses_radial_distance_on_arcs() -> None:
+    from ocx_model_validator.sections.hmx_export import _Chain, _station_and_distance
+
+    # Quarter circle R=1000 centered at origin, from (1000, 0) to (0, 1000).
+    arc = plate("bilge", 1000.0, 0.0, 0.0, 1000.0, radius=1000.0, center=(0.0, 0.0))
+    chain = _Chain(points=[(1000.0, 0.0), (0.0, 1000.0)], plates=[arc])
+
+    # Point exactly on the arc at 45 degrees: chord distance would be the
+    # sagitta (~293 mm) but the radial distance is 0.
+    on_arc = (1000.0 * math.cos(math.pi / 4), 1000.0 * math.sin(math.pi / 4))
+    station, dist = _station_and_distance(chain, on_arc)
+
+    assert dist == pytest.approx(0.0, abs=1e-6)
+    assert station == pytest.approx(1000.0 * math.pi / 4, rel=1e-6)
+
+
+def test_station_and_distance_on_straight_segment() -> None:
+    from ocx_model_validator.sections.hmx_export import _Chain, _station_and_distance
+
+    chain = _Chain(
+        points=[(0.0, 0.0), (1000.0, 0.0), (1000.0, 500.0)],
+        plates=[plate("a", 0.0, 0.0, 1000.0, 0.0), plate("b", 1000.0, 0.0, 1000.0, 500.0)],
+    )
+
+    station, dist = _station_and_distance(chain, (1000.0, 200.0))
+
+    assert station == pytest.approx(1200.0)
+    assert dist == pytest.approx(0.0, abs=1e-9)
+
+
+def test_station_and_distance_reports_offset_distance() -> None:
+    from ocx_model_validator.sections.hmx_export import _Chain, _station_and_distance
+
+    chain = _Chain(points=[(0.0, 0.0), (1000.0, 0.0)], plates=[plate("a", 0.0, 0.0, 1000.0, 0.0)])
+
+    station, dist = _station_and_distance(chain, (500.0, 80.0))
+
+    assert station == pytest.approx(500.0)
+    assert dist == pytest.approx(80.0)
+
+
 def test_level1_code_classifies_bottom_deck_side_bilge_and_undefined() -> None:
     extent = {"min_y": -1000.0, "max_y": 1000.0, "min_z": 0.0, "max_z": 1000.0}
 

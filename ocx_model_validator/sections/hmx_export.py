@@ -332,35 +332,46 @@ def _arc_length_of(
 
 
 def _arc_position(_chain: _Chain, y: float, z: float) -> float:
-    """Return arc-length station of the nearest chord projection on ``chain``."""
-    best_index = 0
-    best_t = 0.0
+    """Return arc-length station of the nearest projection on ``chain``."""
+    return _station_and_distance(_chain, (y, z))[0]
+
+
+def _station_and_distance(chain: _Chain, point: tuple[float, float]) -> tuple[float, float]:
+    """Return ``(arc-length station, distance)`` of the nearest point on ``chain``.
+
+    Straight segments use clamped chord projection; arc segments use radial
+    distance to the circle when the point projects inside the arc sweep, so
+    mid-arc points are not penalized by chord sagitta.
+    """
+    best_station = 0.0
     best_dist = float("inf")
-
-    for idx, (p1, p2) in enumerate(zip(_chain.points, _chain.points[1:])):
-        t, dist = _projection((y, z), p1, p2)
+    prefix = 0.0
+    for plate, p1, p2 in zip(chain.plates, chain.points, chain.points[1:]):
+        seg_len = _arc_length_of(plate, p1, p2)
+        is_arc = (
+            plate.radius_mm is not None
+            and abs(plate.radius_mm) > 0.0
+            and plate.arc_center_y_mm is not None
+            and plate.arc_center_z_mm is not None
+        )
+        if is_arc:
+            center = (plate.arc_center_y_mm, plate.arc_center_z_mm)
+            swept = _arc_station_on_segment(plate, p1, p2, point, seg_len)
+            if 0.0 < swept < seg_len:
+                dist = abs(_distance(center, point) - abs(plate.radius_mm))
+            else:
+                d1 = _distance(point, p1)
+                d2 = _distance(point, p2)
+                swept, dist = (0.0, d1) if d1 <= d2 else (seg_len, d2)
+            station = prefix + swept
+        else:
+            t, dist = _projection(point, p1, p2)
+            station = prefix + t * seg_len
         if dist < best_dist:
-            best_index = idx
-            best_t = t
             best_dist = dist
-
-    prefix = sum(
-        _arc_length_of(plate, p1, p2)
-        for plate, p1, p2 in zip(_chain.plates[:best_index], _chain.points, _chain.points[1:])
-    )
-    plate = _chain.plates[best_index]
-    p1 = _chain.points[best_index]
-    p2 = _chain.points[best_index + 1]
-    seg_len = _arc_length_of(plate, p1, p2)
-    if (
-        plate.radius_mm is not None
-        and plate.arc_center_y_mm is not None
-        and plate.arc_center_z_mm is not None
-        and abs(plate.radius_mm) > 0.0
-    ):
-        return prefix + _arc_station_on_segment(plate, p1, p2, (y, z), seg_len)
-
-    return prefix + best_t * seg_len
+            best_station = station
+        prefix += seg_len
+    return best_station, best_dist
 
 
 def _level1_code(
