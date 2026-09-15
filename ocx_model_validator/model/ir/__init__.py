@@ -90,6 +90,7 @@ from ocx_model_validator.model.ir.arrangement import (
 )
 from ocx_model_validator.model.ir.metadata import (
     IrBuilderInformation,
+    IrHeader,
     IrPrincipalParticulars,
     IrShipDesignation,
     IrStatutoryData,
@@ -139,6 +140,6 @@ __all__ = [
     "IrLiquidCargo", "IrGaseousCargo", "IrBulkCargo", "IrUnitCargo",
     "IrDesignView", "IrOccurrenceGroup", "IrOccurrence",
     # metadata
-    "IrShipDesignation", "IrTonnageData", "IrPrincipalParticulars",
+    "IrHeader", "IrShipDesignation", "IrTonnageData", "IrPrincipalParticulars",
     "IrStatutoryData", "IrBuilderInformation",
 ]

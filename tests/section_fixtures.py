@@ -113,6 +113,7 @@ def make_synthetic_vessel() -> IrVessel:
         id="stiff-a1",
         parent_ref=parent("panel-a"),
         name="A bulb",
+        guidref="stiff-a1-guid",
         material_ref=Ref("mat315"),
         section_ref=Ref("hp300"),
         trace=line(0.4, 0.1),

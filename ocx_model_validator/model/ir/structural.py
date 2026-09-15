@@ -42,6 +42,7 @@ from ocx_model_validator.model.ir.arrangement import (
 )
 from ocx_model_validator.model.ir.metadata import (
     IrBuilderInformation,
+    IrHeader,
     IrPrincipalParticulars,
     IrShipDesignation,
     IrStatutoryData,
@@ -374,6 +375,7 @@ class IrVessel:
     connection_configurations: dict[str, IrConnectionConfiguration] = field(default_factory=dict)
 
     # --- vessel-level metadata ---
+    header: IrHeader | None = None
     ship_designation: IrShipDesignation | None = None
     classification: dict[str, Any] | None = None  # ClassificationData not in scope
     builder_info: IrBuilderInformation | None = None

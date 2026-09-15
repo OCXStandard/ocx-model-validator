@@ -662,3 +662,16 @@ def test_build_cross_section_collects_multiple_hits_per_seam() -> None:
 
     assert len(section.seams) == 2
     assert sorted((s.y_mm, s.z_mm) for s in section.seams) == [(1000.0, 0.0), (2000.0, 0.0)]
+
+
+def test_section_plates_and_stiffeners_carry_guidref() -> None:
+    vessel = make_synthetic_vessel()
+
+    section = build_cross_section(vessel, 5000.0)
+
+    plates = {plate.name: plate for plate in section.plates}
+    assert plates["Plate A1"].guidref == "plate-a1-guid"
+    assert plates["Plate A2"].guidref is None
+    stiffeners = {stiffener.name: stiffener for stiffener in section.stiffeners}
+    assert stiffeners["A bulb"].guidref == "stiff-a1-guid"
+    assert stiffeners["B alone"].guidref is None

@@ -61,6 +61,7 @@ from ocx_model_validator.model.ir import (
     IrExtrudedSurface,
     IrFeatureCope,
     IrGaseousCargo,
+    IrHeader,
     IrHole2D,
     IrHoleShapeCatalogue,
     IrLine3D,
@@ -224,6 +225,7 @@ class OcxV3Builder(IOcxBuilder):
 
         # --- vessel metadata (typed) ---
         self._build_metadata(vessel_raw, ir)
+        self._build_header(root, ir)
 
         # --- integrity checks ---
         self._check_integrity(ir)
@@ -717,6 +719,20 @@ class OcxV3Builder(IOcxBuilder):
         ir.hole_shape_catalogue = IrHoleShapeCatalogue(
             id=getattr(cat, "id", None) or "HoleShapeCatalogue",
             name=getattr(cat, "name", None), holes=holes)
+
+    def _build_header(self, root, ir: IrVessel) -> None:
+        header = getattr(root, "header", None)
+        if header is None:
+            return
+        time_stamp = getattr(header, "time_stamp", None)
+        ir.header = IrHeader(
+            time_stamp=str(time_stamp) if time_stamp is not None else None,
+            name=getattr(header, "name", None),
+            author=getattr(header, "author", None),
+            organization=getattr(header, "organization", None),
+            originating_system=getattr(header, "originating_system", None),
+            application_version=getattr(header, "application_version", None),
+            documentation=getattr(header, "documentation", None))
 
     def _build_metadata(self, vessel_raw, ir: IrVessel) -> None:
         sd = getattr(vessel_raw, "ship_designation", None)

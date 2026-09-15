@@ -323,6 +323,25 @@ def test_build_metadata_typed():
     assert v.classification["classification_society"] == "DNV"
 
 
+def test_build_header():
+    v = IrVessel(id="v1")
+    root = _Stub(header=_Stub(
+        time_stamp="2024-09-18T21:48:11+03:00", name="D-VLCC/A", author="MJ",
+        organization="NAPA LTD", originating_system="NAPA Steel",
+        application_version="B9999", documentation="OCX Export"))
+    _b()._build_header(root, v)
+    assert v.header.time_stamp == "2024-09-18T21:48:11+03:00"
+    assert v.header.author == "MJ"
+    assert v.header.organization == "NAPA LTD"
+    assert v.header.originating_system == "NAPA Steel"
+
+
+def test_build_header_missing_is_none():
+    v = IrVessel(id="v1")
+    _b()._build_header(_Stub(header=None), v)
+    assert v.header is None
+
+
 # ===========================================================================
 # Cargoes
 # ===========================================================================

@@ -648,9 +648,14 @@ def _append_iddata(parent: etree._Element, vessel, cross_section: CrossSection) 
     section_name = getattr(vessel, "name", None) or getattr(vessel, "id", None)
     if not section_name:
         section_name = f"Section at x={_fmt(cross_section.x_mm)}"
+    header = getattr(vessel, "header", None)
+    time_stamp = getattr(header, "time_stamp", None)
+    author = getattr(header, "author", None)
     etree.SubElement(iddata, "NAME").text = str(section_name)
-    etree.SubElement(iddata, "DATE").text = date.today().isoformat()
-    etree.SubElement(iddata, "SIGNATURE").text = "ocx-model-validator"
+    etree.SubElement(iddata, "DATE").text = (
+        time_stamp.split("T")[0] if time_stamp else date.today().isoformat()
+    )
+    etree.SubElement(iddata, "SIGNATURE").text = author or "ocx-model-validator"
     etree.SubElement(iddata, "COMMENTS").text = ""
 
 
@@ -786,6 +791,8 @@ def _append_plates(
             attrs["MaterialId"] = materials.id_for(yield_mpa)
         attrs["Material"] = "STDSTEEL"
         attrs["Side"] = side
+        if span_plate.guidref:
+            attrs["ExternalTag"] = span_plate.guidref
         etree.SubElement(plates_el, "PLATE", **attrs)
 
 
@@ -868,6 +875,8 @@ def _append_longs(
             attrs["MaterialId"] = materials.id_for(yield_mpa)
         attrs["K"] = "0"
         attrs["BuckStiff"] = "false"
+        if stiffener.guidref:
+            attrs["ExternalTag"] = stiffener.guidref
         etree.SubElement(longs, "LSTIFF", **attrs)
 
 

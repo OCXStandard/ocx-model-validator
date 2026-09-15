@@ -53,6 +53,7 @@ class SectionStiffener:
     web_angle_deg: float = 90.0
     web_dir_y: float | None = None
     web_dir_z: float | None = None
+    guidref: str | None = None
 
 
 @dataclass(frozen=True)
@@ -68,6 +69,7 @@ class SectionPlate:
     radius_mm: float | None = None
     arc_center_y_mm: float | None = None
     arc_center_z_mm: float | None = None
+    guidref: str | None = None
 
 
 @dataclass(frozen=True)
@@ -176,6 +178,7 @@ def _build_stiffeners(
                             tf_mm=tf_mm,
                             web_dir_y=web_dir_y,
                             web_dir_z=web_dir_z,
+                            guidref=stiffener.guidref,
                         ),
                     )
                 )
@@ -231,6 +234,7 @@ def _build_plates(
                                 radius_mm=radius_mm,
                                 arc_center_y_mm=center[0] if center else None,
                                 arc_center_z_mm=center[1] if center else None,
+                                guidref=plate.guidref,
                             )
                         )
                     continue
@@ -252,6 +256,7 @@ def _build_plates(
                         radius_mm=radius_mm,
                         arc_center_y_mm=arc_center_y_mm,
                         arc_center_z_mm=arc_center_z_mm,
+                        guidref=plate.guidref,
                     )
                 )
         except GeometryError as exc:

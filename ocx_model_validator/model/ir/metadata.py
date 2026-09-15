@@ -7,6 +7,18 @@ from ocx_model_validator.model.ir.base import Quantity
 
 
 @dataclass(frozen=True)
+class IrHeader:
+    """OCX <Header> document metadata."""
+    time_stamp: str | None = None
+    name: str | None = None
+    author: str | None = None
+    organization: str | None = None
+    originating_system: str | None = None
+    application_version: str | None = None
+    documentation: str | None = None
+
+
+@dataclass(frozen=True)
 class IrShipDesignation:
     ship_name: str | None = None
     call_sign: str | None = None

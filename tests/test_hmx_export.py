@@ -201,3 +201,48 @@ def _assert_only_nauticus_empty_wrapper_errors(hmx_schema, path) -> None:
         assert "content" in reason.lower() or "expected" in reason.lower(), (
             f"unexpected non-cardinality schema error: {error}"
         )
+
+
+def test_iddata_uses_ocx_header_date_and_author() -> None:
+    from ocx_model_validator.model.ir import IrHeader
+
+    vessel = make_synthetic_vessel()
+    vessel.header = IrHeader(time_stamp="2024-09-18T21:48:11+03:00", author="MJ")
+    cross_section = build_cross_section(vessel, 5000.0)
+
+    root = build_hmx(vessel, cross_section, _frame_table())
+
+    iddata = root.find("./CrossSections/Scantling/IDDATA")
+    assert iddata.find("DATE").text == "2024-09-18"
+    assert iddata.find("SIGNATURE").text == "MJ"
+
+
+def test_iddata_falls_back_when_header_missing() -> None:
+    import datetime
+
+    vessel = make_synthetic_vessel()
+    cross_section = build_cross_section(vessel, 5000.0)
+
+    root = build_hmx(vessel, cross_section, _frame_table())
+
+    iddata = root.find("./CrossSections/Scantling/IDDATA")
+    assert iddata.find("DATE").text == datetime.date.today().isoformat()
+    assert iddata.find("SIGNATURE").text == "ocx-model-validator"
+
+
+def test_plate_and_lstiff_external_tag_from_guidref() -> None:
+    vessel = make_synthetic_vessel()
+    cross_section = build_cross_section(vessel, 5000.0)
+
+    root = build_hmx(vessel, cross_section, _frame_table())
+    scantling = root.find("./CrossSections/Scantling")
+
+    plate_tags = {plate.get("ExternalTag") for plate in scantling.findall(".//PLATE")}
+    assert plate_tags == {"plate-a1-guid", None}
+
+    stiff_tags = {
+        stiffener.get("Name"): stiffener.get("ExternalTag")
+        for stiffener in scantling.findall(".//LSTIFF")
+    }
+    assert stiff_tags["A bulb"] == "stiff-a1-guid"
+    assert stiff_tags["B alone"] is None
