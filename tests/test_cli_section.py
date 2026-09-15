@@ -128,10 +128,32 @@ def test_section_export_rejects_rule_set_with_2dlx(model_310: Path):
     assert result.exit_code == 2
 
 
-def test_export_default_output_suffix_follows_format():
-    from ocx_model_validator.cli import _EXPORT_SUFFIX
+def test_section_export_happy_paths_write_files(model_310: Path, tmp_path: Path,
+                                                monkeypatch):
+    # the stub model has no intersectable geometry, so substitute a synthetic
+    # section to exercise the real CLI wiring (dispatch, suffix, save, echo)
+    from ocx_model_validator.sections import document as document_module
+    from ocx_model_validator.sections.section_builder import build_cross_section
+    from tests.section_fixtures import make_synthetic_vessel
+    from tests.test_hmx_export import _frame_table
 
-    assert _EXPORT_SUFFIX == {"2dlx": ".2dlx", "hmx": ".hmx"}
+    section = build_cross_section(make_synthetic_vessel(), 5000.0)
+    monkeypatch.setattr(document_module, "resolve_section",
+                        lambda vessel, x_mm=None, frame=None: (_frame_table(), section))
+    monkeypatch.chdir(tmp_path)
+
+    result = runner.invoke(app, ["section", "export", str(model_310), "--x", "5000"])
+    assert result.exit_code == 0
+    assert "2DLX section written to" in result.output
+    dlx = tmp_path / f"{model_310.stem}-x5000.2dlx"
+    assert "<CROSS_SECTION>" in dlx.read_text(encoding="utf-8")
+
+    result = runner.invoke(app, ["section", "export", str(model_310), "--x", "5000",
+                                 "--format", "hmx"])
+    assert result.exit_code == 0
+    assert "HMX section written to" in result.output
+    hmx = tmp_path / f"{model_310.stem}-x5000.hmx"
+    assert "<HullModel>" in hmx.read_text(encoding="utf-8")
 
 
 def test_export_default_output_name():

@@ -202,7 +202,10 @@ def section_export_cmd(
     out = output or _default_section_output(model, frame, x_mm,
                                             suffix=_EXPORT_SUFFIX[fmt])
     try:
-        save_2dlx(root, out) if fmt == "2dlx" else save_hmx(root, out)
+        if fmt == "2dlx":
+            save_2dlx(root, out)
+        else:
+            save_hmx(root, out)
     except OSError as exc:
         logger.error("Cannot write {}: {}", out, exc)
         raise typer.Exit(code=1) from exc
