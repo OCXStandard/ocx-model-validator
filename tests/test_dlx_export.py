@@ -48,12 +48,11 @@ def test_build_2dlx_saves_schema_valid_document(tmp_path, dlx_schema) -> None:
     assert len(root.findall(".//PLATE")) == 2
     assert len(root.findall(".//LSTIFF")) == 3
 
-    # 2DLX deltas: no HMX-only attributes anywhere
+    # 2DLX deltas: no HMX-only compartment refs
     for segment in root.findall(".//SEGMENT"):
         assert segment.get("LeftCompartment") is None
         assert segment.get("RightCompartment") is None
     for element in [*root.findall(".//PLATE"), *root.findall(".//LSTIFF")]:
-        assert element.get("MaterialId") is None
         assert element.get("Yield") == "315"
 
     # no HMX wrappers leak into the standalone document
@@ -121,6 +120,27 @@ def test_build_2dlx_emits_bilge_segment_for_arc_plate(dlx_schema, tmp_path) -> N
     segment = root.find("./PANEL/SHAPE/SEGMENT")
     assert segment.get("Position") == "BILGE"
     assert float(segment.get("Radius", "0")) != pytest.approx(0.0)
+
+
+def test_build_2dlx_emits_materials_table_and_material_ids() -> None:
+    # Nauticus Hull's own 2DLX export (NAPA VLCC reference) carries a
+    # GlobalData/Materials table and MaterialId refs on every PLATE/LSTIFF;
+    # without them NH drops the imported plate properties.
+    from ocx_model_validator.sections.dlx_export import build_2dlx
+
+    vessel = make_synthetic_vessel()
+    cross_section = build_cross_section(vessel, 5000.0)
+
+    root = build_2dlx(vessel, cross_section, _frame_table())
+
+    materials = root.findall("./GlobalData/Materials/Material")
+    assert materials
+    ids = {m.get("mId") for m in materials}
+    yields = {m.get("mYield") for m in materials}
+    assert "315" in yields
+    assert all(m.get("mName") for m in materials)
+    for element in [*root.findall(".//PLATE"), *root.findall(".//LSTIFF")]:
+        assert element.get("MaterialId") in ids
 
 
 def test_build_2dlx_rejects_plate_less_cross_section() -> None:

@@ -14,6 +14,7 @@ from ocx_model_validator.sections.hmx_export import (
     _level1_code,
     _side,
     _signed_radius,
+    _panel_chains,
     _split_closed_chains,
 )
 from ocx_model_validator.sections.section_builder import (
@@ -33,6 +34,7 @@ def plate(
     *,
     radius: float | None = None,
     center: tuple[float, float] | None = None,
+    panel: str = "Panel",
 ) -> SectionPlate:
     return SectionPlate(
         name=name,
@@ -42,7 +44,7 @@ def plate(
         z2_mm=z2,
         thickness_mm=10.0,
         material_reh_mpa=315.0,
-        panel="Panel",
+        panel=panel,
         radius_mm=radius,
         arc_center_y_mm=None if center is None else center[0],
         arc_center_z_mm=None if center is None else center[1],
@@ -183,6 +185,68 @@ def test_signed_radius_uses_center_side_of_segment_travel() -> None:
         _signed_radius(plate("straight", 0.0, 0.0, 100.0, 0.0), (0.0, 0.0), (100.0, 0.0))
         is None
     )
+
+
+def test_panel_chains_do_not_merge_touching_plates_from_different_panels() -> None:
+    # Nauticus keeps one PANEL per source panel: the deck touching the shell
+    # at the sheer must not be swallowed into the SHELLP chain.
+    plates = [
+        plate("shell", 0.0, 0.0, 100.0, 0.0, panel="SHELLP"),
+        plate("deck", 100.0, 0.0, 100.0, 80.0, panel="DECK"),
+    ]
+
+    named = _panel_chains(plates)
+
+    assert sorted(item.name for item in named) == ["DECK", "SHELLP"]
+    assert all(len(item.chain.plates) == 1 for item in named)
+
+
+def test_panel_chains_split_full_breadth_panel_at_centerline_vertex() -> None:
+    plates = [
+        plate("d-port", -200.0, 100.0, 0.0, 100.0, panel="DECK"),
+        plate("d-stbd", 0.0, 100.0, 200.0, 100.0, panel="DECK"),
+    ]
+
+    named = _panel_chains(plates)
+
+    assert [item.name for item in named] == ["DECK", "DECK_2"]
+    # both halves start at the centerline; positive-Y half keeps the base name
+    assert named[0].chain.points == pytest.approx([(0.0, 100.0), (200.0, 100.0)])
+    assert named[1].chain.points == pytest.approx([(0.0, 100.0), (-200.0, 100.0)])
+    assert all(item.panel == "DECK" for item in named)
+
+
+def test_panel_chains_split_crossing_plate_at_interpolated_centerline_point() -> None:
+    plates = [plate("d", -100.0, 100.0, 300.0, 100.0, panel="DECK")]
+
+    named = _panel_chains(plates)
+
+    assert [item.name for item in named] == ["DECK", "DECK_2"]
+    assert named[0].chain.points == pytest.approx([(0.0, 100.0), (300.0, 100.0)])
+    assert named[1].chain.points == pytest.approx([(0.0, 100.0), (-100.0, 100.0)])
+    # the crossing plate is shared by both halves
+    assert named[0].chain.plates[0] is plates[0]
+    assert named[1].chain.plates[0] is plates[0]
+
+
+def test_panel_chains_keep_centerline_girder_whole() -> None:
+    plates = [
+        plate("g1", 0.0, 0.0, 0.0, 100.0, panel="BGI_CL"),
+        plate("g2", 0.0, 100.0, 0.0, 200.0, panel="BGI_CL"),
+    ]
+
+    named = _panel_chains(plates)
+
+    assert [item.name for item in named] == ["BGI_CL"]
+    assert len(named[0].chain.plates) == 2
+
+
+def test_panel_chains_orient_horizontal_chain_from_inboard_end() -> None:
+    plates = [plate("stg", 300.0, 100.0, 150.0, 100.0, panel="STG_1_P")]
+
+    named = _panel_chains(plates)
+
+    assert named[0].chain.points == pytest.approx([(150.0, 100.0), (300.0, 100.0)])
 
 
 def test_signed_radius_is_mirror_symmetric_across_centerline() -> None:

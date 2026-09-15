@@ -174,9 +174,110 @@ def _ring_slice(
 
 
 def _oriented_from_bottom(chain: _Chain) -> _Chain:
-    if chain.points[0][1] > chain.points[-1][1]:
+    first_y, first_z = chain.points[0]
+    last_y, last_z = chain.points[-1]
+    # Nauticus panels start at the lower end; horizontal panels start inboard.
+    if (first_z, abs(first_y)) > (last_z, abs(last_y)):
         return _Chain(points=list(reversed(chain.points)), plates=list(reversed(chain.plates)))
     return chain
+
+
+@dataclass
+class _PanelChain:
+    name: str
+    panel: str
+    chain: _Chain
+
+
+def _panel_chains(plates: Iterable[SectionPlate], tol: float = 1.0) -> list[_PanelChain]:
+    """Group section plates into Nauticus PANELs: one per source panel.
+
+    Nauticus keeps a PANEL per structural panel instead of merging
+    geometrically-connected plates (its VLCC reference export has SHELLP =
+    shell only, DECK separate). Chains are split at the centerline — both
+    closed rings and full-breadth open chains (DECK/DECK_2 in the reference) —
+    and extra chains of the same panel get a ``_2``/``_3`` name suffix.
+    """
+    groups: dict[str, list[SectionPlate]] = {}
+    for plate in plates:
+        key = plate.panel or plate.name
+        groups.setdefault(key, []).append(plate)
+
+    named: list[_PanelChain] = []
+    for panel_name, group in groups.items():
+        chains: list[_Chain] = []
+        for chain in _split_closed_chains(_chain_segments(group, tol), tol):
+            chains.extend(_split_chain_at_centerline(chain, tol))
+        chains = [_oriented_for_panel(chain, tol) for chain in chains]
+        chains.sort(key=lambda chain: -_mean_y(chain))
+        for index, chain in enumerate(chains):
+            name = panel_name if index == 0 else f"{panel_name}_{index + 1}"
+            named.append(_PanelChain(name=name, panel=panel_name, chain=chain))
+    return named
+
+
+def _split_chain_at_centerline(chain: _Chain, tol: float = 1.0) -> list[_Chain]:
+    """Split an open chain where it crosses the centerline (Y=0).
+
+    Panels lying on the centerline (side of every edge is 0) stay whole.
+    A plate whose segment crosses strictly between its endpoints is shared by
+    both resulting chains with an interpolated split vertex.
+    """
+    vertices = list(chain.points)
+    edges = list(chain.plates)
+
+    i = 0
+    while i < len(edges):
+        y1, z1 = vertices[i]
+        y2, z2 = vertices[i + 1]
+        if abs(y1) > tol and abs(y2) > tol and (y1 > 0.0) != (y2 > 0.0):
+            t = y1 / (y1 - y2)
+            vertices.insert(i + 1, (0.0, z1 + t * (z2 - z1)))
+            edges.insert(i + 1, edges[i])
+            i += 2
+        else:
+            i += 1
+
+    def edge_side(index: int) -> int:
+        mid_y = (vertices[index][0] + vertices[index + 1][0]) / 2.0
+        if mid_y > tol:
+            return 1
+        if mid_y < -tol:
+            return -1
+        return 0
+
+    pieces: list[_Chain] = []
+    start = 0
+    previous_side = 0
+    for index in range(len(edges)):
+        side = edge_side(index)
+        if (
+            side != 0
+            and previous_side != 0
+            and side != previous_side
+            and index > start
+            and abs(vertices[index][0]) <= tol
+        ):
+            pieces.append(_Chain(points=vertices[start : index + 1], plates=edges[start:index]))
+            start = index
+        if side != 0:
+            previous_side = side
+    pieces.append(_Chain(points=vertices[start:], plates=edges[start:]))
+    return pieces
+
+
+def _oriented_for_panel(chain: _Chain, tol: float = 1.0) -> _Chain:
+    start_on_cl = abs(chain.points[0][0]) <= tol
+    end_on_cl = abs(chain.points[-1][0]) <= tol
+    if end_on_cl and not start_on_cl:
+        return _Chain(points=list(reversed(chain.points)), plates=list(reversed(chain.plates)))
+    if start_on_cl and not end_on_cl:
+        return chain
+    return _oriented_from_bottom(chain)
+
+
+def _mean_y(chain: _Chain) -> float:
+    return sum(y for y, _ in chain.points) / len(chain.points)
 
 
 def _signed_radius(
@@ -463,26 +564,32 @@ def _append_section_body(
     materials: _MaterialIds | None,
     warnings: list[str],
     lstiff_types: dict[str, int],
+    global_materials: bool = False,
 ) -> None:
     """Append the shared IDDATA/POSITION/MATERIAL/MISC/PANEL section body.
 
-    ``comp_boxes=None`` suppresses SEGMENT compartment refs and
-    ``materials=None`` suppresses MaterialId attributes (2DLX mode).
+    ``comp_boxes=None`` suppresses SEGMENT compartment refs. In 2DLX mode
+    ``global_materials=True`` emits the GlobalData/Materials table that the
+    PLATE/LSTIFF ``MaterialId`` attributes reference (HMX carries materials in
+    ShipData/MaterialData instead).
     """
     _append_iddata(parent, vessel, cross_section)
     _append_position(parent, cross_section, extent)
     _append_material(parent, cross_section)
+    if global_materials and materials is not None:
+        _append_global_data(parent, materials)
 
     stdspan = _standard_span_mm(frame_table, cross_section.x_mm, warnings)
     stdspace = _standard_spacing_mm(cross_section)
     _append_misc(parent, extent, stdspan, stdspace)
 
-    chains = _split_closed_chains(_chain_segments(cross_section.plates))
+    chains = _panel_chains(cross_section.plates)
     assigned_stiffeners = _assign_stiffeners_to_chains(cross_section.stiffeners, chains)
-    for index, chain in enumerate(chains):
+    for index, item in enumerate(chains):
         _append_panel(
             parent,
-            chain,
+            item.name,
+            item.chain,
             assigned_stiffeners.get(index, []),
             extent,
             comp_boxes,
@@ -493,6 +600,46 @@ def _append_section_body(
             warnings,
             lstiff_types,
         )
+
+
+_MATERIAL_GRADE_NAMES = {235.0: "MS", 265.0: "HT27", 315.0: "HT32", 355.0: "HT36", 390.0: "HT40"}
+
+
+def _append_global_data(parent: etree._Element, materials: _MaterialIds) -> None:
+    """Append the 2DLX GlobalData block with the Materials table.
+
+    Nauticus Hull's own 2DLX exports reference every PLATE/LSTIFF MaterialId
+    against this table; without it the imported plates lose their material and
+    thickness properties.
+    """
+    global_data = etree.SubElement(parent, "GlobalData")
+    etree.SubElement(global_data, "EndConnections")
+    etree.SubElement(global_data, "Slots")
+    materials_el = etree.SubElement(global_data, "Materials")
+    for yield_mpa, material_id in materials.items():
+        etree.SubElement(
+            materials_el,
+            "Material",
+            mId=material_id,
+            mName=_MATERIAL_GRADE_NAMES.get(yield_mpa, f"Y{_fmt(yield_mpa)}"),
+            mYield=_fmt(yield_mpa),
+            mTensileStrength=str(_tensile_strength_group(yield_mpa)),
+            mMaterialTypeId="1",
+        )
+    weldings = etree.SubElement(global_data, "Weldings")
+    etree.SubElement(
+        weldings, "Welding",
+        mId="1", mReHofDeposit="0", mF="1", mLw="1", mS_ctr="1", mL_weld="1",
+    )
+
+
+def _tensile_strength_group(yield_mpa: float) -> int:
+    """Map yield strength to the Nauticus tensile-strength group enum."""
+    if yield_mpa < 300.0:
+        return 3
+    if yield_mpa < 390.0:
+        return 4
+    return 5
 
 
 def _append_iddata(parent: etree._Element, vessel, cross_section: CrossSection) -> None:
@@ -539,6 +686,7 @@ def _append_misc(
 
 def _append_panel(
     parent: etree._Element,
+    name: str,
     chain: _Chain,
     stiffeners: list[SectionStiffener],
     extent: dict[str, float] | None,
@@ -550,7 +698,7 @@ def _append_panel(
     warnings: list[str],
     lstiff_types: dict[str, int],
 ) -> None:
-    panel = etree.SubElement(parent, "PANEL", Name=chain.plates[0].panel or chain.plates[0].name)
+    panel = etree.SubElement(parent, "PANEL", Name=name)
     etree.SubElement(panel, "CORRUGATED")
     etree.SubElement(panel, "BENDEFF").text = "100"
     etree.SubElement(panel, "SHEAREFF").text = "100"
@@ -760,15 +908,22 @@ def _standard_spacing_mm(cross_section: CrossSection) -> float:
 
 def _assign_stiffeners_to_chains(
     stiffeners: list[SectionStiffener],
-    chains: list[_Chain],
+    chains: list[_PanelChain],
 ) -> dict[int, list[SectionStiffener]]:
     assignments: dict[int, list[SectionStiffener]] = {idx: [] for idx in range(len(chains))}
     if not chains:
         return assignments
     for stiffener in stiffeners:
+        # Prefer chains of the stiffener's own source panel; fall back to the
+        # geometrically nearest chain when the panel is unknown or absent.
+        candidates = [idx for idx, item in enumerate(chains) if item.panel == stiffener.panel]
+        if not candidates:
+            candidates = list(range(len(chains)))
         idx = min(
-            range(len(chains)),
-            key=lambda chain_idx: _distance_to_chain((stiffener.y_mm, stiffener.z_mm), chains[chain_idx]),
+            candidates,
+            key=lambda chain_idx: _distance_to_chain(
+                (stiffener.y_mm, stiffener.z_mm), chains[chain_idx].chain
+            ),
         )
         assignments[idx].append(stiffener)
     return assignments
