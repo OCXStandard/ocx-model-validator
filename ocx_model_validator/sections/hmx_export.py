@@ -28,6 +28,7 @@ _SHIP_RULE_CHILD = {
     "RV5": "RV5",
     "CSR-H": "CSR-H",
 }
+RULE_SETS: tuple[str, ...] = tuple(_SHIP_RULE_CHILD)
 _COMPARTMENT_TYPE = {
     "VOIDSPACE": "VoidSpace",
     "BALLASTWATERTANK": "BallastWaterTank",

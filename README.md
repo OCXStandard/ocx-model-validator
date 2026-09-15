@@ -173,6 +173,10 @@ validator section create model.3docx --frame FR20 -o section.json
 validator section create model.3docx --x 50000
 validator section plot section.json -o section.svg
 
+# export a cross section as Nauticus Hull XML (.hmx)
+validator section export model.3docx --frame FR20 -o section.hmx
+validator section export model.3docx --x 50000 --rule-set CSR-H
+
 # generate xsdata stubs from .3docx models in ./models/
 validator generate-stubs
 

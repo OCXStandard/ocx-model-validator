@@ -78,6 +78,50 @@ def test_default_output_name():
         == Path("s-FR_2_b.json")
 
 
+def test_section_help_mentions_export():
+    result = runner.invoke(app, ["section", "--help"])
+    assert result.exit_code == 0
+    assert "export" in result.output
+    assert "Create, plot and export cross sections." in result.output
+
+
+def test_section_export_requires_exactly_one_position(model_310: Path):
+    both = runner.invoke(app, ["section", "export", str(model_310),
+                               "--frame", "FR20", "--x", "1000"])
+    neither = runner.invoke(app, ["section", "export", str(model_310)])
+    assert both.exit_code != 0
+    assert neither.exit_code != 0
+
+
+def test_section_export_no_geometry_exits_1(model_310: Path, tmp_path: Path):
+    # the vessel stub has no intersectable geometry -> SectionError -> exit 1
+    result = runner.invoke(app, ["section", "export", str(model_310),
+                                 "--x", "1000",
+                                 "--output", str(tmp_path / "s.hmx")])
+    assert result.exit_code == 1
+
+
+def test_section_export_missing_model_exits_nonzero():
+    result = runner.invoke(app, ["section", "export", "no_such.3docx",
+                                 "--x", "1000"])
+    assert result.exit_code != 0
+
+
+def test_section_export_rejects_unknown_rule_set(model_310: Path):
+    result = runner.invoke(app, ["section", "export", str(model_310),
+                                 "--x", "1000", "--rule-set", "BOGUS"])
+    # BadParameter (usage error, exit 2), not a geometry failure (exit 1)
+    assert result.exit_code == 2
+
+
+def test_export_default_output_name():
+    from ocx_model_validator.cli import _default_section_output
+
+    assert _default_section_output(Path("a/ship.3docx"), frame="FR20",
+                                   x_mm=None, suffix=".hmx") \
+        == Path("ship-FR20.hmx")
+
+
 def test_section_plot_writes_svg(section_json: Path, tmp_path: Path):
     dest = tmp_path / "out.svg"
     result = runner.invoke(app, ["section", "plot", str(section_json),
