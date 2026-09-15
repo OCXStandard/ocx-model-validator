@@ -186,9 +186,12 @@ def _signed_radius(
 ) -> float | None:
     """Return radius signed by arc center side relative to segment travel.
 
-    Arcs are assumed minor (<180°, chord-recoverable) per the OCX bilge use case:
-    bilge arcs are quarter-to-semi circles, and the chord formula degrades at exactly
-    180°.
+    The side test runs in an outboard-positive frame (port geometry is
+    mirrored to starboard) so the sign matches Nauticus on both sides of the
+    centerline — NH exports the bilge with a positive radius port and
+    starboard. Arcs are assumed minor (<180°, chord-recoverable) per the OCX
+    bilge use case: bilge arcs are quarter-to-semi circles, and the chord
+    formula degrades at exactly 180°.
     """
     if plate.radius_mm is None:
         return None
@@ -197,9 +200,10 @@ def _signed_radius(
 
     y1, z1 = p1
     y2, z2 = p2
-    dy = y2 - y1
+    mirror = -1.0 if (y1 + y2) < 0.0 else 1.0
+    dy = (y2 - y1) * mirror
     dz = z2 - z1
-    cross = dy * (plate.arc_center_z_mm - z1) - dz * (plate.arc_center_y_mm - y1)
+    cross = dy * (plate.arc_center_z_mm - z1) - dz * (plate.arc_center_y_mm - y1) * mirror
     return abs(plate.radius_mm) if cross >= 0.0 else -abs(plate.radius_mm)
 
 

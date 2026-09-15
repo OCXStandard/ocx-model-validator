@@ -185,6 +185,17 @@ def test_signed_radius_uses_center_side_of_segment_travel() -> None:
     )
 
 
+def test_signed_radius_is_mirror_symmetric_across_centerline() -> None:
+    # Nauticus exports the bilge with a positive radius on BOTH sides (see
+    # NAPA VLCC_Fr(x=160000).2dlx and ISSCFrame170.hmx): the sign is evaluated
+    # in an outboard-positive frame, so port geometry must not flip it.
+    stbd = plate("bilge-s", 27400.0, 0.0, 30000.0, 2600.0, radius=2600.0, center=(27400.0, 2600.0))
+    port = plate("bilge-p", -27400.0, 0.0, -30000.0, 2600.0, radius=2600.0, center=(-27400.0, 2600.0))
+
+    assert _signed_radius(stbd, (27400.0, 0.0), (30000.0, 2600.0)) == pytest.approx(2600.0)
+    assert _signed_radius(port, (-27400.0, 0.0), (-30000.0, 2600.0)) == pytest.approx(2600.0)
+
+
 def test_signed_radius_uses_positive_radius_for_exact_semicircle() -> None:
     semicircle = plate("semi", 0.0, 0.0, 200.0, 0.0, radius=100.0, center=(100.0, 0.0))
 
