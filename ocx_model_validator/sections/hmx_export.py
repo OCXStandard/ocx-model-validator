@@ -625,10 +625,12 @@ def _append_section_body(
     chains = _panel_chains(cross_section.plates)
     assigned_stiffeners = _assign_stiffeners_to_chains(cross_section.stiffeners, chains)
     for index, item in enumerate(chains):
+        panel_seams = [seam for seam in cross_section.seams if seam.panel == item.panel]
         _append_panel(
             parent,
             item.name,
             item.chain,
+            _seam_stations(item.chain, panel_seams),
             assigned_stiffeners.get(index, []),
             extent,
             comp_boxes,
@@ -687,6 +689,7 @@ def _append_panel(
     parent: etree._Element,
     name: str,
     chain: _Chain,
+    stations: list[float],
     stiffeners: list[SectionStiffener],
     extent: dict[str, float] | None,
     comp_boxes: dict[str, dict] | None,
@@ -702,7 +705,7 @@ def _append_panel(
     etree.SubElement(panel, "BENDEFF").text = "100"
     etree.SubElement(panel, "SHEAREFF").text = "100"
     _append_shape(panel, chain, extent, comp_boxes, x_mm)
-    _append_plates(panel, chain, materials, warnings)
+    _append_plates(panel, chain, materials, warnings, stations)
     _append_longs(panel, chain, stiffeners, stdspan, materials, warnings, lstiff_types)
     _append_schema_cutouts(panel)
     _append_schema_trvstiffs(panel)
@@ -746,19 +749,35 @@ def _append_plates(
     chain: _Chain,
     materials: _MaterialIds | None,
     warnings: list[str],
+    stations: list[float],
 ) -> None:
-    plates = etree.SubElement(panel, "PLATES")
+    """Emit the PLATES block: one PLATE per seam-to-seam span.
+
+    Nauticus divides plates by seam positions along the panel shape curve,
+    independent of SEGMENT geometry. Spans between consecutive stations merge
+    the underlying OCX plates; Thickness/Yield come from the plate at the
+    span's arclength midpoint (a warning is emitted if the span mixes
+    differing plate properties). No stations -> one PLATE for the whole chain.
+    """
+    plates_el = etree.SubElement(panel, "PLATES")
     side = _side(chain)
-    for plate, p1, p2 in zip(chain.plates, chain.points, chain.points[1:]):
-        yield_mpa = _yield_or_default(plate.material_reh_mpa)
+    seg_lens = [
+        _arc_length_of(plate, p1, p2)
+        for plate, p1, p2 in zip(chain.plates, chain.points, chain.points[1:])
+    ]
+    bounds = [0.0, *stations, sum(seg_lens)]
+    for s1, s2 in zip(bounds, bounds[1:]):
+        span_plate = _plate_at_station(chain, seg_lens, (s1 + s2) / 2.0)
+        _warn_if_mixed_span(chain, seg_lens, s1, s2, span_plate, warnings)
+        yield_mpa = _yield_or_default(span_plate.material_reh_mpa)
         thickness = _required_numeric(
-            plate.thickness_mm,
+            span_plate.thickness_mm,
             0.0,
-            f"plate {plate.name}: thickness is missing; emitted 0",
+            f"plate {span_plate.name}: thickness is missing; emitted 0",
             warnings,
         )
         attrs = {
-            "Width": _fmt(_arc_length_of(plate, p1, p2)),
+            "Width": _fmt(s2 - s1),
             "RefCode": "CURVE",
             "Thickness": _fmt(thickness),
             "Yield": _fmt(yield_mpa),
@@ -767,7 +786,44 @@ def _append_plates(
             attrs["MaterialId"] = materials.id_for(yield_mpa)
         attrs["Material"] = "STDSTEEL"
         attrs["Side"] = side
-        etree.SubElement(plates, "PLATE", **attrs)
+        etree.SubElement(plates_el, "PLATE", **attrs)
+
+
+def _plate_at_station(chain: _Chain, seg_lens: list[float], station: float) -> SectionPlate:
+    """Return the chain plate whose segment contains the arclength station."""
+    prefix = 0.0
+    for plate, seg_len in zip(chain.plates, seg_lens):
+        if station <= prefix + seg_len:
+            return plate
+        prefix += seg_len
+    return chain.plates[-1]
+
+
+def _warn_if_mixed_span(
+    chain: _Chain,
+    seg_lens: list[float],
+    s1: float,
+    s2: float,
+    span_plate: SectionPlate,
+    warnings: list[str],
+) -> None:
+    """Warn once if plates overlapping ``[s1, s2]`` differ from the midpoint plate."""
+    prefix = 0.0
+    for plate, seg_len in zip(chain.plates, seg_lens):
+        lo, hi = prefix, prefix + seg_len
+        prefix = hi
+        if hi <= s1 + 1e-6 or lo >= s2 - 1e-6:
+            continue
+        if (plate.thickness_mm, plate.material_reh_mpa) != (
+            span_plate.thickness_mm,
+            span_plate.material_reh_mpa,
+        ):
+            warnings.append(
+                f"panel {span_plate.panel or span_plate.name}: seam span at "
+                f"s={_fmt((s1 + s2) / 2.0)} mixes plate properties; "
+                f"using {span_plate.name}"
+            )
+            return
 
 
 def _append_longs(

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import math
 from dataclasses import replace
 
 import pytest
@@ -129,7 +130,17 @@ def test_build_hmx_splits_closed_shell_ring_into_two_open_panels(hmx_schema, tmp
         assert (float(node.get("Y")), float(node.get("Z"))) == pytest.approx((0.0, 0.0))
         last = segments[-1]
         assert (float(last.get("Y")), float(last.get("Z"))) == pytest.approx((0.0, 8000.0))
-        assert len(panel.findall("./PLATES/PLATE")) == len(segments)
+        # No seams in the synthetic vessel: each chain merges into one PLATE.
+        plate_elements = panel.findall("./PLATES/PLATE")
+        assert len(plate_elements) == 1
+        expected_length = sum(
+            math.hypot(
+                float(b.get("Y")) - float(a.get("Y")),
+                float(b.get("Z")) - float(a.get("Z")),
+            )
+            for a, b in zip([node, *segments], segments)
+        )
+        assert float(plate_elements[0].get("Width")) == pytest.approx(expected_length)
 
 
 def test_build_hmx_rejects_plate_less_cross_section() -> None:

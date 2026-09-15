@@ -457,3 +457,91 @@ def test_seam_stations_drops_chain_ends_and_duplicates() -> None:
     ]
 
     assert _seam_stations(chain, seams) == pytest.approx([2000.0])
+
+
+def _plates_block(chain, stations, warnings=None):
+    from lxml import etree
+
+    from ocx_model_validator.sections.hmx_export import _append_plates
+
+    panel = etree.Element("PANEL")
+    _append_plates(panel, chain, None, [] if warnings is None else warnings, stations)
+    return panel.findall("./PLATES/PLATE")
+
+
+def test_append_plates_emits_one_plate_per_seam_span() -> None:
+    from ocx_model_validator.sections.hmx_export import _Chain
+
+    # Three collinear 3000 mm plates, seams at 4000 and 6500.
+    chain = _Chain(
+        points=[(0.0, 0.0), (3000.0, 0.0), (6000.0, 0.0), (9000.0, 0.0)],
+        plates=[
+            plate("a", 0.0, 0.0, 3000.0, 0.0),
+            plate("b", 3000.0, 0.0, 6000.0, 0.0),
+            plate("c", 6000.0, 0.0, 9000.0, 0.0),
+        ],
+    )
+
+    elements = _plates_block(chain, [4000.0, 6500.0])
+
+    assert [float(e.get("Width")) for e in elements] == pytest.approx([4000.0, 2500.0, 2500.0])
+    assert all(e.get("RefCode") == "CURVE" for e in elements)
+    assert all(e.get("Thickness") == "10" for e in elements)
+
+
+def test_append_plates_without_stations_merges_whole_chain() -> None:
+    from ocx_model_validator.sections.hmx_export import _Chain
+
+    chain = _Chain(
+        points=[(0.0, 0.0), (3000.0, 0.0), (6000.0, 0.0)],
+        plates=[plate("a", 0.0, 0.0, 3000.0, 0.0), plate("b", 3000.0, 0.0, 6000.0, 0.0)],
+    )
+
+    elements = _plates_block(chain, [])
+
+    assert len(elements) == 1
+    assert float(elements[0].get("Width")) == pytest.approx(6000.0)
+
+
+def test_append_plates_arc_span_width_is_arc_length() -> None:
+    from ocx_model_validator.sections.hmx_export import _Chain
+
+    arc = plate("bilge", 1000.0, 0.0, 0.0, 1000.0, radius=1000.0, center=(0.0, 0.0))
+    chain = _Chain(points=[(1000.0, 0.0), (0.0, 1000.0)], plates=[arc])
+
+    elements = _plates_block(chain, [])
+
+    assert float(elements[0].get("Width")) == pytest.approx(1000.0 * math.pi / 2, rel=1e-4)
+
+
+def test_append_plates_mixed_span_uses_midpoint_plate_and_warns() -> None:
+    from dataclasses import replace
+
+    from ocx_model_validator.sections.hmx_export import _Chain
+
+    thin = plate("thin", 0.0, 0.0, 1000.0, 0.0)
+    thick = replace(plate("thick", 1000.0, 0.0, 5000.0, 0.0), thickness_mm=20.0)
+    chain = _Chain(points=[(0.0, 0.0), (1000.0, 0.0), (5000.0, 0.0)], plates=[thin, thick])
+    warnings: list[str] = []
+
+    elements = _plates_block(chain, [], warnings)
+
+    # Span midpoint at s=2500 lies on "thick".
+    assert elements[0].get("Thickness") == "20"
+    assert len(warnings) == 1
+    assert "mixes plate properties" in warnings[0]
+    assert "thick" in warnings[0]
+
+
+def test_append_plates_uniform_span_does_not_warn() -> None:
+    from ocx_model_validator.sections.hmx_export import _Chain
+
+    chain = _Chain(
+        points=[(0.0, 0.0), (3000.0, 0.0), (6000.0, 0.0)],
+        plates=[plate("a", 0.0, 0.0, 3000.0, 0.0), plate("b", 3000.0, 0.0, 6000.0, 0.0)],
+    )
+    warnings: list[str] = []
+
+    _plates_block(chain, [], warnings)
+
+    assert warnings == []
