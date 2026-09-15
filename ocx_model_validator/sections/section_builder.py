@@ -1,7 +1,7 @@
 """Assemble transverse cross-section inputs from the schema-neutral IR."""
 from __future__ import annotations
 
-from dataclasses import dataclass, replace
+from dataclasses import dataclass, field, replace
 from math import hypot
 from typing import Iterable
 
@@ -71,12 +71,22 @@ class SectionPlate:
 
 
 @dataclass(frozen=True)
+class SectionSeam:
+    """A panel seam's intersection with the section plane."""
+    name: str | None
+    panel: str | None
+    y_mm: float
+    z_mm: float
+
+
+@dataclass(frozen=True)
 class CrossSection:
     x_mm: float
     frame: str | None
     stiffeners: list[SectionStiffener]
     plates: list[SectionPlate]
     warnings: list[str]
+    seams: list[SectionSeam] = field(default_factory=list)
 
 
 @dataclass(frozen=True)
@@ -104,6 +114,7 @@ def build_cross_section(
     stiffener_items = _build_stiffeners(vessel, x_mm, to_mm, tol, warnings)
     stiffeners = _with_spacing(stiffener_items, warnings)
     plates = _build_plates(vessel, x_mm, to_mm, tol, warnings)
+    seams = _build_seams(vessel, x_mm, to_mm, tol, warnings)
 
     if not stiffeners and not plates:
         raise SectionError(f"No plates or stiffeners intersect x={x_mm} mm")
@@ -114,6 +125,7 @@ def build_cross_section(
         stiffeners=stiffeners,
         plates=plates,
         warnings=warnings,
+        seams=seams,
     )
 
 
@@ -246,6 +258,36 @@ def _build_plates(
             warnings.append(f"plate {name}: {exc}")
             continue
 
+    return result
+
+
+def _build_seams(
+    vessel: IrVessel,
+    x_mm: float,
+    to_mm,
+    tol: float,
+    warnings: list[str],
+) -> list[SectionSeam]:
+    """Intersect each panel's seam tracelines with the section plane.
+
+    Transverse seams parallel to the plane simply produce no hits; a seam
+    traceline may cross the plane more than once (one SectionSeam per hit).
+    """
+    result: list[SectionSeam] = []
+    for panel in vessel.panels.values():
+        panel_name = _panel_name(panel)
+        for seam_id in panel.seam_ids:
+            seam = vessel.seams.get(seam_id)
+            if seam is None or seam.trace_line is None:
+                continue
+            name = seam.name or seam.id
+            try:
+                hits = intersect_curve_plane(seam.trace_line, x_mm, to_mm, tol)
+            except GeometryError as exc:
+                warnings.append(f"seam {name}: {exc}")
+                continue
+            for y_mm, z_mm in hits:
+                result.append(SectionSeam(name=name, panel=panel_name, y_mm=y_mm, z_mm=z_mm))
     return result
 
 

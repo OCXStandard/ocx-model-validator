@@ -593,3 +593,56 @@ def test_stiffener_material_yield_bad_unit_is_emitted_with_none_and_warning(vess
         "stiffener Bad material stiffener:" in warning and "Ubad" in warning
         for warning in section.warnings
     )
+
+
+def _vessel_with_seam(seam_trace):
+    from dataclasses import replace as dc_replace
+    from ocx_model_validator.model.ir.structural import IrSeam
+
+    vessel = make_synthetic_vessel()
+    vessel.seams["seam-1"] = IrSeam(id="seam-1", name="SM1", trace_line=seam_trace)
+    vessel.panels["panel-a"] = dc_replace(vessel.panels["panel-a"], seam_ids=["seam-1"])
+    return vessel
+
+
+def test_build_cross_section_collects_seam_intersections() -> None:
+    # line(1.0, 0.0) runs x=0..10 m at y=1 m, z=0: crosses the x=5000 mm plane once.
+    vessel = _vessel_with_seam(line(1.0, 0.0))
+
+    section = build_cross_section(vessel, 5000.0)
+
+    assert len(section.seams) == 1
+    seam = section.seams[0]
+    assert seam.name == "SM1"
+    assert seam.panel == "Panel A"
+    assert seam.y_mm == pytest.approx(1000.0)
+    assert seam.z_mm == pytest.approx(0.0)
+
+
+def test_build_cross_section_skips_seam_missing_the_plane() -> None:
+    vessel = _vessel_with_seam(line(1.0, 0.0, start_x=0.0, end_x=4.0))  # ends before x=5 m
+
+    section = build_cross_section(vessel, 5000.0)
+
+    assert section.seams == []
+
+
+def test_build_cross_section_warns_on_seam_geometry_error() -> None:
+    from ocx_model_validator.model.ir.geometry import IrLine3D
+
+    # IrLine3D without a start point makes intersect_curve_plane raise GeometryError.
+    vessel = _vessel_with_seam(IrLine3D(curve_length=None, start=None, end=p(10.0, 1.0, 0.0)))
+
+    section = build_cross_section(vessel, 5000.0)
+
+    assert section.seams == []
+    assert any(w.startswith("seam SM1:") for w in section.warnings)
+
+
+def test_build_cross_section_skips_seam_without_trace_line() -> None:
+    vessel = _vessel_with_seam(None)
+
+    section = build_cross_section(vessel, 5000.0)
+
+    assert section.seams == []
+    assert not any("seam" in w for w in section.warnings)
