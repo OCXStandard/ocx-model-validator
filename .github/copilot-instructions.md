@@ -54,7 +54,8 @@ Two equivalent entrypoints are registered (`validator` and `ocx-validate`):
 validator section create model.3docx --frame FR20 -o section.json
 validator section create model.3docx --x 50000
 validator section plot section.json -o section.svg
-validator section export model.3docx --frame FR20 --rule-set DNV -o section.hmx
+validator section export model.3docx --frame FR20 -o section.2dlx
+validator section export model.3docx --frame FR20 --format hmx --rule-set DNV -o section.hmx
 
 # Generate XML test stubs from .3docx models in ./models/
 validator generate-stubs
