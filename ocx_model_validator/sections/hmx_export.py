@@ -12,7 +12,7 @@ from lxml import etree
 
 from ocx_model_validator.reporting.generators.model_extent import extent_mm
 from ocx_model_validator.sections.document import build_compartments_block
-from ocx_model_validator.sections.section_builder import CrossSection, SectionPlate, SectionStiffener
+from ocx_model_validator.sections.section_builder import CrossSection, SectionPlate, SectionSeam, SectionStiffener
 
 
 _LSTIFF_TYPE = {
@@ -372,6 +372,37 @@ def _station_and_distance(chain: _Chain, point: tuple[float, float]) -> tuple[fl
             best_station = station
         prefix += seg_len
     return best_station, best_dist
+
+
+def _seam_stations(
+    chain: _Chain,
+    seams: Iterable[SectionSeam],
+    snap_tol: float = 50.0,
+    end_tol: float = 1.0,
+) -> list[float]:
+    """Project seam points onto the chain as sorted interior arclength stations.
+
+    Points farther than ``snap_tol`` from the chain belong to another
+    disconnected part of the panel (or the other centerline half) and are
+    ignored; stations within ``end_tol`` of the chain ends or of each other
+    are dropped so no zero-width plates are emitted.
+    """
+    total = sum(
+        _arc_length_of(plate, p1, p2)
+        for plate, p1, p2 in zip(chain.plates, chain.points, chain.points[1:])
+    )
+    stations: list[float] = []
+    for seam in seams:
+        station, dist = _station_and_distance(chain, (seam.y_mm, seam.z_mm))
+        if dist > snap_tol or station <= end_tol or station >= total - end_tol:
+            continue
+        stations.append(station)
+    stations.sort()
+    deduped: list[float] = []
+    for station in stations:
+        if not deduped or station - deduped[-1] > end_tol:
+            deduped.append(station)
+    return deduped
 
 
 def _level1_code(

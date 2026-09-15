@@ -414,3 +414,46 @@ def test_synthetic_vessel_plates_chain_sensibly() -> None:
         [(0.0, 1000.0), (2000.0, 1000.0)],
     ]
     assert [[p.name for p in chain.plates] for chain in chains] == [["Plate A1"], ["Plate A2"]]
+
+
+def seam(y: float, z: float, panel: str = "Panel"):
+    from ocx_model_validator.sections.section_builder import SectionSeam
+
+    return SectionSeam(name="SM", panel=panel, y_mm=y, z_mm=z)
+
+
+def test_seam_stations_sorted_interior_stations() -> None:
+    from ocx_model_validator.sections.hmx_export import _Chain, _seam_stations
+
+    chain = _Chain(
+        points=[(0.0, 0.0), (5000.0, 0.0), (5000.0, 3000.0)],
+        plates=[plate("a", 0.0, 0.0, 5000.0, 0.0), plate("b", 5000.0, 0.0, 5000.0, 3000.0)],
+    )
+    seams = [seam(5000.0, 1000.0), seam(2000.0, 0.0)]
+
+    assert _seam_stations(chain, seams) == pytest.approx([2000.0, 6000.0])
+
+
+def test_seam_stations_ignores_far_points() -> None:
+    from ocx_model_validator.sections.hmx_export import _Chain, _seam_stations
+
+    chain = _Chain(points=[(0.0, 0.0), (5000.0, 0.0)], plates=[plate("a", 0.0, 0.0, 5000.0, 0.0)])
+
+    # 80 mm off the chain: beyond the 50 mm snap tolerance.
+    assert _seam_stations(chain, [seam(2000.0, 80.0)]) == []
+    # 30 mm off: snapped.
+    assert _seam_stations(chain, [seam(2000.0, 30.0)]) == pytest.approx([2000.0])
+
+
+def test_seam_stations_drops_chain_ends_and_duplicates() -> None:
+    from ocx_model_validator.sections.hmx_export import _Chain, _seam_stations
+
+    chain = _Chain(points=[(0.0, 0.0), (5000.0, 0.0)], plates=[plate("a", 0.0, 0.0, 5000.0, 0.0)])
+    seams = [
+        seam(0.5, 0.0),       # within 1 mm of the chain start -> dropped
+        seam(4999.5, 0.0),    # within 1 mm of the chain end -> dropped
+        seam(2000.0, 0.0),
+        seam(2000.4, 0.0),    # duplicate of the previous station -> dropped
+    ]
+
+    assert _seam_stations(chain, seams) == pytest.approx([2000.0])
