@@ -646,3 +646,19 @@ def test_build_cross_section_skips_seam_without_trace_line() -> None:
 
     assert section.seams == []
     assert not any("seam" in w for w in section.warnings)
+
+
+def test_build_cross_section_collects_multiple_hits_per_seam() -> None:
+    from ocx_model_validator.model.ir.geometry import IrPolyLine3D
+
+    zigzag = IrPolyLine3D(
+        curve_length=None,
+        vertices=[p(0.0, 1.0, 0.0), p(6.0, 1.0, 0.0), p(6.0, 2.0, 0.0), p(0.0, 2.0, 0.0)],
+        is_closed=False,
+    )
+    vessel = _vessel_with_seam(zigzag)
+
+    section = build_cross_section(vessel, 5000.0)
+
+    assert len(section.seams) == 2
+    assert sorted((s.y_mm, s.z_mm) for s in section.seams) == [(1000.0, 0.0), (2000.0, 0.0)]

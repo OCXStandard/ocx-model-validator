@@ -10,6 +10,7 @@ from ocx_model_validator.sections.frame_table import FrameTable, build_frame_tab
 from ocx_model_validator.sections.section_builder import (
     CrossSection,
     SectionPlate,
+    SectionSeam,
     SectionStiffener,
     build_cross_section,
 )
@@ -19,6 +20,7 @@ __all__ = [
     "build_frame_table",
     "CrossSection",
     "SectionPlate",
+    "SectionSeam",
     "SectionStiffener",
     "build_cross_section",
     "build_compartments_block",
