@@ -48,11 +48,12 @@ def test_build_2dlx_saves_schema_valid_document(tmp_path, dlx_schema) -> None:
     assert len(root.findall(".//PLATE")) == 2
     assert len(root.findall(".//LSTIFF")) == 3
 
-    # 2DLX deltas: no HMX-only compartment refs
+    # 2DLX deltas: no HMX-only attributes anywhere
     for segment in root.findall(".//SEGMENT"):
         assert segment.get("LeftCompartment") is None
         assert segment.get("RightCompartment") is None
     for element in [*root.findall(".//PLATE"), *root.findall(".//LSTIFF")]:
+        assert element.get("MaterialId") is None
         assert element.get("Yield") == "315"
 
     # no HMX wrappers leak into the standalone document
@@ -122,10 +123,11 @@ def test_build_2dlx_emits_bilge_segment_for_arc_plate(dlx_schema, tmp_path) -> N
     assert float(segment.get("Radius", "0")) != pytest.approx(0.0)
 
 
-def test_build_2dlx_emits_materials_table_and_material_ids() -> None:
-    # Nauticus Hull's own 2DLX export (NAPA VLCC reference) carries a
-    # GlobalData/Materials table and MaterialId refs on every PLATE/LSTIFF;
-    # without them NH drops the imported plate properties.
+def test_build_2dlx_omits_global_data_materials_table() -> None:
+    # Nauticus Hull's Paste2dlx importer rejects 2DLX files that carry a
+    # GlobalData block ("Verification fail: different number of panels"),
+    # even though NH's own exports contain one. Verified empirically against
+    # NH 21.2 on 2026-09-15 — do not re-add GlobalData/MaterialId.
     from ocx_model_validator.sections.dlx_export import build_2dlx
 
     vessel = make_synthetic_vessel()
@@ -133,14 +135,9 @@ def test_build_2dlx_emits_materials_table_and_material_ids() -> None:
 
     root = build_2dlx(vessel, cross_section, _frame_table())
 
-    materials = root.findall("./GlobalData/Materials/Material")
-    assert materials
-    ids = {m.get("mId") for m in materials}
-    yields = {m.get("mYield") for m in materials}
-    assert "315" in yields
-    assert all(m.get("mName") for m in materials)
+    assert root.find("./GlobalData") is None
     for element in [*root.findall(".//PLATE"), *root.findall(".//LSTIFF")]:
-        assert element.get("MaterialId") in ids
+        assert element.get("MaterialId") is None
 
 
 def test_build_2dlx_rejects_plate_less_cross_section() -> None:

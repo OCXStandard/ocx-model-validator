@@ -15,9 +15,7 @@ from lxml import etree
 from ocx_model_validator.reporting.generators.model_extent import extent_mm
 from ocx_model_validator.sections.hmx_export import (
     _LSTIFF_TYPE,
-    _MaterialIds,
     _append_section_body,
-    _register_section_materials,
     _write_pretty_xml,
     _xml_comment_text,
 )
@@ -43,16 +41,16 @@ def build_2dlx(
     """Build a standalone Nauticus Hull 2DLX CROSS_SECTION document.
 
     Mirrors the HMX Scantling body but omits the HMX-only SEGMENT
-    compartment refs, and carries materials in a GlobalData/Materials
-    table referenced by PLATE/LSTIFF MaterialId attributes (matching
-    Nauticus Hull's own 2DLX exports).
+    compartment refs and PLATE/LSTIFF MaterialId attributes. Although
+    Nauticus Hull's own 2DLX exports carry a GlobalData/Materials table,
+    its Paste2dlx importer rejects files containing GlobalData
+    ("Verification fail: different number of panels"), so the exporter
+    deliberately omits it — Thickness/Yield attributes are sufficient.
     """
     warnings = [*getattr(frame_table, "warnings", []), *cross_section.warnings]
     if not cross_section.plates:
         raise ValueError("2DLX export requires at least one plate")
     extent = extent_mm(vessel)
-    materials = _MaterialIds()
-    _register_section_materials(cross_section, materials)
 
     root = etree.Element("CROSS_SECTION")
     root.append(_administrative())
@@ -63,10 +61,9 @@ def build_2dlx(
         frame_table,
         extent,
         comp_boxes=None,
-        materials=materials,
+        materials=None,
         warnings=warnings,
         lstiff_types=_LSTIFF_TYPE_2DLX,
-        global_materials=True,
     )
 
     if warnings:

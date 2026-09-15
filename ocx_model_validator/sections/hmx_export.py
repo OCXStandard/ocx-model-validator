@@ -564,20 +564,17 @@ def _append_section_body(
     materials: _MaterialIds | None,
     warnings: list[str],
     lstiff_types: dict[str, int],
-    global_materials: bool = False,
 ) -> None:
     """Append the shared IDDATA/POSITION/MATERIAL/MISC/PANEL section body.
 
-    ``comp_boxes=None`` suppresses SEGMENT compartment refs. In 2DLX mode
-    ``global_materials=True`` emits the GlobalData/Materials table that the
-    PLATE/LSTIFF ``MaterialId`` attributes reference (HMX carries materials in
-    ShipData/MaterialData instead).
+    ``comp_boxes=None`` suppresses SEGMENT compartment refs and
+    ``materials=None`` suppresses MaterialId attributes (2DLX mode — the
+    Nauticus 2DLX importer rejects files carrying a GlobalData materials
+    table, so plate/stiffener materials travel as Thickness/Yield only).
     """
     _append_iddata(parent, vessel, cross_section)
     _append_position(parent, cross_section, extent)
     _append_material(parent, cross_section)
-    if global_materials and materials is not None:
-        _append_global_data(parent, materials)
 
     stdspan = _standard_span_mm(frame_table, cross_section.x_mm, warnings)
     stdspace = _standard_spacing_mm(cross_section)
@@ -600,46 +597,6 @@ def _append_section_body(
             warnings,
             lstiff_types,
         )
-
-
-_MATERIAL_GRADE_NAMES = {235.0: "MS", 265.0: "HT27", 315.0: "HT32", 355.0: "HT36", 390.0: "HT40"}
-
-
-def _append_global_data(parent: etree._Element, materials: _MaterialIds) -> None:
-    """Append the 2DLX GlobalData block with the Materials table.
-
-    Nauticus Hull's own 2DLX exports reference every PLATE/LSTIFF MaterialId
-    against this table; without it the imported plates lose their material and
-    thickness properties.
-    """
-    global_data = etree.SubElement(parent, "GlobalData")
-    etree.SubElement(global_data, "EndConnections")
-    etree.SubElement(global_data, "Slots")
-    materials_el = etree.SubElement(global_data, "Materials")
-    for yield_mpa, material_id in materials.items():
-        etree.SubElement(
-            materials_el,
-            "Material",
-            mId=material_id,
-            mName=_MATERIAL_GRADE_NAMES.get(yield_mpa, f"Y{_fmt(yield_mpa)}"),
-            mYield=_fmt(yield_mpa),
-            mTensileStrength=str(_tensile_strength_group(yield_mpa)),
-            mMaterialTypeId="1",
-        )
-    weldings = etree.SubElement(global_data, "Weldings")
-    etree.SubElement(
-        weldings, "Welding",
-        mId="1", mReHofDeposit="0", mF="1", mLw="1", mS_ctr="1", mL_weld="1",
-    )
-
-
-def _tensile_strength_group(yield_mpa: float) -> int:
-    """Map yield strength to the Nauticus tensile-strength group enum."""
-    if yield_mpa < 300.0:
-        return 3
-    if yield_mpa < 390.0:
-        return 4
-    return 5
 
 
 def _append_iddata(parent: etree._Element, vessel, cross_section: CrossSection) -> None:
