@@ -247,3 +247,20 @@ def test_compartment_row_includes_compartment_properties(vessel) -> None:
     assert row["filling_height_mm"] == 9000.0
     assert row["air_pipe_height_mm"] == 10500.0
     assert row["relief_valve_pressure_kpa"] == 25.0
+
+
+def test_document_includes_seams_block() -> None:
+    from dataclasses import replace as dc_replace
+
+    from ocx_model_validator.model.ir.structural import IrSeam
+    from tests.section_fixtures import line
+
+    vessel = make_synthetic_vessel()
+    vessel.seams["seam-1"] = IrSeam(id="seam-1", name="SM1", trace_line=line(1.0, 0.0))
+    vessel.panels["panel-a"] = dc_replace(vessel.panels["panel-a"], seam_ids=["seam-1"])
+
+    doc = build_document(vessel, "model.3docx", x_mm=5000.0)
+
+    assert doc["cross_section"]["seams"] == [
+        {"name": "SM1", "panel": "Panel A", "y_mm": 1000.0, "z_mm": 0.0}
+    ]

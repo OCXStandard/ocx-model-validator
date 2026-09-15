@@ -75,6 +75,7 @@ def build_document(
             "frame": cross_section.frame,
             "stiffeners": [_dataclass_dict(stiffener) for stiffener in cross_section.stiffeners],
             "plates": [_dataclass_dict(plate) for plate in cross_section.plates],
+            "seams": [_dataclass_dict(seam) for seam in cross_section.seams],
         },
         "compartments": compartments,
         "warnings": warnings,
