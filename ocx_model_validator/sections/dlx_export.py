@@ -14,6 +14,7 @@ from lxml import etree
 
 from ocx_model_validator.reporting.generators.model_extent import extent_mm
 from ocx_model_validator.sections.hmx_export import (
+    _LSTIFF_TYPE,
     _append_section_body,
     _write_pretty_xml,
     _xml_comment_text,
@@ -24,14 +25,12 @@ from ocx_model_validator.sections.section_builder import CrossSection
 # 37, 42 and 43 (docs/superpowers/ProfileTypesEnum.cs, trailing comment
 # block). Notably the HMX BuiltUpTbar code 40 is invalid here: T-bars
 # map to 43 (Welded T-bar).
-_LSTIFF_TYPE_2DLX = {
-    "flat_bar": 10,
-    "bulb_flat": 20,
-    "l_section": 31,
-    "l_overshoot_flange": 35,
-    "l_overshoot_web": 36,
-    "t_section": 43,
-}
+_LSTIFF_TYPE_2DLX = {**_LSTIFF_TYPE, "t_section": 43}
+
+# Locale-independent month names for the schema-documented date format
+# (e.g. 15-Feb-2013).
+_MONTHS = ("Jan", "Feb", "Mar", "Apr", "May", "Jun",
+           "Jul", "Aug", "Sep", "Oct", "Nov", "Dec")
 
 
 def build_2dlx(
@@ -94,7 +93,7 @@ def _administrative() -> etree._Element:
     etree.SubElement(
         administrative,
         "session_info",
-        date=now.strftime("%d-%b-%Y"),
+        date=f"{now.day:02d}-{_MONTHS[now.month - 1]}-{now.year}",
         time=now.strftime("%H:%M:%S"),
     )
     return administrative
