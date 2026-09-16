@@ -136,6 +136,8 @@ ocx-model-validator/
 │   │   ├── geometry.py         ← curve/plane intersection engine
 │   │   ├── frame_table.py      ← FrameTable, build_frame_table
 │   │   ├── section_builder.py  ← CrossSection, build_cross_section
+│   │   ├── segment_math.py     ← per-segment arc/chord geometry helpers
+│   │   ├── epp.py              ← EppPlate, split_plates_to_epps (EPP splitting)
 │   │   └── document.py         ← nh-cross-section/2 JSON document
 │   ├── mcp/
 │   │   ├── state.py            ← session state (loaded vessel)
