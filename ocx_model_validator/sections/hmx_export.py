@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from math import atan2, degrees
+from math import atan2, degrees, hypot
 from pathlib import Path
 from statistics import median
 from typing import Iterable
@@ -1110,7 +1110,7 @@ def _segment_compartments(
 ) -> tuple[str | None, str | None]:
     """Return names of compartments sampled 100 mm left and right of a segment."""
     dy, dz = direction
-    length = _distance((0.0, 0.0), direction)
+    length = hypot(dy, dz)
     if length <= 0.0:
         return (None, None)
     left_normal = (-dz / length, dy / length)
