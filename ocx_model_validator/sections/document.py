@@ -11,11 +11,12 @@ from ocx_model_validator.exeptions import GeometryError, SectionError
 from ocx_model_validator.model.ir.arrangement import IrCompartment
 from ocx_model_validator.model.ir.base import IrCog, Ref
 from ocx_model_validator.model.ir.structural import IrPanel, IrVessel
+from ocx_model_validator.sections.epp import split_plates_to_epps
 from ocx_model_validator.sections.frame_table import FrameTable, build_frame_table
 from ocx_model_validator.sections.section_builder import CrossSection, build_cross_section
 from ocx_model_validator.sections.units import point_mm, qty_kpa, qty_m3, qty_mm
 
-SCHEMA = "nh-cross-section/1"
+SCHEMA = "nh-cross-section/2"
 _REQUIRED_TOP_LEVEL_KEYS = {"schema", "frame_table", "cross_section", "compartments"}
 _NULL_EXTENT = {
     "min_x": None,
@@ -74,7 +75,12 @@ def build_document(
             "x_mm": cross_section.x_mm,
             "frame": cross_section.frame,
             "stiffeners": [_dataclass_dict(stiffener) for stiffener in cross_section.stiffeners],
-            "plates": [_dataclass_dict(plate) for plate in cross_section.plates],
+            "plates": [
+                _dataclass_dict(epp)
+                for epp in split_plates_to_epps(
+                    cross_section.plates, cross_section.stiffeners
+                )
+            ],
             "seams": [_dataclass_dict(seam) for seam in cross_section.seams],
         },
         "compartments": compartments,

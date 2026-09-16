@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import date
-from math import asin, atan2, degrees, hypot, pi, tau
+from math import atan2, degrees, hypot
 from pathlib import Path
 from statistics import median
 from typing import Iterable
@@ -13,6 +13,12 @@ from lxml import etree
 from ocx_model_validator.reporting.generators.model_extent import extent_mm
 from ocx_model_validator.sections.document import build_compartments_block
 from ocx_model_validator.sections.section_builder import CrossSection, SectionPlate, SectionSeam, SectionStiffener
+from ocx_model_validator.sections.segment_math import (
+    arc_length as _arc_length_of,
+    arc_station_on_segment as _arc_station_on_segment,
+    distance as _distance,
+    projection as _projection,
+)
 
 
 _LSTIFF_TYPE = {
@@ -306,29 +312,6 @@ def _signed_radius(
     dz = z2 - z1
     cross = dy * (plate.arc_center_z_mm - z1) - dz * (plate.arc_center_y_mm - y1) * mirror
     return abs(plate.radius_mm) if cross >= 0.0 else -abs(plate.radius_mm)
-
-
-def _arc_length_of(
-    plate: SectionPlate,
-    p1: tuple[float, float],
-    p2: tuple[float, float],
-) -> float:
-    """Return chord length for straight segments or circular arc length.
-
-    Arcs are assumed minor (<180°, chord-recoverable) per the OCX bilge use case:
-    bilge arcs are quarter-to-semi circles, and the chord formula degrades at exactly
-    180°.
-    """
-    chord = _distance(p1, p2)
-    if plate.radius_mm is None:
-        return chord
-
-    radius = abs(plate.radius_mm)
-    if radius <= 0.0:
-        return chord
-
-    theta = 2.0 * asin(min(1.0, chord / (2.0 * radius)))
-    return radius * theta
 
 
 def _arc_position(_chain: _Chain, y: float, z: float) -> float:
@@ -1279,64 +1262,3 @@ def _fmt(value: float) -> str:
 
 def _same_point(a: tuple[float, float], b: tuple[float, float], tol: float) -> bool:
     return _distance(a, b) <= tol
-
-
-def _distance(a: tuple[float, float], b: tuple[float, float]) -> float:
-    return hypot(b[0] - a[0], b[1] - a[1])
-
-
-def _projection(
-    point: tuple[float, float],
-    p1: tuple[float, float],
-    p2: tuple[float, float],
-) -> tuple[float, float]:
-    vx = p2[0] - p1[0]
-    vz = p2[1] - p1[1]
-    length_sq = vx * vx + vz * vz
-    if length_sq <= 0.0:
-        return (0.0, _distance(point, p1))
-
-    t = ((point[0] - p1[0]) * vx + (point[1] - p1[1]) * vz) / length_sq
-    t = max(0.0, min(1.0, t))
-    projected = (p1[0] + t * vx, p1[1] + t * vz)
-    return (t, _distance(point, projected))
-
-
-def _arc_station_on_segment(
-    plate: SectionPlate,
-    p1: tuple[float, float],
-    p2: tuple[float, float],
-    point: tuple[float, float],
-    seg_len: float,
-) -> float:
-    radius = abs(plate.radius_mm or 0.0)
-    if radius <= 0.0:
-        return 0.0
-
-    cy = plate.arc_center_y_mm
-    cz = plate.arc_center_z_mm
-    if cy is None or cz is None:
-        return 0.0
-
-    query_radius = _distance((cy, cz), point)
-    if query_radius <= 0.0:
-        return 0.0
-
-    start_angle = atan2(p1[1] - cz, p1[0] - cy)
-    end_angle = atan2(p2[1] - cz, p2[0] - cy)
-    query_angle = atan2(point[1] - cz, point[0] - cy)
-
-    total = _minor_sweep(start_angle, end_angle)
-    query_delta = _minor_sweep(start_angle, query_angle)
-    swept = query_delta if total >= 0.0 else -query_delta
-
-    theta_total = min(abs(total), seg_len / radius if radius > 0.0 else 0.0)
-    swept = max(0.0, min(theta_total, swept))
-    return radius * swept
-
-
-def _minor_sweep(start_angle: float, end_angle: float) -> float:
-    delta = (end_angle - start_angle) % tau
-    if delta > pi:
-        delta -= tau
-    return delta

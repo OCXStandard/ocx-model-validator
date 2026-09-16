@@ -18,7 +18,7 @@ def model_310(stub_dir_310: Path) -> Path:
 @pytest.fixture()
 def section_json(tmp_path: Path) -> Path:
     doc = {
-        "schema": "nh-cross-section/1",
+        "schema": "nh-cross-section/2",
         "source": {"file": "ship.3docx", "vessel_id": "V1", "generated": "t"},
         "frame_table": {"frame0_offset_mm": 0.0, "entries": [], "positions": []},
         "cross_section": {
@@ -156,6 +156,80 @@ def test_section_export_happy_paths_write_files(model_310: Path, tmp_path: Path,
     assert "<HullModel>" in hmx.read_text(encoding="utf-8")
 
 
+def test_section_create_multiple_x_writes_one_file_each(model_310: Path,
+                                                        tmp_path: Path,
+                                                        monkeypatch):
+    from ocx_model_validator.sections import document as document_module
+
+    calls = []
+
+    def fake_build_document(vessel, source, x_mm=None, frame=None):
+        calls.append((x_mm, frame))
+        return {"schema": "nh-cross-section/2", "cross_section": {"x_mm": x_mm}}
+
+    monkeypatch.setattr(document_module, "build_document", fake_build_document)
+    monkeypatch.chdir(tmp_path)
+
+    result = runner.invoke(app, ["section", "create", str(model_310),
+                                 "--x", "5000", "--x", "7000"])
+    assert result.exit_code == 0
+    assert calls == [(5000.0, None), (7000.0, None)]
+    assert (tmp_path / f"{model_310.stem}-x5000.json").exists()
+    assert (tmp_path / f"{model_310.stem}-x7000.json").exists()
+
+
+def test_section_create_multiple_frames_writes_one_file_each(model_310: Path,
+                                                             tmp_path: Path,
+                                                             monkeypatch):
+    from ocx_model_validator.sections import document as document_module
+
+    def fake_build_document(vessel, source, x_mm=None, frame=None):
+        return {"schema": "nh-cross-section/2", "cross_section": {"frame": frame}}
+
+    monkeypatch.setattr(document_module, "build_document", fake_build_document)
+    monkeypatch.chdir(tmp_path)
+
+    result = runner.invoke(app, ["section", "create", str(model_310),
+                                 "--frame", "FR20", "--frame", "FR21"])
+    assert result.exit_code == 0
+    assert (tmp_path / f"{model_310.stem}-FR20.json").exists()
+    assert (tmp_path / f"{model_310.stem}-FR21.json").exists()
+
+
+def test_section_create_output_with_multiple_positions_rejected(model_310: Path):
+    result = runner.invoke(app, ["section", "create", str(model_310),
+                                 "--x", "5000", "--x", "7000",
+                                 "--output", "out.json"])
+    assert result.exit_code == 2
+
+
+def test_section_export_multiple_frames_writes_one_file_each(model_310: Path,
+                                                             tmp_path: Path,
+                                                             monkeypatch):
+    from ocx_model_validator.sections import document as document_module
+    from ocx_model_validator.sections.section_builder import build_cross_section
+    from tests.section_fixtures import make_synthetic_vessel
+    from tests.test_hmx_export import _frame_table
+
+    section = build_cross_section(make_synthetic_vessel(), 5000.0)
+    monkeypatch.setattr(document_module, "resolve_section",
+                        lambda vessel, x_mm=None, frame=None: (_frame_table(), section))
+    monkeypatch.chdir(tmp_path)
+
+    result = runner.invoke(app, ["section", "export", str(model_310),
+                                 "--frame", "FR20", "--frame", "FR21"])
+    assert result.exit_code == 0
+    assert (tmp_path / f"{model_310.stem}-FR20.2dlx").exists()
+    assert (tmp_path / f"{model_310.stem}-FR21.2dlx").exists()
+
+
+def test_section_export_output_with_multiple_positions_rejected(model_310: Path):
+    result = runner.invoke(app, ["section", "export", str(model_310),
+                                 "--frame", "FR20", "--frame", "FR21",
+                                 "--output", "out.2dlx"])
+    assert result.exit_code == 2
+
+
 def test_export_default_output_name():
     from ocx_model_validator.cli import _default_section_output
 
@@ -190,7 +264,7 @@ def test_section_plot_invalid_document_exits_1(tmp_path: Path):
 def test_section_plot_malformed_rows_exits_1(tmp_path: Path):
     # passes load_document's top-level checks, but plate row lacks coordinates
     doc = {
-        "schema": "nh-cross-section/1",
+        "schema": "nh-cross-section/2",
         "frame_table": {},
         "compartments": [],
         "cross_section": {
