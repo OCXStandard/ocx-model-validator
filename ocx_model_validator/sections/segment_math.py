@@ -114,10 +114,12 @@ def project_point(
 
     Straight segments use clamped chord projection; arc segments use radial
     distance to the circle when the point projects inside the arc sweep, and
-    snap to the nearest endpoint otherwise.
+    snap to the nearest endpoint otherwise. Segments with a radius but no
+    center data are treated as straight chords.
     """
-    seg_len = arc_length(segment, p1, p2)
-    if is_arc(segment):
+    arc = is_arc(segment)
+    seg_len = arc_length(segment, p1, p2) if arc else distance(p1, p2)
+    if arc:
         center = (segment.arc_center_y_mm, segment.arc_center_z_mm)
         swept = arc_station_on_segment(segment, p1, p2, point, seg_len)
         if 0.0 < swept < seg_len:
@@ -136,13 +138,17 @@ def point_at_station(
     p2: Point,
     station: float,
 ) -> Point:
-    """Return the point at clamped arc-length ``station`` along one segment."""
-    seg_len = arc_length(segment, p1, p2)
+    """Return the point at clamped arc-length ``station`` along one segment.
+
+    Segments with a radius but no center data are treated as straight chords.
+    """
+    arc = is_arc(segment)
+    seg_len = arc_length(segment, p1, p2) if arc else distance(p1, p2)
     if seg_len <= 0.0:
         return p1
 
     t = max(0.0, min(1.0, station / seg_len))
-    if is_arc(segment):
+    if arc:
         cy = segment.arc_center_y_mm
         cz = segment.arc_center_z_mm
         radius = abs(segment.radius_mm)

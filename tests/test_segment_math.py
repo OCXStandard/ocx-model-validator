@@ -70,6 +70,16 @@ def test_project_point_straight() -> None:
     assert isclose(dist, 5.0)
 
 
+def test_radius_without_center_is_treated_as_straight() -> None:
+    ghost = _plate(radius=1000.0)  # no center data
+    station, dist = project_point(ghost, (0.0, 0.0), (3000.0, 0.0), (1000.0, 5.0))
+    assert isclose(station, 1000.0)
+    assert isclose(dist, 5.0)
+    y, z = point_at_station(ghost, (0.0, 0.0), (3000.0, 0.0), 1500.0)
+    assert isclose(y, 1500.0)
+    assert isclose(z, 0.0)
+
+
 def test_project_point_mid_arc_uses_radial_distance() -> None:
     r = 1000.0 / sqrt(2.0)
     station, dist = project_point(ARC, ARC_P1, ARC_P2, (r, r))
@@ -100,4 +110,4 @@ def test_point_at_station_clamps_and_handles_zero_length() -> None:
     assert point_at_station(_plate(), (5.0, 5.0), (5.0, 5.0), 100.0) == (5.0, 5.0)
     y, z = point_at_station(_plate(), (0.0, 0.0), (10.0, 0.0), 99.0)
     assert isclose(y, 10.0)
-
+    assert isclose(z, 0.0)
