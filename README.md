@@ -21,7 +21,7 @@ making downstream tools independent of any particular OCX schema version.
   frame table from the model's X reference planes, intersects the 3D model at any
   longitudinal position (analytic lines/circles/arcs + de Boor NURBS evaluation with
   tangency refinement), and assembles stiffener/plate/compartment data into a
-  JSON document (schema `nh-cross-section/1`)
+  JSON document (schema `nh-cross-section/2`)
 - **MCP server** `ocx-mcp` exposing the parse → frame table → cross-section → JSON
   pipeline to LLM clients
 
@@ -76,11 +76,14 @@ print(len(section["stiffeners"]), "stiffeners,", len(section["plates"]), "plates
 save_document(doc, "midship.json")
 ```
 
-The document (schema `nh-cross-section/1`) contains four blocks — `frame_table`,
+The document (schema `nh-cross-section/2`) contains four blocks — `frame_table`,
 `cross_section`, `compartments` and `warnings` — with all coordinates in **mm**,
 volumes in **m³** and yield stress in **MPa**, matching the input conventions of
 the DNV Nauticus Hull `RulesAPI` (see the companion
 [`nh-mcp`](../nh-mcp/) project).
+The `cross_section.plates` entries are elementary plate panels (EPPs), split at
+longitudinal stiffeners, with `_EPP{n}` name suffixes plus `bound_lower`,
+`bound_upper` and `breadth_mm` fields.
 
 ### MCP server
 
@@ -109,7 +112,7 @@ MCP client configuration (e.g. `mcp.json`):
 | `get_model_info` | Vessel name, schema version and entity counts |
 | `get_frame_table` | Frame 0 offset, spacing entries and frame positions (mm) |
 | `get_compartments` | Compartment names, tank types, COGs, volumes and extents |
-| `build_cross_section` | Full `nh-cross-section/1` document at a frame label or x position |
+| `build_cross_section` | Full `nh-cross-section/2` document at a frame label or x position |
 | `save_cross_section` | Build the document and persist it to a JSON file |
 
 ---
@@ -133,7 +136,7 @@ ocx-model-validator/
 │   │   ├── geometry.py         ← curve/plane intersection engine
 │   │   ├── frame_table.py      ← FrameTable, build_frame_table
 │   │   ├── section_builder.py  ← CrossSection, build_cross_section
-│   │   └── document.py         ← nh-cross-section/1 JSON document
+│   │   └── document.py         ← nh-cross-section/2 JSON document
 │   ├── mcp/
 │   │   ├── state.py            ← session state (loaded vessel)
 │   │   └── server.py           ← FastMCP "ocx-mcp" server (6 tools)
@@ -169,12 +172,14 @@ validator report bom          model.3docx --detailed
 validator report all          model.3docx --destination report.md
 
 # cross sections: JSON document at a frame or x-position, then SVG plot
+# (--frame / --x are repeatable: one output file per position)
 validator section create model.3docx --frame FR20 -o section.json
-validator section create model.3docx --x 50000
+validator section create model.3docx --x 50000 --x 60000
 validator section plot section.json -o section.svg
 
-# export a cross section as Nauticus Hull XML (2DLX default, or HMX)
+# export cross sections as Nauticus Hull XML (2DLX default, or HMX)
 validator section export model.3docx --frame FR20 -o section.2dlx
+validator section export model.3docx --frame FR20 --frame FR30
 validator section export model.3docx --x 50000 --format hmx --rule-set CSR-H
 
 # generate xsdata stubs from .3docx models in ./models/
@@ -216,7 +221,7 @@ IOcxBuilder.build(root) → IrVessel   ← schema-neutral IR
     ▼
 sections.build_frame_table(vessel) → FrameTable        (X ref planes → frames)
 sections.build_cross_section(vessel, x_mm) → CrossSection   (plane intersection)
-sections.build_document(vessel, ...) → dict            (nh-cross-section/1 JSON)
+sections.build_document(vessel, ...) → dict            (nh-cross-section/2 JSON)
     │
     ▼
 ocx-mcp MCP server / DNV Nauticus Hull rule checks (nh-mcp)
