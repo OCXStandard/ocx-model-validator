@@ -17,7 +17,6 @@ from ocx_model_validator.sections.segment_math import (
     arc_length as _arc_length_of,
     arc_station_on_segment as _arc_station_on_segment,
     distance as _distance,
-    minor_sweep as _minor_sweep,
     projection as _projection,
 )
 
