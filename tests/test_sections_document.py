@@ -25,12 +25,22 @@ def vessel():
 def test_document_has_schema_and_top_level_blocks(vessel) -> None:
     doc = build_document(vessel, "model.ocx", x_mm=5000.0)
 
-    assert doc["schema"] == "nh-cross-section/1"
+    assert doc["schema"] == "nh-cross-section/2"
     assert set(doc) == {"schema", "source", "frame_table", "cross_section", "compartments", "warnings"}
     assert doc["source"]["file"] == "model.ocx"
     assert doc["source"]["vessel_id"] == "vessel-1"
     assert doc["frame_table"]["positions"][1] == {"frame_no": "5", "x_mm": 5000.0}
     assert doc["cross_section"]["stiffeners"][0]["orientation"] == "Longitudinal"
+
+
+def test_plates_are_elementary_plate_panels(vessel) -> None:
+    doc = build_document(vessel, "model.ocx", x_mm=5000.0)
+    plates = doc["cross_section"]["plates"]
+    assert plates
+    for entry in plates:
+        assert "_EPP" in entry["name"]
+        assert {"bound_lower", "bound_upper", "breadth_mm"} <= set(entry)
+        assert entry["breadth_mm"] >= 0.0
 
 
 @pytest.mark.parametrize(
@@ -158,7 +168,7 @@ def test_save_load_round_trip_equality(vessel) -> None:
 
 def test_load_rejects_missing_cross_section() -> None:
     path = Path("section-document-missing-cross-section-test.json")
-    path.write_text(json.dumps({"schema": "nh-cross-section/1", "frame_table": {}, "compartments": []}))
+    path.write_text(json.dumps({"schema": "nh-cross-section/2", "frame_table": {}, "compartments": []}))
 
     try:
         with pytest.raises(SectionError, match="cross_section"):
