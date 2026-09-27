@@ -63,9 +63,20 @@ def apply_report(model_path: str | Path, report: dict[str, Any],
 
 
 def _parent_plate_name(epp_name: str) -> str:
-    # "P:P50/DECK_EPP1" -> "P50/DECK"
-    name = epp_name.split(":", 1)[-1]
-    return name.rsplit("_EPP", 1)[0]
+    return epp_name.rsplit("_EPP", 1)[0]
+
+
+def _find_by_guid_then_name(root: Any, ns: str, tag: str,
+                            guidref: str | None, name: str) -> Any | None:
+    guid_attr = f"{{{ns}}}GUIDRef"
+    if guidref:
+        for cand in root.iter(f"{{{ns}}}{tag}"):
+            if cand.get(guid_attr) == guidref:
+                return cand
+    for cand in root.iter(f"{{{ns}}}{tag}"):
+        if cand.get("name") == name:
+            return cand
+    return None
 
 
 def _patch_plates(root: Any, ns: str, rows: list[dict[str, Any]],
@@ -81,14 +92,9 @@ def _patch_plates(root: Any, ns: str, rows: list[dict[str, Any]],
             by_plate[key] = row
 
     updated = 0
-    guid_attr = f"{{{ns}}}GUIDRef"
     for (guidref, plate_name), row in by_plate.items():
-        plate = None
-        for cand in root.iter(f"{{{ns}}}Plate"):
-            if (guidref and cand.get(guid_attr) == guidref) or \
-                    cand.get("name") == plate_name:
-                plate = cand
-                break
+        plate = _find_by_guid_then_name(root, ns, "Plate", guidref,
+                                        plate_name)
         if plate is None:
             unmatched.append(row["name"])
             continue
@@ -97,7 +103,11 @@ def _patch_plates(root: Any, ns: str, rows: list[dict[str, Any]],
         if thickness is None:
             unmatched.append(row["name"])
             continue
-        factor = _UNIT_TO_M.get(thickness.get("unit", "Um"), 1.0)
+        unit = thickness.get("unit", "Um")
+        factor = _UNIT_TO_M.get(unit)
+        if factor is None:
+            unmatched.append(row["name"])
+            continue
         thickness.set("numericvalue",
                       repr(row["optimised_mm"] * 0.001 / factor))
         updated += 1
@@ -107,20 +117,21 @@ def _patch_plates(root: Any, ns: str, rows: list[dict[str, Any]],
 def _patch_stiffeners(root: Any, ns: str, rows: list[dict[str, Any]],
                       unmatched: list[str]) -> int:
     guid_attr = f"{{{ns}}}GUIDRef"
-    vessel = root.find(f"{{{ns}}}Vessel")
-    if vessel is None:
-        vessel = root
+    class_catalogue = root.find(f".//{{{ns}}}ClassCatalogue")
+    xsection_catalogue = root.find(f".//{{{ns}}}ClassCatalogue/"
+                                   f"{{{ns}}}XSectionCatalogue")
+    if xsection_catalogue is None and class_catalogue is not None:
+        xsection_catalogue = etree.SubElement(
+            class_catalogue, f"{{{ns}}}XSectionCatalogue")
     updated = 0
     for row in rows:
         if row.get("status") != "optimised":
             continue
-        stiffener = None
-        for cand in root.iter(f"{{{ns}}}Stiffener"):
-            if (row.get("guidref")
-                    and cand.get(guid_attr) == row["guidref"]) or \
-                    cand.get("name") == row["name"]:
-                stiffener = cand
-                break
+        if xsection_catalogue is None:
+            unmatched.append(row["name"])
+            continue
+        stiffener = _find_by_guid_then_name(root, ns, "Stiffener",
+                                            row.get("guidref"), row["name"])
         ref = stiffener.find(f"{{{ns}}}SectionRef") \
             if stiffener is not None else None
         if ref is None:
@@ -130,7 +141,7 @@ def _patch_stiffeners(root: Any, ns: str, rows: list[dict[str, Any]],
         if section is None:
             unmatched.append(row["name"])
             continue
-        vessel.append(section)
+        xsection_catalogue.append(section)
         ref.set("localRef", section.get("id"))
         ref.set(guid_attr, section.get(guid_attr))
         ref.set("name", section.get("name"))
