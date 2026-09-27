@@ -1,6 +1,7 @@
 """Apply an nh-optimisation/1 report to an OCX 3D model file.
 
-Patches plate thicknesses (max over the plate's EPP strips — conservative)
+Patches plate thicknesses only when every EPP strip is optimised (max over
+the plate's optimised EPP strips — conservative)
 and repoints stiffener SectionRefs to freshly created BarSections carrying
 the optimised profile dimensions. Writes a new .3docx file; never modifies
 the input.
@@ -34,8 +35,8 @@ def apply_report(model_path: str | Path, report: dict[str, Any],
                  output_path: str | Path) -> dict[str, Any]:
     """Patch model_path with the report's optimised rows into output_path.
 
-    Returns {"plates_updated", "stiffeners_updated", "unmatched",
-    "output_path"}."""
+    Returns {"plates_updated", "plates_skipped_mixed",
+    "stiffeners_updated", "unmatched", "output_path"}."""
     model_path = Path(model_path)
     output_path = Path(output_path)
     if model_path.resolve() == output_path.resolve():
@@ -49,8 +50,8 @@ def apply_report(model_path: str | Path, report: dict[str, Any],
     ns = etree.QName(root).namespace
 
     unmatched: list[str] = []
-    plates_updated = _patch_plates(root, ns,
-                                   report.get("plates", []), unmatched)
+    plates_updated, plates_skipped_mixed = _patch_plates(
+        root, ns, report.get("plates", []), unmatched)
     stiffeners_updated = _patch_stiffeners(root, ns,
                                            report.get("stiffeners", []),
                                            unmatched)
@@ -58,6 +59,7 @@ def apply_report(model_path: str | Path, report: dict[str, Any],
     tree.write(str(output_path), xml_declaration=True, encoding="utf-8",
                pretty_print=True)
     return {"plates_updated": plates_updated,
+            "plates_skipped_mixed": plates_skipped_mixed,
             "stiffeners_updated": stiffeners_updated,
             "unmatched": unmatched, "output_path": str(output_path)}
 
@@ -80,19 +82,22 @@ def _find_by_guid_then_name(root: Any, ns: str, tag: str,
 
 
 def _patch_plates(root: Any, ns: str, rows: list[dict[str, Any]],
-                  unmatched: list[str]) -> int:
-    # Group optimised EPP rows by parent plate; apply the MAX thickness.
-    by_plate: dict[tuple[str | None, str], dict[str, Any]] = {}
+                  unmatched: list[str]) -> tuple[int, int]:
+    # Group all EPP rows by parent plate. A parent plate has one thickness, so
+    # only reduce it when every EPP row for that parent was optimised.
+    by_plate: dict[tuple[str | None, str], list[dict[str, Any]]] = {}
     for row in rows:
-        if row.get("status") != "optimised":
-            continue
         key = (row.get("guidref"), _parent_plate_name(row["name"]))
-        best = by_plate.get(key)
-        if best is None or row["optimised_mm"] > best["optimised_mm"]:
-            by_plate[key] = row
+        by_plate.setdefault(key, []).append(row)
 
     updated = 0
-    for (guidref, plate_name), row in by_plate.items():
+    skipped_mixed = 0
+    for (guidref, plate_name), plate_rows in by_plate.items():
+        if any(row.get("status") != "optimised" for row in plate_rows):
+            if any(row.get("status") == "optimised" for row in plate_rows):
+                skipped_mixed += 1
+            continue
+        row = max(plate_rows, key=lambda item: item["optimised_mm"])
         plate = _find_by_guid_then_name(root, ns, "Plate", guidref,
                                         plate_name)
         if plate is None:
@@ -111,7 +116,7 @@ def _patch_plates(root: Any, ns: str, rows: list[dict[str, Any]],
         thickness.set("numericvalue",
                       repr(row["optimised_mm"] * 0.001 / factor))
         updated += 1
-    return updated
+    return updated, skipped_mixed
 
 
 def _patch_stiffeners(root: Any, ns: str, rows: list[dict[str, Any]],

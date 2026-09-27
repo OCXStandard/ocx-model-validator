@@ -103,6 +103,22 @@ def test_max_epp_thickness_governs_parent_plate(tmp_path):
     assert float(thickness.get("numericvalue")) == pytest.approx(0.022)
 
 
+def test_mixed_status_epp_rows_do_not_reduce_parent_plate(tmp_path):
+    model = make_model(tmp_path)
+    out = tmp_path / "patched.3docx"
+    result = writeback.apply_report(model, make_report(plates=[
+        plate_row(name="P:P50/DECK_EPP1", optimised_mm=20.0),
+        plate_row(name="P:P50/DECK_EPP2", status="under-dimensioned",
+                  optimised_mm=30.0),
+    ]), out)
+    thickness = parse(out).find(f".//{{{NS}}}Plate/{{{NS}}}PlateMaterial"
+                                f"/{{{NS}}}Thickness")
+    assert float(thickness.get("numericvalue")) == pytest.approx(0.03)
+    assert result["plates_updated"] == 0
+    assert result["plates_skipped_mixed"] == 1
+    assert result["unmatched"] == []
+
+
 def test_stiffener_gets_new_bar_section(tmp_path):
     model = make_model(tmp_path)
     out = tmp_path / "patched.3docx"
