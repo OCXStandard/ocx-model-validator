@@ -14,7 +14,7 @@ def clean_state():
     state.reset()
 
 
-def test_six_tools_registered():
+def test_seven_tools_registered():
     tools = asyncio.run(server.mcp.list_tools())
     assert {t.name for t in tools} == {
         "load_model",
@@ -23,6 +23,7 @@ def test_six_tools_registered():
         "get_compartments",
         "build_cross_section",
         "save_cross_section",
+        "apply_scantlings",
     }
 
 
@@ -63,3 +64,26 @@ def test_pipeline_with_synthetic_model(monkeypatch, tmp_path):
     out = tmp_path / "sec.json"
     saved = server.save_cross_section(str(out), x_mm=5000.0)
     assert saved["ok"] and out.exists()
+
+
+def test_apply_scantlings_ok(tmp_path):
+    # reuse the writeback test fixture model
+    from tests.test_writeback import make_model, make_report, plate_row
+    import json
+
+    model = make_model(tmp_path)
+    report_path = tmp_path / "report.json"
+    report_path.write_text(json.dumps(make_report(plates=[plate_row()])),
+                           encoding="utf-8")
+    out = tmp_path / "patched.3docx"
+    result = server.apply_scantlings(str(model), str(report_path), str(out))
+    assert result["ok"] is True
+    assert result["plates_updated"] == 1
+    assert out.exists()
+
+
+def test_apply_scantlings_error_dict():
+    result = server.apply_scantlings("no-such.3docx", "no-such.json",
+                                     "out.3docx")
+    assert result["ok"] is False
+    assert "error" in result

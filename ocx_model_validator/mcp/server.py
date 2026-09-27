@@ -1,11 +1,13 @@
 """FastMCP server exposing OCX model cross-section tools."""
 from __future__ import annotations
 
+import json
 from pathlib import Path
 from typing import Any
 
 from mcp.server.fastmcp import FastMCP
 
+from ocx_model_validator import writeback
 from ocx_model_validator.builders.factory import get_builder
 from ocx_model_validator.mcp import state
 from ocx_model_validator.model.ir.structural import IrVessel
@@ -134,6 +136,25 @@ def save_cross_section(
         doc = build_document(vessel, state.source_file, x_mm=x_mm, frame=frame)
         save_document(doc, path)
         return {"ok": True, "path": path}
+    except Exception as exc:
+        return {"ok": False, "error": str(exc)}
+
+
+@mcp.tool()
+def apply_scantlings(model_path: str, report_path: str,
+                     output_path: str) -> dict[str, Any]:
+    """Apply an nh-optimisation/1 report (from the nauticushull-mcp
+    optimise_cross_section tool) to an OCX .3docx model. Patches plate
+    thicknesses (max over each plate's EPP strips) and repoints stiffener
+    SectionRefs to new BarSections with the optimised dimensions. Writes
+    the patched model to output_path (must differ from model_path); never
+    modifies the input. Returns counts of updated items and any unmatched
+    report rows."""
+    try:
+        report = json.loads(
+            Path(report_path).read_text(encoding="utf-8"))
+        result = writeback.apply_report(model_path, report, output_path)
+        return {"ok": True, **result}
     except Exception as exc:
         return {"ok": False, "error": str(exc)}
 
