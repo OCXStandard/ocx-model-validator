@@ -114,6 +114,7 @@ MCP client configuration (e.g. `mcp.json`):
 | `get_compartments` | Compartment names, tank types, COGs, volumes and extents |
 | `build_cross_section` | Full `nh-cross-section/2` document at a frame label or x position |
 | `save_cross_section` | Build the document and persist it to a JSON file |
+| `apply_scantlings` | Apply an `nh-optimisation/1` report to a `.3docx`: plate thicknesses plus stiffener `BarSection`s, written to a new file |
 
 ---
 
@@ -141,7 +142,7 @@ ocx-model-validator/
 │   │   └── document.py         ← nh-cross-section/2 JSON document
 │   ├── mcp/
 │   │   ├── state.py            ← session state (loaded vessel)
-│   │   └── server.py           ← FastMCP "ocx-mcp" server (6 tools)
+│   │   └── server.py           ← FastMCP "ocx-mcp" server (7 tools)
 │   ├── parsers/
 │   │   ├── base_parser.py
 │   │   ├── dynamic_loader.py   ← runtime xsdata module loader
