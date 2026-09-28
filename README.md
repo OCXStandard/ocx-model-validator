@@ -205,8 +205,7 @@ properties per longitudinal position (see `section_props_sample.json`):
     "x_pos": 165800.0,
     "z_n": 14.2659,
     "iy_n50": 1516.878,
-    "iz_n50": 4446.297,
-    "z_vd": 22.0
+    "iz_n50": 4446.297
   }
 ]
 ```
@@ -217,7 +216,6 @@ properties per longitudinal position (see `section_props_sample.json`):
 | `z_n` | m | Height of the hull girder's neutral axis above the baseline. |
 | `iy_n50` | m⁴ | Hull-girder moment of inertia (net, half corrosion deducted) about the horizontal axis. |
 | `iz_n50` | m⁴ | Hull-girder moment of inertia (net) about the vertical axis. |
-| `z_vd` | m | Height of the equivalent deck line (optional). |
 
 The entry whose `x_pos` lies within 1 mm of the section position is merged
 into the `cross_section.sect_props` block of the output document. If no entry

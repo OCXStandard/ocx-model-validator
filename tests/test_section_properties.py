@@ -21,7 +21,6 @@ SAMPLE_ENTRY = {
     "z_n": 11.065,
     "iy_n50": 1002.0,
     "iz_n50": 2990.0,
-    "z_vd": 22.0,
 }
 
 
@@ -172,7 +171,7 @@ class TestBuildDocumentWithProperties:
                              section_props=[SAMPLE_ENTRY])
         props = doc["cross_section"]["sect_props"]
         assert props["z_n"] == 11.065  # user values preserved verbatim
-        assert props["z_vd"] == 22.0
+        assert props["iy_n50"] == 1002.0
         assert "x_pos" not in props
         # derived from the model: synthetic plates span y 0..2000 mm (half model)
         assert props["bx"] == 4.0
