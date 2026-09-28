@@ -35,6 +35,7 @@ class EppPlate:
     bound_lower: str | None
     bound_upper: str | None
     breadth_mm: float
+    function_type: str | None = None
 
 
 def split_plates_to_epps(
@@ -108,6 +109,7 @@ def _split_plate(
             bound_lower=bounds[index],
             bound_upper=bounds[index + 1],
             breadth_mm=stations[index + 1] - stations[index],
+            function_type=plate.function_type,
         )
         for index in range(len(stations) - 1)
     ]

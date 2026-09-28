@@ -24,7 +24,12 @@ _STUB_DEFAULT_MM = 250.0
 _SVG_NS = 'xmlns="http://www.w3.org/2000/svg"'
 
 
-def render_svg(doc: dict) -> str:
+def _escape_attr(value) -> str:
+    return escape(str(value), {'"': "&quot;"})
+
+
+def render_svg(doc: dict, *, plate_style=None, stiffener_style=None,
+               legend_extra=None, thickness_legend: bool = True) -> str:
     """Render the cross-section document as an SVG string."""
     cs = doc["cross_section"]
     plates: list[dict] = cs.get("plates") or []
@@ -54,11 +59,13 @@ def render_svg(doc: dict) -> str:
             f'font-family="sans-serif">(no geometry to plot)</text>'
         )
     else:
-        parts.extend(_plate_lines(plates, color_of, to_px))
-        parts.extend(_stiffener_stubs(stiffeners, to_px))
+        parts.extend(_plate_lines(plates, color_of, to_px, plate_style))
+        parts.extend(_stiffener_stubs(stiffeners, to_px, stiffener_style))
 
     legend_x = _MARGIN + _PLOT_W + 40.0
-    legend_parts, legend_h = _legend(stiffeners, color_of, legend_x, has_unknown)
+    legend_parts, legend_h = _legend(
+        stiffeners, color_of, legend_x, has_unknown,
+        legend_extra=legend_extra, thickness_legend=thickness_legend)
     parts.extend(legend_parts)
 
     width = _MARGIN * 2 + _PLOT_W + _LEGEND_W
@@ -106,20 +113,34 @@ def _fit(plates: list[dict], stiffeners: list[dict]):
     return to_px
 
 
-def _plate_lines(plates, color_of, to_px) -> list[str]:
+def _plate_lines(plates, color_of, to_px, style_of=None) -> list[str]:
     out = []
     for p in plates:
         x1, y1 = to_px(p["y1_mm"], p["z1_mm"])
         x2, y2 = to_px(p["y2_mm"], p["z2_mm"])
         t = p.get("thickness_mm")
-        if t is None:
-            style = f'stroke="{_UNKNOWN_COLOR}" stroke-dasharray="6 4"'
+        override = style_of(p) if style_of is not None else None
+        if override is not None:
+            color = override.get("color")
+            if color is None:
+                color = _UNKNOWN_COLOR if t is None else color_of[t]
+            style = f'stroke="{_escape_attr(color)}"'
+            dash = override.get("dash")
+            if dash:
+                style += f' stroke-dasharray="{_escape_attr(dash)}"'
+            elif t is None:
+                style += ' stroke-dasharray="6 4"'
+            title = override.get("title") or p.get("name") or ""
         else:
-            style = f'stroke="{color_of[t]}"'
+            if t is None:
+                style = f'stroke="{_UNKNOWN_COLOR}" stroke-dasharray="6 4"'
+            else:
+                style = f'stroke="{color_of[t]}"'
+            title = p.get("name") or ""
         out.append(
             f'<line class="plate" x1="{x1:.1f}" y1="{y1:.1f}" '
             f'x2="{x2:.1f}" y2="{y2:.1f}" {style} stroke-width="3">'
-            f'<title>{escape(str(p.get("name") or ""))}</title></line>'
+            f'<title>{escape(str(title))}</title></line>'
         )
     return out
 
@@ -132,7 +153,7 @@ def _stub_len_mm(profile_dimensions: str | None) -> float:
     return _STUB_DEFAULT_MM
 
 
-def _stiffener_stubs(stiffeners, to_px) -> list[str]:
+def _stiffener_stubs(stiffeners, to_px, style_of=None) -> list[str]:
     out = []
     for n, s in enumerate(stiffeners, start=1):
         x0, y0 = to_px(s["y_mm"], s["z_mm"])
@@ -144,10 +165,23 @@ def _stiffener_stubs(stiffeners, to_px) -> list[str]:
         else:
             dx, dy, dash = wdy * length_px, -wdz * length_px, ""
         x1, y1 = x0 + dx, y0 + dy
-        out.append(
+        override = style_of(s) if style_of is not None else None
+        title = None
+        stroke = "black"
+        if override is not None:
+            stroke = str(override.get("color", stroke))
+            if override.get("dash"):
+                dash = f' stroke-dasharray="{_escape_attr(override["dash"])}"'
+            title = override.get("title")
+        line = (
             f'<line class="stiffener" x1="{x0:.1f}" y1="{y0:.1f}" '
-            f'x2="{x1:.1f}" y2="{y1:.1f}" stroke="black" stroke-width="1.5"{dash}/>'
+            f'x2="{x1:.1f}" y2="{y1:.1f}" stroke="{_escape_attr(stroke)}" '
+            f'stroke-width="1.5"{dash}'
         )
+        if title is None:
+            out.append(f"{line}/>")
+        else:
+            out.append(f"{line}><title>{escape(str(title))}</title></line>")
         lx, ly = x1 + dx * 0.15 + 3.0, y1 + dy * 0.15
         out.append(
             f'<text class="stiffener-no" x="{lx:.1f}" y="{ly:.1f}" '
@@ -156,7 +190,8 @@ def _stiffener_stubs(stiffeners, to_px) -> list[str]:
     return out
 
 
-def _legend(stiffeners, color_of, x: float, has_unknown: bool) -> tuple[list[str], float]:
+def _legend(stiffeners, color_of, x: float, has_unknown: bool, *,
+            legend_extra=None, thickness_legend: bool = True) -> tuple[list[str], float]:
     out: list[str] = []
     y = _TITLE_H + 20.0
     out.append(f'<text x="{x}" y="{y}" font-size="14" font-weight="bold" '
@@ -171,20 +206,36 @@ def _legend(stiffeners, color_of, x: float, has_unknown: bool) -> tuple[list[str
         out.append(f'<text x="{x}" y="{y:.1f}" font-size="11" '
                    f'font-family="sans-serif">{escape(label)}</text>')
         y += _ROW_H
-    y += _ROW_H
-    out.append(f'<text x="{x}" y="{y:.1f}" font-size="14" font-weight="bold" '
-               f'font-family="sans-serif">Plate thickness</text>')
-    y += _ROW_H
-    for t, color in color_of.items():
-        out.append(f'<line x1="{x}" y1="{y - 4:.1f}" x2="{x + 30}" '
-                   f'y2="{y - 4:.1f}" stroke="{color}" stroke-width="3"/>')
-        out.append(f'<text x="{x + 38}" y="{y:.1f}" font-size="11" '
-                   f'font-family="sans-serif">{t} mm</text>')
+    if thickness_legend:
         y += _ROW_H
-    if has_unknown:
-        out.append(f'<line x1="{x}" y1="{y - 4:.1f}" x2="{x + 30}" y2="{y - 4:.1f}" '
-                   f'stroke="{_UNKNOWN_COLOR}" stroke-width="3" stroke-dasharray="6 4"/>')
-        out.append(f'<text x="{x + 38}" y="{y:.1f}" font-size="11" '
-                   f'font-family="sans-serif">unknown</text>')
+        out.append(f'<text x="{x}" y="{y:.1f}" font-size="14" font-weight="bold" '
+                   f'font-family="sans-serif">Plate thickness</text>')
         y += _ROW_H
+        for t, color in color_of.items():
+            out.append(f'<line x1="{x}" y1="{y - 4:.1f}" x2="{x + 30}" '
+                       f'y2="{y - 4:.1f}" stroke="{color}" stroke-width="3"/>')
+            out.append(f'<text x="{x + 38}" y="{y:.1f}" font-size="11" '
+                       f'font-family="sans-serif">{t} mm</text>')
+            y += _ROW_H
+        if has_unknown:
+            out.append(f'<line x1="{x}" y1="{y - 4:.1f}" x2="{x + 30}" y2="{y - 4:.1f}" '
+                       f'stroke="{_UNKNOWN_COLOR}" stroke-width="3" stroke-dasharray="6 4"/>')
+            out.append(f'<text x="{x + 38}" y="{y:.1f}" font-size="11" '
+                       f'font-family="sans-serif">unknown</text>')
+            y += _ROW_H
+    if legend_extra:
+        y += _ROW_H
+        out.append(f'<text x="{x}" y="{y:.1f}" font-size="14" font-weight="bold" '
+                   f'font-family="sans-serif">Legend</text>')
+        y += _ROW_H
+        for color, dash, label in legend_extra:
+            dash_attr = ""
+            if dash:
+                dash_attr = f' stroke-dasharray="{_escape_attr(dash)}"'
+            out.append(f'<line x1="{x}" y1="{y - 4:.1f}" x2="{x + 30}" '
+                       f'y2="{y - 4:.1f}" stroke="{_escape_attr(color)}" '
+                       f'stroke-width="3"{dash_attr}/>')
+            out.append(f'<text x="{x + 38}" y="{y:.1f}" font-size="11" '
+                       f'font-family="sans-serif">{escape(str(label))}</text>')
+            y += _ROW_H
     return out, y - _TITLE_H

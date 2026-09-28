@@ -54,6 +54,7 @@ class SectionStiffener:
     web_dir_y: float | None = None
     web_dir_z: float | None = None
     guidref: str | None = None
+    function_type: str | None = None
 
 
 @dataclass(frozen=True)
@@ -70,6 +71,7 @@ class SectionPlate:
     arc_center_y_mm: float | None = None
     arc_center_z_mm: float | None = None
     guidref: str | None = None
+    function_type: str | None = None
 
 
 @dataclass(frozen=True)
@@ -157,6 +159,7 @@ def _build_stiffeners(
             material_reh_mpa = _safe_material_reh_mpa(stiffener.material_ref, vessel, "stiffener", name, warnings)
             panel_name = _panel_name(panel_item.panel)
             panel_id = panel_item.panel.id if panel_item.panel is not None else None
+            function_type = panel_item.panel.function_type if panel_item.panel is not None else None
             web_dir_y, web_dir_z = _web_dir(stiffener, x_mm, to_mm, warnings)
             for y_mm, z_mm in hits:
                 result.append(
@@ -179,6 +182,7 @@ def _build_stiffeners(
                             web_dir_y=web_dir_y,
                             web_dir_z=web_dir_z,
                             guidref=stiffener.guidref,
+                            function_type=function_type,
                         ),
                     )
                 )
@@ -216,6 +220,7 @@ def _build_plates(
             thickness_mm = _safe_qty_mm(plate.thickness, vessel.unit_registry, "plate", name, "thickness", warnings)
             material_reh_mpa = _safe_material_reh_mpa(plate.material_ref, vessel, "plate", name, warnings)
             panel_name = _panel_name(panel_item.panel)
+            function_type = panel_item.panel.function_type if panel_item.panel is not None else None
 
             if len(hits) == 2:
                 trace = trace_profile(plate.outer_contour, x_mm, to_mm, tol)
@@ -235,6 +240,7 @@ def _build_plates(
                                 arc_center_y_mm=center[0] if center else None,
                                 arc_center_z_mm=center[1] if center else None,
                                 guidref=plate.guidref,
+                                function_type=function_type,
                             )
                         )
                     continue
@@ -257,6 +263,7 @@ def _build_plates(
                         arc_center_y_mm=arc_center_y_mm,
                         arc_center_z_mm=arc_center_z_mm,
                         guidref=plate.guidref,
+                        function_type=function_type,
                     )
                 )
         except GeometryError as exc:
