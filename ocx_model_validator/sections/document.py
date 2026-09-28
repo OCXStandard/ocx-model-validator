@@ -15,7 +15,7 @@ from ocx_model_validator.sections.epp import split_plates_to_epps
 from ocx_model_validator.sections.frame_table import FrameTable, build_frame_table
 from ocx_model_validator.sections.properties import derive_section_properties, match_properties
 from ocx_model_validator.sections.section_builder import CrossSection, build_cross_section
-from ocx_model_validator.sections.units import point_mm, qty_kpa, qty_m3, qty_mm
+from ocx_model_validator.sections.units import point_mm, qty_kpa, qty_m3, qty_mm, to_si
 
 SCHEMA = "nh-cross-section/3"
 _REQUIRED_TOP_LEVEL_KEYS = {"schema", "cross_section", "compartments"}
@@ -123,6 +123,39 @@ def frame_table_block(ft: FrameTable) -> dict[str, Any]:
             for frame_no, x_mm in ft.positions
         ],
     }
+
+
+# (doc key, IrPrincipalParticulars attribute) — RulesAPI names Lpp, L,
+# Lll, B, D, CB, TSC, Tbal in snake_case with unit suffix.
+_PRINCIPAL_DIMENSION_FIELDS = (
+    ("lpp_m", "lpp"),
+    ("l_m", "rule_length"),
+    ("lll_m", "freeboard_length"),
+    ("b_m", "moulded_breadth"),
+    ("d_m", "moulded_depth"),
+    ("cb", "block_coefficient"),
+    ("tsc_m", "scantling_draught"),
+    ("tbal_m", "normal_ballast_draught"),
+)
+
+
+def principal_dimensions_block(vessel: IrVessel,
+                               warnings: list[str]) -> dict[str, float | None]:
+    """Principal dimensions in metres (cb dimensionless); None + warning when absent."""
+    pp = vessel.principal_particulars
+    block: dict[str, float | None] = {}
+    for key, attr in _PRINCIPAL_DIMENSION_FIELDS:
+        qty = getattr(pp, attr, None) if pp is not None else None
+        if qty is None:
+            block[key] = None
+            warnings.append(f"principal dimension {key} is missing")
+            continue
+        try:
+            block[key] = to_si(qty, vessel.unit_registry)
+        except GeometryError as exc:
+            block[key] = None
+            warnings.append(f"principal dimension {key}: {exc}")
+    return block
 
 
 def build_compartments_block(vessel: IrVessel) -> tuple[list[dict[str, Any]], list[str]]:

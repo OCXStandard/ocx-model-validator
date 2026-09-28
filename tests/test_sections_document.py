@@ -8,10 +8,12 @@ import pytest
 from ocx_model_validator.exeptions import SectionError
 from ocx_model_validator.model.ir.arrangement import IrCompartment
 from ocx_model_validator.model.ir.base import IrCog, Ref
+from ocx_model_validator.model.ir.metadata import IrPrincipalParticulars
 from ocx_model_validator.sections.document import (
     build_compartments_block,
     build_document,
     load_document,
+    principal_dimensions_block,
     save_document,
 )
 from tests.section_fixtures import make_synthetic_vessel, q
@@ -273,3 +275,50 @@ def test_document_includes_seams_block() -> None:
     assert doc["cross_section"]["seams"] == [
         {"name": "SM1", "panel": "Panel A", "y_mm": 1000.0, "z_mm": 0.0}
     ]
+
+
+def test_principal_dimensions_block_converts_to_metres(vessel) -> None:
+    vessel.principal_particulars = IrPrincipalParticulars(
+        lpp=q(320.0, "Um"),
+        rule_length=q(316.0, "Um"),
+        freeboard_length=q(322.0, "Um"),
+        moulded_breadth=q(60.0, "Um"),
+        moulded_depth=q(30.5, "Um"),
+        block_coefficient=q(0.81, ""),
+        scantling_draught=q(22.5, "Um"),
+        normal_ballast_draught=q(9.5, "Um"),
+    )
+    warnings: list[str] = []
+
+    block = principal_dimensions_block(vessel, warnings)
+
+    assert block == {
+        "lpp_m": 320.0, "l_m": 316.0, "lll_m": 322.0, "b_m": 60.0,
+        "d_m": 30.5, "cb": 0.81, "tsc_m": 22.5, "tbal_m": 9.5,
+    }
+    assert warnings == []
+
+
+def test_principal_dimensions_block_nulls_and_warns_on_missing(vessel) -> None:
+    vessel.principal_particulars = IrPrincipalParticulars(lpp=q(320.0, "Um"))
+    warnings: list[str] = []
+
+    block = principal_dimensions_block(vessel, warnings)
+
+    assert block["lpp_m"] == 320.0
+    for key in ("l_m", "lll_m", "b_m", "d_m", "cb", "tsc_m", "tbal_m"):
+        assert block[key] is None
+    assert len(warnings) == 7
+    assert any("b_m" in w for w in warnings)
+
+
+def test_principal_dimensions_block_handles_absent_particulars(vessel) -> None:
+    vessel.principal_particulars = None
+    warnings: list[str] = []
+
+    block = principal_dimensions_block(vessel, warnings)
+
+    assert set(block) == {"lpp_m", "l_m", "lll_m", "b_m", "d_m", "cb",
+                          "tsc_m", "tbal_m"}
+    assert all(v is None for v in block.values())
+    assert len(warnings) == 8
