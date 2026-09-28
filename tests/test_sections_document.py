@@ -53,6 +53,13 @@ def test_document_principal_dimensions_present_with_warnings(vessel) -> None:
     assert sum("principal dimension" in w for w in doc["warnings"]) == 8
 
 
+def test_principal_dimensions_are_not_rounded(vessel) -> None:
+    vessel.principal_particulars = IrPrincipalParticulars(
+        block_coefficient=q(0.815, ""))
+    doc = build_document(vessel, "model.ocx", x_mm=5000.0)
+    assert doc["principal_dimensions"]["cb"] == 0.815
+
+
 def test_plates_are_elementary_plate_panels(vessel) -> None:
     doc = build_document(vessel, "model.ocx", x_mm=5000.0)
     plates = doc["cross_section"]["plates"]

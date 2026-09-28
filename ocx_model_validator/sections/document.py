@@ -74,7 +74,6 @@ def build_document(
             "vessel_id": vessel.id,
             "generated": datetime.now(timezone.utc).isoformat(),
         },
-        "principal_dimensions": principal_dimensions,
         "frame_table": frame_table_block(frame_table),
         "cross_section": {
             "x_mm": cross_section.x_mm,
@@ -92,7 +91,9 @@ def build_document(
         "warnings": warnings,
     }
     doc = _round_floats(doc)
-    # Attach after rounding so user-supplied values are preserved verbatim.
+    # Attach principal dimensions and section properties after rounding so
+    # user-supplied values are preserved verbatim.
+    doc["principal_dimensions"] = principal_dimensions
     derived, derived_warnings = derive_section_properties(cross_section.plates)
     doc["warnings"].extend(derived_warnings)
     sect_props: dict[str, Any] = dict(derived)
