@@ -24,6 +24,10 @@ _STUB_DEFAULT_MM = 250.0
 _SVG_NS = 'xmlns="http://www.w3.org/2000/svg"'
 
 
+def _escape_attr(value) -> str:
+    return escape(str(value), {'"': "&quot;"})
+
+
 def render_svg(doc: dict, *, plate_style=None, stiffener_style=None,
                legend_extra=None, thickness_legend: bool = True) -> str:
     """Render the cross-section document as an SVG string."""
@@ -120,11 +124,13 @@ def _plate_lines(plates, color_of, to_px, style_of=None) -> list[str]:
             color = override.get("color")
             if color is None:
                 color = _UNKNOWN_COLOR if t is None else color_of[t]
-            style = f'stroke="{escape(str(color))}"'
+            style = f'stroke="{_escape_attr(color)}"'
             dash = override.get("dash")
             if dash:
-                style += f' stroke-dasharray="{escape(str(dash))}"'
-            title = override.get("title", p.get("name") or "")
+                style += f' stroke-dasharray="{_escape_attr(dash)}"'
+            elif t is None:
+                style += ' stroke-dasharray="6 4"'
+            title = override.get("title") or p.get("name") or ""
         else:
             if t is None:
                 style = f'stroke="{_UNKNOWN_COLOR}" stroke-dasharray="6 4"'
@@ -165,11 +171,11 @@ def _stiffener_stubs(stiffeners, to_px, style_of=None) -> list[str]:
         if override is not None:
             stroke = str(override.get("color", stroke))
             if override.get("dash"):
-                dash = f' stroke-dasharray="{escape(str(override["dash"]))}"'
+                dash = f' stroke-dasharray="{_escape_attr(override["dash"])}"'
             title = override.get("title")
         line = (
             f'<line class="stiffener" x1="{x0:.1f}" y1="{y0:.1f}" '
-            f'x2="{x1:.1f}" y2="{y1:.1f}" stroke="{escape(stroke)}" '
+            f'x2="{x1:.1f}" y2="{y1:.1f}" stroke="{_escape_attr(stroke)}" '
             f'stroke-width="1.5"{dash}'
         )
         if title is None:
@@ -225,9 +231,9 @@ def _legend(stiffeners, color_of, x: float, has_unknown: bool, *,
         for color, dash, label in legend_extra:
             dash_attr = ""
             if dash:
-                dash_attr = f' stroke-dasharray="{escape(str(dash))}"'
+                dash_attr = f' stroke-dasharray="{_escape_attr(dash)}"'
             out.append(f'<line x1="{x}" y1="{y - 4:.1f}" x2="{x + 30}" '
-                       f'y2="{y - 4:.1f}" stroke="{escape(str(color))}" '
+                       f'y2="{y - 4:.1f}" stroke="{_escape_attr(color)}" '
                        f'stroke-width="3"{dash_attr}/>')
             out.append(f'<text x="{x + 38}" y="{y:.1f}" font-size="11" '
                        f'font-family="sans-serif">{escape(str(label))}</text>')

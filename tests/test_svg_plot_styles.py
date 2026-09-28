@@ -1,4 +1,6 @@
 """Styling hooks on the cross-section SVG renderer."""
+import xml.etree.ElementTree as ET
+
 from ocx_model_validator.sections.svg_plot import render_svg
 
 
@@ -40,6 +42,34 @@ def test_plate_style_overrides_colour_dash_title():
     assert 'stroke="#d62828"' in svg
     assert 'stroke-dasharray="6 4"' in svg
     assert "P1 | DECK | 10 -&gt; 8 mm" in svg or "P1 | DECK | 10 -> 8 mm" in svg
+
+
+def test_plate_style_colour_escapes_double_quote_in_attribute():
+    def plate_style(row):
+        return {"color": 'red" onmouseover="alert(1)'}
+
+    svg = render_svg(make_doc(), plate_style=plate_style)
+    assert 'stroke="red&quot; onmouseover=&quot;alert(1)"' in svg
+    assert 'stroke="red" onmouseover="alert(1)"' not in svg
+
+
+def test_unknown_thickness_plate_style_without_dash_keeps_baseline_dash():
+    doc = make_doc()
+    doc["cross_section"]["plates"][0]["thickness_mm"] = None
+
+    svg = render_svg(doc, plate_style=lambda row: {"color": "#d62828"})
+    root = ET.fromstring(svg)
+    plate = next(line for line in root.iter("{http://www.w3.org/2000/svg}line")
+                 if line.get("class") == "plate")
+
+    assert plate.get("stroke-dasharray") == "6 4"
+
+
+def test_plate_style_title_none_falls_back_to_plate_name():
+    svg = render_svg(make_doc(), plate_style=lambda row: {"title": None})
+
+    assert "<title>P1</title>" in svg
+    assert "<title>None</title>" not in svg
 
 
 def test_stiffener_style_overrides_colour_and_title():
