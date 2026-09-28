@@ -6,7 +6,7 @@ from ocx_model_validator.sections.svg_plot import render_svg
 
 def make_doc():
     return {
-        "schema": "nh-cross-section/3",
+        "schema": "nh-cross-section/4",
         "source": {"file": "m.3docx"},
         "cross_section": {
             "x_mm": 160000.0,

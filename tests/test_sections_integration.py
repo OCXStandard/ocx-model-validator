@@ -48,7 +48,7 @@ def test_document_round_trip(vessel, tmp_path):
     label, x = ft.nearest_frame(
         (ft.positions[0][1] + ft.positions[-1][1]) / 2.0)
     doc = build_document(vessel, str(MODEL), x_mm=x)
-    assert doc["schema"] == "nh-cross-section/3"
+    assert doc["schema"] == "nh-cross-section/4"
     assert doc["compartments"]
     p = tmp_path / "section.json"
     save_document(doc, p)

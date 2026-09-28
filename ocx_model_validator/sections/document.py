@@ -17,8 +17,9 @@ from ocx_model_validator.sections.properties import derive_section_properties, m
 from ocx_model_validator.sections.section_builder import CrossSection, build_cross_section
 from ocx_model_validator.sections.units import point_mm, qty_kpa, qty_m3, qty_mm, to_si
 
-SCHEMA = "nh-cross-section/3"
-_REQUIRED_TOP_LEVEL_KEYS = {"schema", "cross_section", "compartments"}
+SCHEMA = "nh-cross-section/4"
+_REQUIRED_TOP_LEVEL_KEYS = {"schema", "cross_section", "compartments",
+                            "frame_table", "principal_dimensions"}
 _NULL_EXTENT = {
     "min_x": None,
     "max_x": None,
@@ -64,6 +65,7 @@ def build_document(
     frame_table, cross_section = resolve_section(vessel, x_mm=x_mm, frame=frame)
     compartments, compartment_warnings = build_compartments_block(vessel)
     warnings = [*frame_table.warnings, *cross_section.warnings, *compartment_warnings]
+    principal_dimensions = principal_dimensions_block(vessel, warnings)
 
     doc = {
         "schema": SCHEMA,
@@ -72,6 +74,8 @@ def build_document(
             "vessel_id": vessel.id,
             "generated": datetime.now(timezone.utc).isoformat(),
         },
+        "principal_dimensions": principal_dimensions,
+        "frame_table": frame_table_block(frame_table),
         "cross_section": {
             "x_mm": cross_section.x_mm,
             "frame": cross_section.frame,

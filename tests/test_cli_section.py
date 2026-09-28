@@ -18,8 +18,10 @@ def model_310(stub_dir_310: Path) -> Path:
 @pytest.fixture()
 def section_json(tmp_path: Path) -> Path:
     doc = {
-        "schema": "nh-cross-section/3",
+        "schema": "nh-cross-section/4",
         "source": {"file": "ship.3docx", "vessel_id": "V1", "generated": "t"},
+        "principal_dimensions": {},
+        "frame_table": {},
         "cross_section": {
             "x_mm": 50_000.0,
             "frame": "FR20",
@@ -164,7 +166,7 @@ def test_section_create_multiple_x_writes_one_file_each(model_310: Path,
 
     def fake_build_document(vessel, source, x_mm=None, frame=None, **kwargs):
         calls.append((x_mm, frame))
-        return {"schema": "nh-cross-section/3", "cross_section": {"x_mm": x_mm}}
+        return {"schema": "nh-cross-section/4", "cross_section": {"x_mm": x_mm}}
 
     monkeypatch.setattr(document_module, "build_document", fake_build_document)
     monkeypatch.chdir(tmp_path)
@@ -183,7 +185,7 @@ def test_section_create_multiple_frames_writes_one_file_each(model_310: Path,
     from ocx_model_validator.sections import document as document_module
 
     def fake_build_document(vessel, source, x_mm=None, frame=None, **kwargs):
-        return {"schema": "nh-cross-section/3", "cross_section": {"frame": frame}}
+        return {"schema": "nh-cross-section/4", "cross_section": {"frame": frame}}
 
     monkeypatch.setattr(document_module, "build_document", fake_build_document)
     monkeypatch.chdir(tmp_path)
@@ -263,8 +265,10 @@ def test_section_plot_invalid_document_exits_1(tmp_path: Path):
 def test_section_plot_malformed_rows_exits_1(tmp_path: Path):
     # passes load_document's top-level checks, but plate row lacks coordinates
     doc = {
-        "schema": "nh-cross-section/3",
+        "schema": "nh-cross-section/4",
         "compartments": [],
+        "frame_table": {},
+        "principal_dimensions": {},
         "cross_section": {
             "x_mm": 1.0, "frame": None,
             "plates": [{"name": "p", "thickness_mm": 10}],

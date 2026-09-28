@@ -27,11 +27,30 @@ def vessel():
 def test_document_has_schema_and_top_level_blocks(vessel) -> None:
     doc = build_document(vessel, "model.ocx", x_mm=5000.0)
 
-    assert doc["schema"] == "nh-cross-section/3"
-    assert set(doc) == {"schema", "source", "cross_section", "compartments", "warnings"}
+    assert doc["schema"] == "nh-cross-section/4"
+    assert set(doc) == {"schema", "source", "cross_section", "compartments",
+                        "frame_table", "principal_dimensions", "warnings"}
     assert doc["source"]["file"] == "model.ocx"
     assert doc["source"]["vessel_id"] == "vessel-1"
     assert doc["cross_section"]["stiffeners"][0]["orientation"] == "Longitudinal"
+
+
+def test_document_frame_table_block(vessel) -> None:
+    doc = build_document(vessel, "model.ocx", x_mm=5000.0)
+
+    ft = doc["frame_table"]
+    assert set(ft) == {"frame0_offset_mm", "entries", "positions"}
+    assert ft["positions"] and {"frame_no", "x_mm"} <= set(ft["positions"][0])
+    assert ft["entries"] and {"frame_no", "spacing_mm"} <= set(ft["entries"][0])
+
+
+def test_document_principal_dimensions_present_with_warnings(vessel) -> None:
+    vessel.principal_particulars = None
+    doc = build_document(vessel, "model.ocx", x_mm=5000.0)
+
+    assert set(doc["principal_dimensions"]) == {
+        "lpp_m", "l_m", "lll_m", "b_m", "d_m", "cb", "tsc_m", "tbal_m"}
+    assert sum("principal dimension" in w for w in doc["warnings"]) == 8
 
 
 def test_plates_are_elementary_plate_panels(vessel) -> None:
@@ -182,7 +201,10 @@ def test_load_rejects_wrong_schema() -> None:
     path = Path("section-document-wrong-schema-test.json")
     path.write_text(
         json.dumps(
-            {"schema": "wrong", "cross_section": {}, "compartments": []}
+            {
+                "schema": "wrong", "cross_section": {},
+                "compartments": [], "frame_table": {}, "principal_dimensions": {},
+            }
         )
     )
 
@@ -191,6 +213,16 @@ def test_load_rejects_wrong_schema() -> None:
             load_document(path)
     finally:
         path.unlink(missing_ok=True)
+
+
+def test_load_document_rejects_v3(tmp_path) -> None:
+    path = tmp_path / "old.json"
+    path.write_text(json.dumps({
+        "schema": "nh-cross-section/3", "cross_section": {},
+        "compartments": [], "frame_table": {}, "principal_dimensions": {},
+    }), encoding="utf-8")
+    with pytest.raises(SectionError, match="nh-cross-section/4"):
+        load_document(path)
 
 
 def test_extent_from_face_boundary_curves(vessel) -> None:
