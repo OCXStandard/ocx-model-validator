@@ -178,6 +178,8 @@ validator report all          model.3docx --destination report.md
 # (--frame / --x are repeatable: one output file per position)
 validator section create model.3docx --frame FR20 -o section.json
 validator section create model.3docx --x 50000 --x 60000
+# attach hull-girder section properties from a JSON input file (see below)
+validator section create model.3docx --x 90000 --section-props props.json
 validator section plot section.json -o section.svg
 
 # export cross sections as Nauticus Hull XML (2DLX default, or HMX)
@@ -191,6 +193,48 @@ validator generate-stubs
 # wipe and regenerate all stubs
 validator generate-stubs --force
 ```
+
+### Section properties JSON input (`--section-props`)
+
+`validator section create` accepts a JSON file with hull-girder section
+properties per longitudinal position (see `section_props_sample.json`):
+
+```json
+[
+  {
+    "x_pos": 165800.0,
+    "z_n": 14.2659,
+    "iy_n50": 1516.878,
+    "iz_n50": 4446.297,
+    "z_vd": 22.0
+  }
+]
+```
+
+| Key | Unit | Description |
+| --- | --- | --- |
+| `x_pos` | mm | Longitudinal position the entry applies to (required). |
+| `z_n` | m | Height of the hull girder's neutral axis above the baseline. |
+| `iy_n50` | m⁴ | Hull-girder moment of inertia (net, half corrosion deducted) about the horizontal axis. |
+| `iz_n50` | m⁴ | Hull-girder moment of inertia (net) about the vertical axis. |
+| `z_vd` | m | Height of the equivalent deck line (optional). |
+
+The entry whose `x_pos` lies within 1 mm of the section position is merged
+into the `cross_section.sect_props` block of the output document. If no entry
+matches — or `--section-props` is omitted — a warning is recorded in the
+document's `warnings` list.
+
+Three further properties are derived from the OCX model (all in m) and must
+**not** appear in the input file:
+
+- `bx` — local breadth from the y-extent of the section plates (doubled for
+  half-breadth models);
+- `z_deck_corner` — height of the strength-deck edge (outboard-most
+  deck-plate endpoint);
+- `ibh` — height of the inner bottom, from inner-bottom/double-bottom typed
+  plates, falling back to the second plate intersection with the vertical
+  line y = 50 mm (the first being the bottom shell). Underivable values are
+  `null` with a warning.
 
 ---
 

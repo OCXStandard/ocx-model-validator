@@ -6,9 +6,8 @@ from ocx_model_validator.sections.svg_plot import _PALETTE, _UNKNOWN_COLOR, rend
 
 def _doc(plates=None, stiffeners=None, x_mm=50_000.0, frame="FR20"):
     return {
-        "schema": "nh-cross-section/2",
+        "schema": "nh-cross-section/3",
         "source": {"file": "ship.3docx", "vessel_id": "V1", "generated": "t"},
-        "frame_table": {"frame0_offset_mm": 0.0, "entries": [], "positions": []},
         "cross_section": {
             "x_mm": x_mm,
             "frame": frame,

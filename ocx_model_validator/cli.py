@@ -7,8 +7,8 @@ Usage::
     validator report catalogues MODEL.3docx [--catalogue material|section|opening|all] ...
     validator report bom MODEL.3docx [--detailed] ...
     validator report all MODEL.3docx ...
-    validator section create MODEL.3docx --frame FR20 -o section.json
-    validator section export MODEL.3docx --frame FR20 [--format 2dlx|hmx] -o section.2dlx
+    validator section create MODEL.3docx --frame FR20 [--frame FR21 ...] -o section.json
+    validator section export MODEL.3docx --x 50000 [--x 60000 ...] [--format 2dlx|hmx] -o section.2dlx
     validator section plot section.json -o section.svg
     validator generate-stubs [--force]
 """
@@ -124,60 +124,87 @@ def _default_section_output(model: Path, frame: str | None,
 _EXPORT_SUFFIX = {"2dlx": ".2dlx", "hmx": ".hmx"}
 
 
+def _section_positions(frames: list[str], x_mms: list[float],
+                       output: Path | None) -> list[tuple[str | None, float | None]]:
+    """Validate --frame/--x lists and return (frame, x_mm) pairs to process."""
+    if bool(frames) == bool(x_mms):
+        raise typer.BadParameter("Provide at least one --frame or --x (not both)")
+    positions: list[tuple[str | None, float | None]] = (
+        [(f, None) for f in frames] + [(None, x) for x in x_mms])
+    if output is not None and len(positions) > 1:
+        raise typer.BadParameter(
+            "--output cannot be combined with multiple --frame/--x values")
+    return positions
+
+
 @section_app.command("create")
 def section_create_cmd(
     model: Path = _MODEL_ARG,
-    frame: str | None = typer.Option(None, "--frame",
-                                     help="Frame label, e.g. FR20."),
-    x_mm: float | None = typer.Option(None, "--x",
-                                      help="Section x-position in mm."),
+    frames: list[str] = typer.Option([], "--frame",
+                                     help="Frame label, e.g. FR20 (repeatable)."),
+    x_mms: list[float] = typer.Option([], "--x",
+                                      help="Section x-position in mm (repeatable)."),
     output: Path | None = typer.Option(None, "--output", "-o",
-                                       help="Output JSON file."),
+                                       help="Output JSON file "
+                                            "(single --frame/--x only)."),
+    section_props_file: Path | None = typer.Option(
+        None, "--section-props", exists=True, readable=True,
+        help="JSON file with hull-girder section properties per x_pos (mm)."),
 ) -> None:
-    """Build a transverse cross-section and write the JSON document."""
+    """Build transverse cross-sections and write one JSON document each."""
     from ocx_model_validator.exeptions import GeometryError, SectionError
     from ocx_model_validator.sections.document import build_document, save_document
+    from ocx_model_validator.sections.properties import load_section_properties
 
-    if (frame is None) == (x_mm is None):
-        raise typer.BadParameter("Provide exactly one of --frame or --x")
+    positions = _section_positions(frames, x_mms, output)
+    section_props = None
+    if section_props_file is not None:
+        try:
+            section_props = load_section_properties(section_props_file)
+        except (SectionError, ValueError) as exc:
+            logger.error("Cannot load section properties {}: {}",
+                         section_props_file, exc)
+            raise typer.Exit(code=1) from exc
     vessel = _load_vessel(model)
-    try:
-        doc = build_document(vessel, str(model), x_mm=x_mm, frame=frame)
-    except (GeometryError, SectionError) as exc:
-        logger.error("Cannot build section for {}: {}", model, exc)
-        raise typer.Exit(code=1) from exc
-    out = output or _default_section_output(model, frame, x_mm)
-    try:
-        save_document(doc, out)
-    except OSError as exc:
-        logger.error("Cannot write {}: {}", out, exc)
-        raise typer.Exit(code=1) from exc
-    typer.echo(f"Section written to {out}")
+    for frame, x_mm in positions:
+        try:
+            doc = build_document(vessel, str(model), x_mm=x_mm, frame=frame,
+                                 section_props=section_props)
+        except (GeometryError, SectionError) as exc:
+            logger.error("Cannot build section for {}: {}", model, exc)
+            raise typer.Exit(code=1) from exc
+        out = output or _default_section_output(model, frame, x_mm)
+        try:
+            save_document(doc, out)
+        except OSError as exc:
+            logger.error("Cannot write {}: {}", out, exc)
+            raise typer.Exit(code=1) from exc
+        typer.echo(f"Section written to {out}")
 
 
 @section_app.command("export")
 def section_export_cmd(
     model: Path = _MODEL_ARG,
-    frame: str | None = typer.Option(None, "--frame",
-                                     help="Frame label, e.g. FR20."),
-    x_mm: float | None = typer.Option(None, "--x",
-                                      help="Section x-position in mm."),
+    frames: list[str] = typer.Option([], "--frame",
+                                     help="Frame label, e.g. FR20 (repeatable)."),
+    x_mms: list[float] = typer.Option([], "--x",
+                                      help="Section x-position in mm (repeatable)."),
     fmt: str = typer.Option("2dlx", "--format",
                             help="Export format: 2dlx (default) or hmx."),
     rule_set: str | None = typer.Option(None, "--rule-set",
                                         help="Classification rule set (hmx only): "
                                              "DNV (default), RV5 or CSR-H."),
     output: Path | None = typer.Option(None, "--output", "-o",
-                                       help="Output XML file (.2dlx or .hmx)."),
+                                       help="Output XML file (.2dlx or .hmx; "
+                                            "single --frame/--x only)."),
 ) -> None:
-    """Export a transverse cross-section as Nauticus Hull XML (2DLX or HMX)."""
+    """Export transverse cross-sections as Nauticus Hull XML (2DLX or HMX)."""
     from ocx_model_validator.exeptions import GeometryError, SectionError
     from ocx_model_validator.sections.dlx_export import build_2dlx, save_2dlx
     from ocx_model_validator.sections.document import resolve_section
     from ocx_model_validator.sections.hmx_export import RULE_SETS, build_hmx, save_hmx
 
-    if (frame is None) == (x_mm is None):
-        raise typer.BadParameter("Provide exactly one of --frame or --x")
+    positions = _section_positions(frames, x_mms, output)
     if fmt not in _EXPORT_SUFFIX:
         raise typer.BadParameter(
             f"Unsupported format {fmt!r}; choose one of {', '.join(_EXPORT_SUFFIX)}")
@@ -190,26 +217,27 @@ def section_export_cmd(
                 f"Unsupported rule set {rule_set!r}; choose one of {', '.join(RULE_SETS)}")
 
     vessel = _load_vessel(model)
-    try:
-        frame_table, cross_section = resolve_section(vessel, x_mm=x_mm, frame=frame)
-        if fmt == "2dlx":
-            root = build_2dlx(vessel, cross_section, frame_table)
-        else:
-            root = build_hmx(vessel, cross_section, frame_table, rule_set=rule_set)
-    except (GeometryError, SectionError, ValueError) as exc:
-        logger.error("Cannot export {} section for {}: {}", fmt, model, exc)
-        raise typer.Exit(code=1) from exc
-    out = output or _default_section_output(model, frame, x_mm,
-                                            suffix=_EXPORT_SUFFIX[fmt])
-    try:
-        if fmt == "2dlx":
-            save_2dlx(root, out)
-        else:
-            save_hmx(root, out)
-    except OSError as exc:
-        logger.error("Cannot write {}: {}", out, exc)
-        raise typer.Exit(code=1) from exc
-    typer.echo(f"{fmt.upper()} section written to {out}")
+    for frame, x_mm in positions:
+        try:
+            frame_table, cross_section = resolve_section(vessel, x_mm=x_mm, frame=frame)
+            if fmt == "2dlx":
+                root = build_2dlx(vessel, cross_section, frame_table)
+            else:
+                root = build_hmx(vessel, cross_section, frame_table, rule_set=rule_set)
+        except (GeometryError, SectionError, ValueError) as exc:
+            logger.error("Cannot export {} section for {}: {}", fmt, model, exc)
+            raise typer.Exit(code=1) from exc
+        out = output or _default_section_output(model, frame, x_mm,
+                                                suffix=_EXPORT_SUFFIX[fmt])
+        try:
+            if fmt == "2dlx":
+                save_2dlx(root, out)
+            else:
+                save_hmx(root, out)
+        except OSError as exc:
+            logger.error("Cannot write {}: {}", out, exc)
+            raise typer.Exit(code=1) from exc
+        typer.echo(f"{fmt.upper()} section written to {out}")
 
 
 @section_app.command("plot")

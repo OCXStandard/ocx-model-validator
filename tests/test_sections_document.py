@@ -25,11 +25,10 @@ def vessel():
 def test_document_has_schema_and_top_level_blocks(vessel) -> None:
     doc = build_document(vessel, "model.ocx", x_mm=5000.0)
 
-    assert doc["schema"] == "nh-cross-section/2"
-    assert set(doc) == {"schema", "source", "frame_table", "cross_section", "compartments", "warnings"}
+    assert doc["schema"] == "nh-cross-section/3"
+    assert set(doc) == {"schema", "source", "cross_section", "compartments", "warnings"}
     assert doc["source"]["file"] == "model.ocx"
     assert doc["source"]["vessel_id"] == "vessel-1"
-    assert doc["frame_table"]["positions"][1] == {"frame_no": "5", "x_mm": 5000.0}
     assert doc["cross_section"]["stiffeners"][0]["orientation"] == "Longitudinal"
 
 
@@ -168,7 +167,7 @@ def test_save_load_round_trip_equality(vessel) -> None:
 
 def test_load_rejects_missing_cross_section() -> None:
     path = Path("section-document-missing-cross-section-test.json")
-    path.write_text(json.dumps({"schema": "nh-cross-section/2", "frame_table": {}, "compartments": []}))
+    path.write_text(json.dumps({"schema": "nh-cross-section/3", "compartments": []}))
 
     try:
         with pytest.raises(SectionError, match="cross_section"):
@@ -181,7 +180,7 @@ def test_load_rejects_wrong_schema() -> None:
     path = Path("section-document-wrong-schema-test.json")
     path.write_text(
         json.dumps(
-            {"schema": "wrong", "frame_table": {}, "cross_section": {}, "compartments": []}
+            {"schema": "wrong", "cross_section": {}, "compartments": []}
         )
     )
 

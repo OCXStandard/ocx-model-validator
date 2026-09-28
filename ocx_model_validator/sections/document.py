@@ -13,11 +13,12 @@ from ocx_model_validator.model.ir.base import IrCog, Ref
 from ocx_model_validator.model.ir.structural import IrPanel, IrVessel
 from ocx_model_validator.sections.epp import split_plates_to_epps
 from ocx_model_validator.sections.frame_table import FrameTable, build_frame_table
+from ocx_model_validator.sections.properties import derive_section_properties, match_properties
 from ocx_model_validator.sections.section_builder import CrossSection, build_cross_section
 from ocx_model_validator.sections.units import point_mm, qty_kpa, qty_m3, qty_mm
 
-SCHEMA = "nh-cross-section/2"
-_REQUIRED_TOP_LEVEL_KEYS = {"schema", "frame_table", "cross_section", "compartments"}
+SCHEMA = "nh-cross-section/3"
+_REQUIRED_TOP_LEVEL_KEYS = {"schema", "cross_section", "compartments"}
 _NULL_EXTENT = {
     "min_x": None,
     "max_x": None,
@@ -57,6 +58,7 @@ def build_document(
     source_file: str,
     x_mm: float | None = None,
     frame: str | None = None,
+    section_props: list[dict[str, Any]] | None = None,
 ) -> dict[str, Any]:
     """Build a cross-section JSON document for exactly one x-location or frame."""
     frame_table, cross_section = resolve_section(vessel, x_mm=x_mm, frame=frame)
@@ -70,7 +72,6 @@ def build_document(
             "vessel_id": vessel.id,
             "generated": datetime.now(timezone.utc).isoformat(),
         },
-        "frame_table": frame_table_block(frame_table),
         "cross_section": {
             "x_mm": cross_section.x_mm,
             "frame": cross_section.frame,
@@ -86,7 +87,27 @@ def build_document(
         "compartments": compartments,
         "warnings": warnings,
     }
-    return _round_floats(doc)
+    doc = _round_floats(doc)
+    # Attach after rounding so user-supplied values are preserved verbatim.
+    derived, derived_warnings = derive_section_properties(cross_section.plates)
+    doc["warnings"].extend(derived_warnings)
+    sect_props: dict[str, Any] = dict(derived)
+    if section_props is None:
+        doc["warnings"].append(
+            "no section properties provided (use --section-props)"
+        )
+    else:
+        matched = match_properties(section_props, cross_section.x_mm)
+        if matched is None:
+            doc["warnings"].append(
+                f"no section properties entry matches x={cross_section.x_mm:g} mm"
+            )
+        else:
+            sect_props.update(
+                {key: value for key, value in matched.items() if key != "x_pos"}
+            )
+    doc["cross_section"]["sect_props"] = sect_props
+    return doc
 
 
 def frame_table_block(ft: FrameTable) -> dict[str, Any]:

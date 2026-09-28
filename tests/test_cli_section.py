@@ -18,9 +18,8 @@ def model_310(stub_dir_310: Path) -> Path:
 @pytest.fixture()
 def section_json(tmp_path: Path) -> Path:
     doc = {
-        "schema": "nh-cross-section/2",
+        "schema": "nh-cross-section/3",
         "source": {"file": "ship.3docx", "vessel_id": "V1", "generated": "t"},
-        "frame_table": {"frame0_offset_mm": 0.0, "entries": [], "positions": []},
         "cross_section": {
             "x_mm": 50_000.0,
             "frame": "FR20",
@@ -163,9 +162,9 @@ def test_section_create_multiple_x_writes_one_file_each(model_310: Path,
 
     calls = []
 
-    def fake_build_document(vessel, source, x_mm=None, frame=None):
+    def fake_build_document(vessel, source, x_mm=None, frame=None, **kwargs):
         calls.append((x_mm, frame))
-        return {"schema": "nh-cross-section/2", "cross_section": {"x_mm": x_mm}}
+        return {"schema": "nh-cross-section/3", "cross_section": {"x_mm": x_mm}}
 
     monkeypatch.setattr(document_module, "build_document", fake_build_document)
     monkeypatch.chdir(tmp_path)
@@ -183,8 +182,8 @@ def test_section_create_multiple_frames_writes_one_file_each(model_310: Path,
                                                              monkeypatch):
     from ocx_model_validator.sections import document as document_module
 
-    def fake_build_document(vessel, source, x_mm=None, frame=None):
-        return {"schema": "nh-cross-section/2", "cross_section": {"frame": frame}}
+    def fake_build_document(vessel, source, x_mm=None, frame=None, **kwargs):
+        return {"schema": "nh-cross-section/3", "cross_section": {"frame": frame}}
 
     monkeypatch.setattr(document_module, "build_document", fake_build_document)
     monkeypatch.chdir(tmp_path)
@@ -264,8 +263,7 @@ def test_section_plot_invalid_document_exits_1(tmp_path: Path):
 def test_section_plot_malformed_rows_exits_1(tmp_path: Path):
     # passes load_document's top-level checks, but plate row lacks coordinates
     doc = {
-        "schema": "nh-cross-section/2",
-        "frame_table": {},
+        "schema": "nh-cross-section/3",
         "compartments": [],
         "cross_section": {
             "x_mm": 1.0, "frame": None,
