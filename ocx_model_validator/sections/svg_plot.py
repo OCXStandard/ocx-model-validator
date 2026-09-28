@@ -1,4 +1,4 @@
-"""Render an nh-cross-section/3 JSON document as an SVG plot (stdlib only).
+"""Render an nh-cross-section/4 JSON document as an SVG plot (stdlib only).
 
 Layout: title on top, plot area left (y → right, z → up), legend column right
 with the numbered stiffener list and plate-thickness swatches.

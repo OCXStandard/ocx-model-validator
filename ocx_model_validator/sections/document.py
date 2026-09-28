@@ -15,10 +15,11 @@ from ocx_model_validator.sections.epp import split_plates_to_epps
 from ocx_model_validator.sections.frame_table import FrameTable, build_frame_table
 from ocx_model_validator.sections.properties import derive_section_properties, match_properties
 from ocx_model_validator.sections.section_builder import CrossSection, build_cross_section
-from ocx_model_validator.sections.units import point_mm, qty_kpa, qty_m3, qty_mm
+from ocx_model_validator.sections.units import point_mm, qty_kpa, qty_m3, qty_mm, to_si
 
-SCHEMA = "nh-cross-section/3"
-_REQUIRED_TOP_LEVEL_KEYS = {"schema", "cross_section", "compartments"}
+SCHEMA = "nh-cross-section/4"
+_REQUIRED_TOP_LEVEL_KEYS = {"schema", "cross_section", "compartments",
+                            "frame_table", "principal_dimensions"}
 _NULL_EXTENT = {
     "min_x": None,
     "max_x": None,
@@ -64,6 +65,7 @@ def build_document(
     frame_table, cross_section = resolve_section(vessel, x_mm=x_mm, frame=frame)
     compartments, compartment_warnings = build_compartments_block(vessel)
     warnings = [*frame_table.warnings, *cross_section.warnings, *compartment_warnings]
+    principal_dimensions = principal_dimensions_block(vessel, warnings)
 
     doc = {
         "schema": SCHEMA,
@@ -72,6 +74,7 @@ def build_document(
             "vessel_id": vessel.id,
             "generated": datetime.now(timezone.utc).isoformat(),
         },
+        "frame_table": frame_table_block(frame_table),
         "cross_section": {
             "x_mm": cross_section.x_mm,
             "frame": cross_section.frame,
@@ -88,7 +91,9 @@ def build_document(
         "warnings": warnings,
     }
     doc = _round_floats(doc)
-    # Attach after rounding so user-supplied values are preserved verbatim.
+    # Attach principal dimensions and section properties after rounding so
+    # user-supplied values are preserved verbatim.
+    doc["principal_dimensions"] = principal_dimensions
     derived, derived_warnings = derive_section_properties(cross_section.plates)
     doc["warnings"].extend(derived_warnings)
     sect_props: dict[str, Any] = dict(derived)
@@ -123,6 +128,39 @@ def frame_table_block(ft: FrameTable) -> dict[str, Any]:
             for frame_no, x_mm in ft.positions
         ],
     }
+
+
+# (doc key, IrPrincipalParticulars attribute) — RulesAPI names Lpp, L,
+# Lll, B, D, CB, TSC, Tbal in snake_case with unit suffix.
+_PRINCIPAL_DIMENSION_FIELDS = (
+    ("lpp_m", "lpp"),
+    ("l_m", "rule_length"),
+    ("lll_m", "freeboard_length"),
+    ("b_m", "moulded_breadth"),
+    ("d_m", "moulded_depth"),
+    ("cb", "block_coefficient"),
+    ("tsc_m", "scantling_draught"),
+    ("tbal_m", "normal_ballast_draught"),
+)
+
+
+def principal_dimensions_block(vessel: IrVessel,
+                               warnings: list[str]) -> dict[str, float | None]:
+    """Principal dimensions in metres (cb dimensionless); None + warning when absent."""
+    pp = vessel.principal_particulars
+    block: dict[str, float | None] = {}
+    for key, attr in _PRINCIPAL_DIMENSION_FIELDS:
+        qty = getattr(pp, attr, None) if pp is not None else None
+        if qty is None:
+            block[key] = None
+            warnings.append(f"principal dimension {key} is missing")
+            continue
+        try:
+            block[key] = to_si(qty, vessel.unit_registry)
+        except GeometryError as exc:
+            block[key] = None
+            warnings.append(f"principal dimension {key}: {exc}")
+    return block
 
 
 def build_compartments_block(vessel: IrVessel) -> tuple[list[dict[str, Any]], list[str]]:

@@ -8,10 +8,12 @@ import pytest
 from ocx_model_validator.exeptions import SectionError
 from ocx_model_validator.model.ir.arrangement import IrCompartment
 from ocx_model_validator.model.ir.base import IrCog, Ref
+from ocx_model_validator.model.ir.metadata import IrPrincipalParticulars
 from ocx_model_validator.sections.document import (
     build_compartments_block,
     build_document,
     load_document,
+    principal_dimensions_block,
     save_document,
 )
 from tests.section_fixtures import make_synthetic_vessel, q
@@ -25,11 +27,37 @@ def vessel():
 def test_document_has_schema_and_top_level_blocks(vessel) -> None:
     doc = build_document(vessel, "model.ocx", x_mm=5000.0)
 
-    assert doc["schema"] == "nh-cross-section/3"
-    assert set(doc) == {"schema", "source", "cross_section", "compartments", "warnings"}
+    assert doc["schema"] == "nh-cross-section/4"
+    assert set(doc) == {"schema", "source", "cross_section", "compartments",
+                        "frame_table", "principal_dimensions", "warnings"}
     assert doc["source"]["file"] == "model.ocx"
     assert doc["source"]["vessel_id"] == "vessel-1"
     assert doc["cross_section"]["stiffeners"][0]["orientation"] == "Longitudinal"
+
+
+def test_document_frame_table_block(vessel) -> None:
+    doc = build_document(vessel, "model.ocx", x_mm=5000.0)
+
+    ft = doc["frame_table"]
+    assert set(ft) == {"frame0_offset_mm", "entries", "positions"}
+    assert ft["positions"] and {"frame_no", "x_mm"} <= set(ft["positions"][0])
+    assert ft["entries"] and {"frame_no", "spacing_mm"} <= set(ft["entries"][0])
+
+
+def test_document_principal_dimensions_present_with_warnings(vessel) -> None:
+    vessel.principal_particulars = None
+    doc = build_document(vessel, "model.ocx", x_mm=5000.0)
+
+    assert set(doc["principal_dimensions"]) == {
+        "lpp_m", "l_m", "lll_m", "b_m", "d_m", "cb", "tsc_m", "tbal_m"}
+    assert sum("principal dimension" in w for w in doc["warnings"]) == 8
+
+
+def test_principal_dimensions_are_not_rounded(vessel) -> None:
+    vessel.principal_particulars = IrPrincipalParticulars(
+        block_coefficient=q(0.815, ""))
+    doc = build_document(vessel, "model.ocx", x_mm=5000.0)
+    assert doc["principal_dimensions"]["cb"] == 0.815
 
 
 def test_plates_are_elementary_plate_panels(vessel) -> None:
@@ -180,7 +208,10 @@ def test_load_rejects_wrong_schema() -> None:
     path = Path("section-document-wrong-schema-test.json")
     path.write_text(
         json.dumps(
-            {"schema": "wrong", "cross_section": {}, "compartments": []}
+            {
+                "schema": "wrong", "cross_section": {},
+                "compartments": [], "frame_table": {}, "principal_dimensions": {},
+            }
         )
     )
 
@@ -189,6 +220,16 @@ def test_load_rejects_wrong_schema() -> None:
             load_document(path)
     finally:
         path.unlink(missing_ok=True)
+
+
+def test_load_document_rejects_v3(tmp_path) -> None:
+    path = tmp_path / "old.json"
+    path.write_text(json.dumps({
+        "schema": "nh-cross-section/3", "cross_section": {},
+        "compartments": [], "frame_table": {}, "principal_dimensions": {},
+    }), encoding="utf-8")
+    with pytest.raises(SectionError, match="nh-cross-section/4"):
+        load_document(path)
 
 
 def test_extent_from_face_boundary_curves(vessel) -> None:
@@ -273,3 +314,50 @@ def test_document_includes_seams_block() -> None:
     assert doc["cross_section"]["seams"] == [
         {"name": "SM1", "panel": "Panel A", "y_mm": 1000.0, "z_mm": 0.0}
     ]
+
+
+def test_principal_dimensions_block_converts_to_metres(vessel) -> None:
+    vessel.principal_particulars = IrPrincipalParticulars(
+        lpp=q(320.0, "Um"),
+        rule_length=q(316.0, "Um"),
+        freeboard_length=q(322.0, "Um"),
+        moulded_breadth=q(60.0, "Um"),
+        moulded_depth=q(30.5, "Um"),
+        block_coefficient=q(0.81, ""),
+        scantling_draught=q(22.5, "Um"),
+        normal_ballast_draught=q(9.5, "Um"),
+    )
+    warnings: list[str] = []
+
+    block = principal_dimensions_block(vessel, warnings)
+
+    assert block == {
+        "lpp_m": 320.0, "l_m": 316.0, "lll_m": 322.0, "b_m": 60.0,
+        "d_m": 30.5, "cb": 0.81, "tsc_m": 22.5, "tbal_m": 9.5,
+    }
+    assert warnings == []
+
+
+def test_principal_dimensions_block_nulls_and_warns_on_missing(vessel) -> None:
+    vessel.principal_particulars = IrPrincipalParticulars(lpp=q(320.0, "Um"))
+    warnings: list[str] = []
+
+    block = principal_dimensions_block(vessel, warnings)
+
+    assert block["lpp_m"] == 320.0
+    for key in ("l_m", "lll_m", "b_m", "d_m", "cb", "tsc_m", "tbal_m"):
+        assert block[key] is None
+    assert len(warnings) == 7
+    assert any("b_m" in w for w in warnings)
+
+
+def test_principal_dimensions_block_handles_absent_particulars(vessel) -> None:
+    vessel.principal_particulars = None
+    warnings: list[str] = []
+
+    block = principal_dimensions_block(vessel, warnings)
+
+    assert set(block) == {"lpp_m", "l_m", "lll_m", "b_m", "d_m", "cb",
+                          "tsc_m", "tbal_m"}
+    assert all(v is None for v in block.values())
+    assert len(warnings) == 8
