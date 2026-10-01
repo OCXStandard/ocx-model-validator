@@ -113,5 +113,7 @@ class TestOcxParserFromString:
         """parse_from_string works for every stub version directory."""
         from tests.stubs import StubMaterial
         version, stub_dir, declaration = ocx_stub_version
+        if not (stub_dir / StubMaterial.entity_file).exists():
+            pytest.skip(f"{StubMaterial.entity_file} not available for OCX {version}")
         result = StubMaterial.load(stub_dir=stub_dir, declaration=declaration)
         assert result is not None
