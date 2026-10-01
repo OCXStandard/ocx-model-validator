@@ -6,7 +6,6 @@ from dataclasses import dataclass, field
 from ocx_model_validator.model.ir.base import Quantity
 from ocx_model_validator.model.ir.geometry import IrCurve3D
 
-
 # ---------------------------------------------------------------------------
 # Materials
 # ---------------------------------------------------------------------------

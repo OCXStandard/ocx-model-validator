@@ -34,9 +34,12 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
-from typing import ClassVar, TypeVar
+from typing import TYPE_CHECKING, ClassVar, TypeVar
 
 from ocx_model_validator.parsers.load_tools import DeclarationOfOcxImport, OcxParser
+
+if TYPE_CHECKING:
+    from lxml import etree
 
 T = TypeVar("T")
 

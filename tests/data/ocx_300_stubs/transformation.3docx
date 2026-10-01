@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:Transformation xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd">
+    <ocx:Origin coordinates="156.5 -19.125 1.35004" unit="Um"/>
+    <ocx:PrimaryAxis direction="0.0 1.0 0.0"/>
+    <ocx:SecondaryAxis direction="0.0 0.0 1.0"/>
+</ocx:Transformation>

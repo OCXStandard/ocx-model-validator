@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<ocx:Sweep xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd">
+    <ocx:Vector3D direction="0.0 -1.0 0.0"/>
+    <ocx:SweepLength numericvalue="30.0" unit="Um"/>
+</ocx:Sweep>

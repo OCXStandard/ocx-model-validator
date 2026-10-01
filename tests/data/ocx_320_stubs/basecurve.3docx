@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<ocx:BaseCurve xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid88" ocx:GUIDRef="46c77610-436a-4e38-8f86-e25bfd945a1c" is2D="false">
+    <ocx:CurveLength numericvalue="218.61714" unit="Um"/>
+    <ocx:NURBS3D id="nplcid89" ocx:GUIDRef="15cbabf0-70ee-4ce6-a2d1-3cee03617338" is2D="false">
+        <ocx:CurveLength numericvalue="218.61714" unit="Um"/>
+        <ocx:NURBSproperties degree="3" numCtrlPts="28" numKnots="32" form="Open" isRational="false"/>
+        <ocx:KnotVector value="0.0 0.0 0.0 0.0 1.0 1.0 1.0 2.0 2.0 2.0 3.0 3.0 3.0 4.0 4.0 4.0 5.0 5.0 5.0 6.0 6.0 6.0 7.0 7.0 7.0 8.0 8.0 8.0 9.0 9.0 9.0 9.0"/>
+        <ocx:ControlPtList>
+            <ocx:ControlPoint coordinates="-5.49 15.0 2.5" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="11.56333 15.0 2.5" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="28.61667 15.0 2.5" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="45.67 15.0 2.5" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="47.905 15.0 2.33333" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="50.14 15.0 2.16667" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="52.375 15.0 2.0" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="55.355 15.0 2.0" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="58.335 15.0 2.0" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="61.315 15.0 2.0" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="61.81167 15.0 1.93333" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="62.30833 15.0 1.86667" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="62.805 15.0 1.8" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="72.01 15.0 1.8" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="81.215 15.0 1.8" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="90.42 15.0 1.8" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="91.39667 15.0 1.66667" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="92.37333 15.0 1.53333" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="93.35 15.0 1.4" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="98.26667 15.0 1.4" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="103.18333 15.0 1.4" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="108.1 15.0 1.4" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="110.335 15.0 1.46667" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="112.57 15.0 1.53333" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="114.805 15.0 1.6" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="147.55833 15.0 1.6" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="180.31167 15.0 1.6" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="213.065 15.0 1.6" unit="Um" weight="1.0"/>
+        </ocx:ControlPtList>
+    </ocx:NURBS3D>
+</ocx:BaseCurve>

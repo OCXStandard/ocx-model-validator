@@ -12,9 +12,9 @@ from pathlib import Path
 
 import pytest
 
-from ocx_model_validator.parsers.dynamic_loader import DeclarationOfOcxImport
 from ocx_model_validator.builders.factory import get_builder
 from ocx_model_validator.model.ir import IrVessel
+from ocx_model_validator.parsers.dynamic_loader import DeclarationOfOcxImport
 from ocx_model_validator.parsers.parser import OcxParser
 from tests.stubs import version_from_folder
 
@@ -78,19 +78,3 @@ def stub_dir_310() -> Path:
 @pytest.fixture(scope="session")
 def declaration_310() -> DeclarationOfOcxImport:
     return DeclarationOfOcxImport(name="ocx", version="3.1.0")
-
-
-@pytest.fixture(scope="session")
-def hmx_schema():
-    import xmlschema
-
-    xsd = Path(__file__).parent / "data" / "hmx_schema" / "HullModel_HMX.xsd"
-    return xmlschema.XMLSchema11(str(xsd))
-
-
-@pytest.fixture(scope="session")
-def dlx_schema():
-    import xmlschema
-
-    xsd = Path(__file__).parent / "data" / "hmx_schema" / "CrossSection_2DLX.xsd"
-    return xmlschema.XMLSchema11(str(xsd))

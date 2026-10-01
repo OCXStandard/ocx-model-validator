@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:SplitBy xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd">
+    <ocx:Seam id="nplcid5136" name="V:0XY96KUSZ4/DECK" ocx:GUIDRef="dbd04c73-f3e7-4871-a78f-becf8da5ab4d">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5137" ocx:GUIDRef="a2373766-fd56-409d-b9c8-1b67d840142d" is2D="false">
+                <ocx:CurveLength numericvalue="60.0546" unit="Um"/>
+                <ocx:NURBS3D id="nplcid5138" ocx:GUIDRef="04f3e09a-fc18-4a43-946a-d2e993d4df85" is2D="false">
+                    <ocx:CurveLength numericvalue="60.0546" unit="Um"/>
+                    <ocx:NURBSproperties degree="3" numCtrlPts="10" numKnots="14" form="Open" isRational="false"/>
+                    <ocx:KnotVector value="0.0 0.0 0.0 0.0 1.0 1.0 1.0 2.0 2.0 2.0 3.0 3.0 3.0 3.0"/>
+                    <ocx:ControlPtList>
+                        <ocx:ControlPoint coordinates="168.2 -30.0 29.7055" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="168.2 -23.96667 30.037" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="168.2 -17.93333 30.3685" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="168.2 -11.9 30.7" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="168.2 -3.96667 30.7" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="168.2 3.96667 30.7" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="168.2 11.9 30.7" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="168.2 17.93333 30.3685" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="168.2 23.96667 30.037" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="168.2 30.0 29.7055" unit="Um" weight="1.0"/>
+                    </ocx:ControlPtList>
+                </ocx:NURBS3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5142" name="V:2SICBJWBME/DECK" ocx:GUIDRef="0721a933-9e95-42d9-88da-47461c583643">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5143" ocx:GUIDRef="c49abc32-1318-41a0-a6e1-d1b28ee0d40a" is2D="false">
+                <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                <ocx:Line3D id="nplcid5144" ocx:GUIDRef="2449209b-00ae-4d17-b3b4-00a3a2ebc728" is2D="false">
+                    <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                    <ocx:StartPoint coordinates="150.3 23.832 30.0444" unit="Um"/>
+                    <ocx:EndPoint coordinates="201.9 23.832 30.0444" unit="Um"/>
+                </ocx:Line3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5147" name="V:08WAZK78WW/DECK" ocx:GUIDRef="ace80ec2-4f02-4665-ae38-76df7d967f6b">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5148" ocx:GUIDRef="600fea55-b077-4d15-9154-57a52816c953" is2D="false">
+                <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                <ocx:Line3D id="nplcid5149" ocx:GUIDRef="ba0ae349-1330-4ca6-b235-ce1f1a7c4621" is2D="false">
+                    <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                    <ocx:StartPoint coordinates="150.3 -19.25004 30.29615" unit="Um"/>
+                    <ocx:EndPoint coordinates="201.9 -19.25004 30.29615" unit="Um"/>
+                </ocx:Line3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5150" name="V:RTTNUWZFD6/DECK" ocx:GUIDRef="162519aa-54ef-46d8-ac23-30d03cefbf39">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5151" ocx:GUIDRef="a2279c33-437b-421d-af18-841e7763a7b9" is2D="false">
+                <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                <ocx:Line3D id="nplcid5152" ocx:GUIDRef="ee972003-6e7d-49ce-9ac5-7b1c427cc2c8" is2D="false">
+                    <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                    <ocx:StartPoint coordinates="201.9 -16.24345 30.46135" unit="Um"/>
+                    <ocx:EndPoint coordinates="150.3 -16.24345 30.46135" unit="Um"/>
+                </ocx:Line3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5161" name="V:HJZLP8S92X/DECK" ocx:GUIDRef="7afafa7e-085e-47ee-ad90-e7a214011edb">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5162" ocx:GUIDRef="93265d15-a893-47fb-84d9-4aadf877ff1f" is2D="false">
+                <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                <ocx:Line3D id="nplcid5163" ocx:GUIDRef="dbddbca4-cbb2-4b1a-8a93-ca5860188162" is2D="false">
+                    <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                    <ocx:StartPoint coordinates="150.3 -23.832 30.0444" unit="Um"/>
+                    <ocx:EndPoint coordinates="201.9 -23.832 30.0444" unit="Um"/>
+                </ocx:Line3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5166" name="V:X7BT1SI8LM/DECK" ocx:GUIDRef="164aa962-7233-4d8e-8e10-c7b36b962e30">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5167" ocx:GUIDRef="2689f19b-7789-413f-ac05-0393678eb8de" is2D="false">
+                <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                <ocx:Line3D id="nplcid5168" ocx:GUIDRef="b5648e13-b01b-4cfa-b6e1-2356852a0163" is2D="false">
+                    <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                    <ocx:StartPoint coordinates="150.3 0.17 30.7" unit="Um"/>
+                    <ocx:EndPoint coordinates="201.9 0.17 30.7" unit="Um"/>
+                </ocx:Line3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5169" name="V:7CDLOSZS61/DECK" ocx:GUIDRef="a082366a-2e90-44c3-b071-97bdc5c8682b">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5170" ocx:GUIDRef="ca793e8a-7355-461b-9bc7-eb41ec587d04" is2D="false">
+                <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                <ocx:Line3D id="nplcid5171" ocx:GUIDRef="a24b26b9-5f17-469e-b5d7-341dbe20ef9a" is2D="false">
+                    <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                    <ocx:StartPoint coordinates="201.9 3.77 30.7" unit="Um"/>
+                    <ocx:EndPoint coordinates="150.3 3.77 30.7" unit="Um"/>
+                </ocx:Line3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5180" name="V:E5X4VZOQCK/DECK" ocx:GUIDRef="02e3b511-2c91-4870-b2ff-6169238db57d">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5181" ocx:GUIDRef="dd61e52c-c11d-4c2f-bf3a-e1be4956050e" is2D="false">
+                <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                <ocx:Line3D id="nplcid5182" ocx:GUIDRef="56ce4e30-7fd7-44a7-977b-6f4c584efbe7" is2D="false">
+                    <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                    <ocx:StartPoint coordinates="150.3 -3.77 30.7" unit="Um"/>
+                    <ocx:EndPoint coordinates="201.9 -3.77 30.7" unit="Um"/>
+                </ocx:Line3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5185" name="V:N5LWJ65E2K/DECK" ocx:GUIDRef="b3eb4274-d410-46e3-be0e-0ecc851b7cb2">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5186" ocx:GUIDRef="d3119373-20fa-40c6-90dc-98acecf8454f" is2D="false">
+                <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                <ocx:Line3D id="nplcid5187" ocx:GUIDRef="e91fb43f-b098-4c1e-aa15-3935e72e9def" is2D="false">
+                    <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                    <ocx:StartPoint coordinates="150.3 19.25004 30.29615" unit="Um"/>
+                    <ocx:EndPoint coordinates="201.9 19.25004 30.29615" unit="Um"/>
+                </ocx:Line3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5196" name="V:SN9ZVV01WM/DECK" ocx:GUIDRef="e63bbb7c-2495-460e-8223-cf76e0866e2a">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5197" ocx:GUIDRef="f6029fab-a8c5-4227-88ec-d1f2e0f6a5ad" is2D="false">
+                <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                <ocx:Line3D id="nplcid5198" ocx:GUIDRef="16c72791-f8f3-4d76-b347-0ccc1991e49c" is2D="false">
+                    <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                    <ocx:StartPoint coordinates="150.3 16.24345 30.46135" unit="Um"/>
+                    <ocx:EndPoint coordinates="201.9 16.24345 30.46135" unit="Um"/>
+                </ocx:Line3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5201" name="V:WSH9T5BE9I/DECK" ocx:GUIDRef="4e3d2fcd-cbb4-4b39-a596-c602a7d0c775">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5202" ocx:GUIDRef="def839e0-ad65-4402-a9fa-7473e5af0242" is2D="false">
+                <ocx:CurveLength numericvalue="60.0546" unit="Um"/>
+                <ocx:NURBS3D id="nplcid5203" ocx:GUIDRef="033832f8-155a-4ee2-8474-283e3967829c" is2D="false">
+                    <ocx:CurveLength numericvalue="60.0546" unit="Um"/>
+                    <ocx:NURBSproperties degree="3" numCtrlPts="10" numKnots="14" form="Open" isRational="false"/>
+                    <ocx:KnotVector value="0.0 0.0 0.0 0.0 1.0 1.0 1.0 2.0 2.0 2.0 3.0 3.0 3.0 3.0"/>
+                    <ocx:ControlPtList>
+                        <ocx:ControlPoint coordinates="190.6 -30.0 29.7055" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="190.6 -23.96667 30.037" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="190.6 -17.93333 30.3685" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="190.6 -11.9 30.7" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="190.6 -3.96667 30.7" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="190.6 3.96667 30.7" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="190.6 11.9 30.7" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="190.6 17.93333 30.3685" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="190.6 23.96667 30.037" unit="Um" weight="1.0"/>
+                        <ocx:ControlPoint coordinates="190.6 30.0 29.7055" unit="Um" weight="1.0"/>
+                    </ocx:ControlPtList>
+                </ocx:NURBS3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5265" name="V:15YQUBJNCL/DECK" ocx:GUIDRef="9a382c3a-d5d0-442a-aaa5-4a55eed7afee">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5266" ocx:GUIDRef="0b7bb352-f8e3-4411-a6d4-773ae80e4b20" is2D="false">
+                <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                <ocx:Line3D id="nplcid5267" ocx:GUIDRef="2320737c-1e04-4fb1-95fb-9892ec1fc517" is2D="false">
+                    <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                    <ocx:StartPoint coordinates="201.9 7.86 30.7" unit="Um"/>
+                    <ocx:EndPoint coordinates="150.3 7.86 30.7" unit="Um"/>
+                </ocx:Line3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5280" name="V:EIYWIEV6SY/DECK" ocx:GUIDRef="bfe98555-5bd8-4eb2-9f6b-a3e49b9a27dc">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5281" ocx:GUIDRef="79646cbd-95a1-4c0a-960a-7d809ea2921a" is2D="false">
+                <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                <ocx:Line3D id="nplcid5282" ocx:GUIDRef="8bd2e073-3bcb-49ec-bed3-f14baeac96e5" is2D="false">
+                    <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                    <ocx:StartPoint coordinates="201.9 11.94992 30.69726" unit="Um"/>
+                    <ocx:EndPoint coordinates="150.3 11.94992 30.69726" unit="Um"/>
+                </ocx:Line3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5310" name="V:73AIJN5959/DECK" ocx:GUIDRef="966cb323-ddba-428d-80fd-e76a9b26d48e">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5311" ocx:GUIDRef="df5f846d-9a7f-4ad3-824c-941f57a9c816" is2D="false">
+                <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                <ocx:Line3D id="nplcid5312" ocx:GUIDRef="ecb0411a-992e-45dc-a0c6-895861a45578" is2D="false">
+                    <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                    <ocx:StartPoint coordinates="150.3 -7.86 30.7" unit="Um"/>
+                    <ocx:EndPoint coordinates="201.9 -7.86 30.7" unit="Um"/>
+                </ocx:Line3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+    <ocx:Seam id="nplcid5325" name="V:LS1ZTV9WU9/DECK" ocx:GUIDRef="3c24e08f-886f-4fe5-aa84-4c29454fc04d">
+        <ocx:TraceLine>
+            <ocx:CompositeCurve3D id="nplcid5326" ocx:GUIDRef="2ea0f00b-0c95-4888-8058-e28d9be3a892" is2D="false">
+                <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                <ocx:Line3D id="nplcid5327" ocx:GUIDRef="5be7f5ff-f112-4202-8c1c-e8892c1b8463" is2D="false">
+                    <ocx:CurveLength numericvalue="51.6" unit="Um"/>
+                    <ocx:StartPoint coordinates="150.3 -11.94992 30.69726" unit="Um"/>
+                    <ocx:EndPoint coordinates="201.9 -11.94992 30.69726" unit="Um"/>
+                </ocx:Line3D>
+            </ocx:CompositeCurve3D>
+        </ocx:TraceLine>
+    </ocx:Seam>
+</ocx:SplitBy>

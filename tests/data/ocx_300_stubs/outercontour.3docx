@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:OuterContour xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd">
+    <ocx:CompositeCurve3D id="nplcid5134" ocx:GUIDRef="e761a816-7e05-4b43-81aa-34ee3d8a24bf" is2D="false">
+        <ocx:CurveLength numericvalue="48.1546" unit="Um"/>
+        <ocx:NURBS3D id="nplcid5135" ocx:GUIDRef="63f4efe6-d6ef-4dfe-85f2-499db2ccde60" is2D="false">
+            <ocx:CurveLength numericvalue="48.1546" unit="Um"/>
+            <ocx:NURBSproperties degree="3" numCtrlPts="13" numKnots="17" form="Unknown" isRational="false"/>
+            <ocx:KnotVector value="0.0 0.0 0.0 0.0 1.0 1.0 1.0 2.0 2.0 2.0 3.0 3.0 3.0 4.0 4.0 4.0 4.0"/>
+            <ocx:ControlPtList>
+                <ocx:ControlPoint coordinates="150.3 23.832 30.0444" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="156.26667 23.832 30.0444" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="162.23333 23.832 30.0444" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="168.2 23.832 30.0444" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="168.2 25.888 29.93143" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="168.2 27.944 29.81846" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="168.2 30.0 29.7055" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="162.23333 30.0 29.7055" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="156.26667 30.0 29.7055" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="150.3 30.0 29.7055" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="150.3 27.944 29.81846" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="150.3 25.888 29.93143" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="150.3 23.832 30.0444" unit="Um" weight="1.0"/>
+            </ocx:ControlPtList>
+        </ocx:NURBS3D>
+    </ocx:CompositeCurve3D>
+</ocx:OuterContour>

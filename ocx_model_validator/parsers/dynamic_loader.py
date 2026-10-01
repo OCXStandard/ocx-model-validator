@@ -4,16 +4,16 @@ from __future__ import annotations
 import importlib
 import importlib.util
 import inspect
-import re
 import sys
 from abc import ABC
 from types import ModuleType
-from typing import Any, Dict, List, TypeVar
+from typing import Any, List, TypeVar
 
 from loguru import logger
 
 from ocx_model_validator.exeptions import DynamicLoaderError  # noqa: F401 – re-exported
 from ocx_model_validator.utils import MetaData  # noqa: F401 – re-exported
+
 from .base_parser import IModuleDeclaration
 
 T = TypeVar("T")

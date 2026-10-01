@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<ocx:Seam xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid9167" name="V:KOD1E1PY0K/TTOP" ocx:GUIDRef="994083b5-c638-c5dc-574d-4a8257c30aba">
+    <ocx:TraceLine>
+        <ocx:CompositeCurve3D id="nplcid9168" ocx:GUIDRef="beabdff7-7aba-4f31-a6ea-1dc6cd3ef8dd" is2D="false">
+            <ocx:CurveLength numericvalue="19.10628" unit="Um"/>
+            <ocx:Line3D id="nplcid9169" ocx:GUIDRef="90ba11bc-a20b-400b-a59b-8374f9434f86" is2D="false">
+                <ocx:CurveLength numericvalue="19.10628" unit="Um"/>
+                <ocx:StartPoint coordinates="45.67 -9.55314 2.5" unit="Um"/>
+                <ocx:EndPoint coordinates="45.67 9.55314 2.5" unit="Um"/>
+            </ocx:Line3D>
+        </ocx:CompositeCurve3D>
+    </ocx:TraceLine>
+</ocx:Seam>

@@ -3,11 +3,11 @@ from __future__ import annotations
 
 import pytest
 
+from ocx_model_validator.exeptions import DynamicLoaderError
 from ocx_model_validator.parsers.dynamic_loader import (
     DeclarationOfOcxImport,
     DynamicLoader,
 )
-from ocx_model_validator.exeptions import DynamicLoaderError
 from ocx_model_validator.utils import MetaData
 
 

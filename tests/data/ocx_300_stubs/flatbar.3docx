@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:FlatBar xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd">
+    <ocx:Height numericvalue="0.3" unit="Um"/>
+    <ocx:Width numericvalue="0.016" unit="Um"/>
+</ocx:FlatBar>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:Seam xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" id="nplcid5136" name="V:0XY96KUSZ4/DECK" ocx:GUIDRef="dbd04c73-f3e7-4871-a78f-becf8da5ab4d">
+    <ocx:TraceLine>
+        <ocx:CompositeCurve3D id="nplcid5137" ocx:GUIDRef="a2373766-fd56-409d-b9c8-1b67d840142d" is2D="false">
+            <ocx:CurveLength numericvalue="60.0546" unit="Um"/>
+            <ocx:NURBS3D id="nplcid5138" ocx:GUIDRef="04f3e09a-fc18-4a43-946a-d2e993d4df85" is2D="false">
+                <ocx:CurveLength numericvalue="60.0546" unit="Um"/>
+                <ocx:NURBSproperties degree="3" numCtrlPts="10" numKnots="14" form="Open" isRational="false"/>
+                <ocx:KnotVector value="0.0 0.0 0.0 0.0 1.0 1.0 1.0 2.0 2.0 2.0 3.0 3.0 3.0 3.0"/>
+                <ocx:ControlPtList>
+                    <ocx:ControlPoint coordinates="168.2 -30.0 29.7055" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="168.2 -23.96667 30.037" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="168.2 -17.93333 30.3685" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="168.2 -11.9 30.7" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="168.2 -3.96667 30.7" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="168.2 3.96667 30.7" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="168.2 11.9 30.7" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="168.2 17.93333 30.3685" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="168.2 23.96667 30.037" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="168.2 30.0 29.7055" unit="Um" weight="1.0"/>
+                </ocx:ControlPtList>
+            </ocx:NURBS3D>
+        </ocx:CompositeCurve3D>
+    </ocx:TraceLine>
+</ocx:Seam>

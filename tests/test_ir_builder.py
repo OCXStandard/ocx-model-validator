@@ -16,27 +16,6 @@ from __future__ import annotations
 
 import pytest
 
-from tests.stubs import (
-    StubBarSection,
-    StubBracket,
-    StubBulbFlat,
-    StubDoubleBracket,
-    StubEdgeReinforcement,
-    StubFlatBar,
-    StubHalfRoundBar,
-    StubIBar,
-    StubLBar,
-    StubMaterial,
-    StubPanel,
-    StubPillar,
-    StubPlate,
-    StubRectangularTube,
-    StubSingleBracket,
-    StubStiffener,
-    StubTBar,
-    StubTube,
-    StubUserDefinedBarSection,
-)
 from ocx_model_validator.builders.v3_builder import OcxV3Builder
 from ocx_model_validator.model.ir import (
     IrBracket,
@@ -60,7 +39,27 @@ from ocx_model_validator.model.ir import (
     ParentKind,
     ParentRef,
 )
-
+from tests.stubs import (
+    StubBarSection,
+    StubBracket,
+    StubBulbFlat,
+    StubDoubleBracket,
+    StubEdgeReinforcement,
+    StubFlatBar,
+    StubHalfRoundBar,
+    StubIBar,
+    StubLBar,
+    StubMaterial,
+    StubPanel,
+    StubPillar,
+    StubPlate,
+    StubRectangularTube,
+    StubSingleBracket,
+    StubStiffener,
+    StubTBar,
+    StubTube,
+    StubUserDefinedBarSection,
+)
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -226,7 +225,6 @@ class TestBuildSections:
 
     def test_bar_section_stub_is_registered_in_ir(self, ocx_stub_version):
         """The BarSection wrapper stub carries an id and can be registered."""
-        from tests.stubs import StubBarSection
         _, stub_dir, declaration = ocx_stub_version
         raw = _load(StubBarSection, stub_dir, declaration)
         root = _Ns(class_catalogue=_Ns(
@@ -433,7 +431,7 @@ class TestBuildPanel:
         _, stub_dir, declaration = ocx_stub_version
         raw = _load(StubPanel, stub_dir, declaration)
         ir = _empty_ir()
-        panel = OcxV3Builder()._build_panel(raw, ir, ir.id)
+        OcxV3Builder()._build_panel(raw, ir, ir.id)
         assert len(ir.plates) > 0, "Panel stub should contain at least one child plate"
 
     def test_panel_plate_refs_match_registered_plates(self, ocx_stub_version):

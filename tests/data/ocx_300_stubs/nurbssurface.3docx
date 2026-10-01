@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:NURBSSurface xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" id="nplcid66" name="CO_C3_01" ocx:GUIDRef="06c5960f-3068-401a-bcb7-27548ef15b24">
+    <ocx:U_NURBSproperties degree="1" numCtrlPts="2" numKnots="4" form="Open" isRational="false"/>
+    <ocx:UknotVector value="0.0 0.0 1.0 1.0"/>
+    <ocx:V_NURBSproperties degree="1" numCtrlPts="2" numKnots="4" form="Open" isRational="false"/>
+    <ocx:VknotVector value="0.0 0.0 1.0 1.0"/>
+    <ocx:ControlPtList>
+        <ocx:ControlPoint coordinates="150.9 -11.9 30.7" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="150.9 -11.9 2.7" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="150.9 11.9 30.7" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="150.9 11.9 2.7" unit="Um" weight="1.0"/>
+    </ocx:ControlPtList>
+</ocx:NURBSSurface>

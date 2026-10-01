@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:CompartmentFace xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" id="nplcid65" name="CO_C3_0" ocx:GUIDRef="2ab1b088-4d37-4fa7-82b6-808db6f6272c">
+    <ocx:UnboundedGeometry>
+        <ocx:NURBSSurface id="nplcid66" name="CO_C3_01" ocx:GUIDRef="06c5960f-3068-401a-bcb7-27548ef15b24">
+            <ocx:U_NURBSproperties degree="1" numCtrlPts="2" numKnots="4" form="Open" isRational="false"/>
+            <ocx:UknotVector value="0.0 0.0 1.0 1.0"/>
+            <ocx:V_NURBSproperties degree="1" numCtrlPts="2" numKnots="4" form="Open" isRational="false"/>
+            <ocx:VknotVector value="0.0 0.0 1.0 1.0"/>
+            <ocx:ControlPtList>
+                <ocx:ControlPoint coordinates="150.9 -11.9 30.7" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="150.9 -11.9 2.7" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="150.9 11.9 30.7" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="150.9 11.9 2.7" unit="Um" weight="1.0"/>
+            </ocx:ControlPtList>
+        </ocx:NURBSSurface>
+    </ocx:UnboundedGeometry>
+    <ocx:FaceBoundaryCurve isUVspace="false">
+        <ocx:CompositeCurve3D id="nplcid67" ocx:GUIDRef="e789bf89-23ab-41e2-9bd8-0b24710e02f8" is2D="false">
+            <ocx:CurveLength numericvalue="103.54478" unit="Um"/>
+            <ocx:NURBS3D id="nplcid68" ocx:GUIDRef="7524b105-e16f-489e-878a-fb00fcd280ef" is2D="false">
+                <ocx:CurveLength numericvalue="103.54478" unit="Um"/>
+                <ocx:NURBSproperties degree="1" numCtrlPts="5" numKnots="7" form="Unknown" isRational="false"/>
+                <ocx:KnotVector value="0.0 0.0 28.0 51.8 79.8 103.6 103.6"/>
+                <ocx:ControlPtList>
+                    <ocx:ControlPoint coordinates="150.9 -11.9 30.7" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="150.9 -11.9 2.7" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="150.9 11.9 2.7" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="150.9 11.9 30.7" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="150.9 -11.9 30.7" unit="Um" weight="1.0"/>
+                </ocx:ControlPtList>
+            </ocx:NURBS3D>
+        </ocx:CompositeCurve3D>
+    </ocx:FaceBoundaryCurve>
+</ocx:CompartmentFace>

@@ -50,13 +50,10 @@ uv run pytest tests/test_builders.py::TestBuilderFactory::test_get_builder_310_r
 Two equivalent entrypoints are registered (`validator` and `ocx-validate`):
 
 ```bash
-# cross sections: JSON document at a frame or x-position, then SVG plot
-validator section create model.3docx --frame FR20 -o section.json
-validator section create model.3docx --x 50000 --x 60000
-validator section create model.3docx --x 90000 --section-props props.json
-validator section plot section.json -o section.svg
-validator section export model.3docx --frame FR20 --frame FR30
-validator section export model.3docx --frame FR20 --format hmx --rule-set DNV -o section.hmx
+# Model reports (rich to stdout, or markdown via --destination)
+validator report frame-table  model.3docx
+validator report compartments model.3docx
+validator report all          model.3docx --destination report.md
 
 # Generate XML test stubs from .3docx models in ./models/
 validator generate-stubs

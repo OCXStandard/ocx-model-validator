@@ -340,9 +340,9 @@ def test_compartment_extent_x_falls_back_to_mm_without_frame_table():
 
 
 def test_model_extent_report():
+    from ocx_model_validator.model.ir.base import ParentKind, ParentRef
     from ocx_model_validator.model.ir.geometry import IrLine3D, IrPoint3D
     from ocx_model_validator.model.ir.structural import IrStiffener
-    from ocx_model_validator.model.ir.base import ParentKind, ParentRef
     from ocx_model_validator.reporting.generators import model_extent as extent_gen
 
     parent = ParentRef(kind=ParentKind.VESSEL, id="V1")

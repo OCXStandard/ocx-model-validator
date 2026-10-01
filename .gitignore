@@ -54,3 +54,6 @@ models/
 # Local env files
 .env
 .env.*
+
+# pdoc output
+_site/

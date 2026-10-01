@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<ocx:NURBSSurface xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid1979" name="REF_SHELL_S_0" ocx:GUIDRef="c1f75011-f85d-4746-898e-001a30efdd69">
+    <ocx:FaceBoundaryCurve isUVspace="false">
+        <ocx:NURBS3D id="nplcid1978" ocx:GUIDRef="87b0b8af-a5aa-462f-be05-cda5fd3dae1f" is2D="false">
+            <ocx:CurveLength numericvalue="17.8072" unit="Um"/>
+            <ocx:NURBSproperties degree="1" numCtrlPts="5" numKnots="7" form="Unknown" isRational="false"/>
+            <ocx:KnotVector value="0.0 0.0 1.32 8.952 10.272 17.904 17.904"/>
+            <ocx:ControlPtList>
+                <ocx:ControlPoint coordinates="93.632 -1.32 0.0" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="93.632 0.0 0.0" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="86.0 0.0 0.0" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="86.0 -1.32 0.0" unit="Um" weight="1.0"/>
+                <ocx:ControlPoint coordinates="93.632 -1.32 0.0" unit="Um" weight="1.0"/>
+            </ocx:ControlPtList>
+        </ocx:NURBS3D>
+    </ocx:FaceBoundaryCurve>
+    <ocx:PointOnSurface coordinates="89.816 -0.66 0.0" unit="Um"/>
+    <ocx:Normal direction="0.0 0.0 1.0"/>
+    <ocx:U_NURBSproperties degree="3" numCtrlPts="4" numKnots="8" form="Open" isRational="false"/>
+    <ocx:UknotVector value="0.0 0.0 0.0 0.0 1.0 1.0 1.0 1.0"/>
+    <ocx:V_NURBSproperties degree="3" numCtrlPts="4" numKnots="8" form="Open" isRational="false"/>
+    <ocx:VknotVector value="0.0 0.0 0.0 0.0 1.0 1.0 1.0 1.0"/>
+    <ocx:ControlPtList>
+        <ocx:ControlPoint coordinates="93.632 -1.32 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="93.632 -0.88 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="93.632 -0.44 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="93.632 0.0 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="91.088 -1.32 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="91.088 -0.88 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="91.088 -0.44 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="91.088 0.0 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="88.544 -1.32 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="88.544 -0.88 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="88.544 -0.44 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="88.544 0.0 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="86.0 -1.32 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="86.0 -0.88 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="86.0 -0.44 0.0" unit="Um" weight="1.0"/>
+        <ocx:ControlPoint coordinates="86.0 0.0 0.0" unit="Um" weight="1.0"/>
+    </ocx:ControlPtList>
+</ocx:NURBSSurface>

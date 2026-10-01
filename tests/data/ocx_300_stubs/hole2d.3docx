@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:Hole2D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" id="nplcid49" name="E*600*800" ocx:GUIDRef="81e6c4c7-1be7-4f84-997a-6d00177d2b8e">
+    <ocx:RectangularHole id="nplcid48">
+        <ocx:Height numericvalue="0.8" unit="Um"/>
+        <ocx:Width numericvalue="0.6" unit="Um"/>
+        <ocx:FilletRadius numericvalue="0.3" unit="Um"/>
+    </ocx:RectangularHole>
+</ocx:Hole2D>

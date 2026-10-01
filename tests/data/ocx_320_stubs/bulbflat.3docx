@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<ocx:BulbFlat xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd">
+    <ocx:Height numericvalue="0.16" unit="Um"/>
+    <ocx:WebThickness numericvalue="0.007" unit="Um"/>
+    <ocx:FlangeWidth numericvalue="0.029" unit="Um"/>
+    <ocx:BulbAngle numericvalue="0.5236" unit="URad"/>
+    <ocx:BulbOuterRadius numericvalue="0.006" unit="Um"/>
+</ocx:BulbFlat>

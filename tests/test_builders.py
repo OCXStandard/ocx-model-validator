@@ -3,8 +3,8 @@ from __future__ import annotations
 
 import pytest
 
-from ocx_model_validator.builders.factory import get_builder
 from ocx_model_validator.builders.base import UnsupportedSchemaVersionError
+from ocx_model_validator.builders.factory import get_builder
 from ocx_model_validator.builders.v3_builder import OcxV3Builder
 from ocx_model_validator.model.ir import IrVessel, ParentKind, ParentRef
 
@@ -62,7 +62,6 @@ class TestOcxV3BuilderFromStub:
     """Builder primitive helper unit tests."""
 
     def test_v3_builder_qty_returns_none_for_none(self):
-        from ocx_model_validator.model.ir import Quantity
         b = OcxV3Builder()
         assert b._qty(None) is None
 

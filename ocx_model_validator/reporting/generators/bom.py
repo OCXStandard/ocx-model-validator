@@ -11,12 +11,12 @@ from dataclasses import dataclass, field
 
 from ocx_model_validator.exeptions import GeometryError
 from ocx_model_validator.model.ir.structural import IrVessel
+from ocx_model_validator.model.units import to_si
 from ocx_model_validator.reporting.generators._common import (
     qty_mm_cell,
     report_metadata,
 )
 from ocx_model_validator.reporting.model import Cell, Report, ReportSection, ReportTable
-from ocx_model_validator.sections.units import to_si
 
 _NO_MATERIAL = "(no material)"
 _NO_SECTION = "(no section)"

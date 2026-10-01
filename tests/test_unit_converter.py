@@ -8,8 +8,11 @@ Covers:
 - Graceful degradation when units_ml is None or unit id is unknown
 """
 from __future__ import annotations
+
 import math
+
 import pytest
+
 from ocx_model_validator.builders import OcxV3Builder
 from ocx_model_validator.model import IrUnit, Quantity
 from ocx_model_validator.model.units import (
@@ -19,13 +22,15 @@ from ocx_model_validator.model.units import (
 )
 from tests.object_stubs import (
     StubEnumeratedRootUnit,
-    StubRootUnits,
     StubRoot,
+    StubRootUnits,
     StubUnit,
     StubUnitSet,
     StubUnitsMl,
     StubVessel,
 )
+
+
 def _make_length_unit(uid, name, symbol, base, prefix=None, power=1):
     eru = StubEnumeratedRootUnit(unit=base, prefix=prefix, power_numerator=power)
     return StubUnit(id=uid, name=name, symbol=symbol, dimension_url="D_L",
@@ -159,6 +164,7 @@ class TestBuildUnitRegistry:
         assert reg == {}
     def test_real_model_unit_set(self):
         from pathlib import Path
+
         from ocx_model_validator.parsers.load_tools import OcxParser
         model = Path("models/TR03_TC10_nast.3docx")
         if not model.exists():
@@ -247,6 +253,7 @@ class TestBuilderUnitRegistry:
             assert isinstance(u, IrUnit)
     def test_real_model_vessel_has_registry(self):
         from pathlib import Path
+
         from ocx_model_validator.builders import get_builder
         from ocx_model_validator.parsers.load_tools import OcxParser
         model = Path("models/TR03_TC10_nast.3docx")

@@ -24,11 +24,11 @@ def test_representative_new_types_present():
 
 def test_backward_compatible_core_imports_still_work():
     from ocx_model_validator.model.ir import (  # noqa: F401
-        IrVessel,
+        IrMaterial,
         IrPanel,
         IrPlate,
         IrSection,
-        IrMaterial,
+        IrVessel,
         Quantity,
         Ref,
     )

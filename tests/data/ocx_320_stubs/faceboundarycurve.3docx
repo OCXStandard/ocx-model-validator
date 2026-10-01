@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<ocx:FaceBoundaryCurve xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" isUVspace="false">
+    <ocx:NURBS3D id="nplcid227" ocx:GUIDRef="8587993d-d457-458d-acf8-8956efd5ba90" is2D="false">
+        <ocx:CurveLength numericvalue="16.32" unit="Um"/>
+        <ocx:NURBSproperties degree="3" numCtrlPts="13" numKnots="17" form="Unknown" isRational="false"/>
+        <ocx:KnotVector value="0.0 0.0 0.0 0.0 1.0 1.0 1.0 2.0 2.0 2.0 3.0 3.0 3.0 4.0 4.0 4.0 4.0"/>
+        <ocx:ControlPtList>
+            <ocx:ControlPoint coordinates="139.39 -1.845 1.1" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="140.88 -1.845 1.1" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="142.37 -1.845 1.1" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="143.86 -1.845 1.1" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="143.86 -0.615 1.1" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="143.86 0.615 1.1" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="143.86 1.845 1.1" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="142.37 1.845 1.1" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="140.88 1.845 1.1" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="139.39 1.845 1.1" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="139.39 0.615 1.1" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="139.39 -0.615 1.1" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="139.39 -1.845 1.1" unit="Um" weight="1.0"/>
+        </ocx:ControlPtList>
+    </ocx:NURBS3D>
+</ocx:FaceBoundaryCurve>

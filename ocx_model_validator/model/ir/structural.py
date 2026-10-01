@@ -4,13 +4,29 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Any
 
+from ocx_model_validator.model.ir.arrangement import (
+    IrBulkCargo,
+    IrCompartment,
+    IrDesignView,
+    IrGaseousCargo,
+    IrLiquidCargo,
+    IrPhysicalSpace,
+    IrUnitCargo,
+)
 from ocx_model_validator.model.ir.base import (
     IrCog,
     IrUnit,
-    ParentKind,
     ParentRef,
     Quantity,
     Ref,
+)
+from ocx_model_validator.model.ir.catalogues import (
+    IrHoleShapeCatalogue,
+    IrMaterial,
+)
+from ocx_model_validator.model.ir.connections import (
+    IrConnectionConfiguration,
+    IrPenetration,
 )
 from ocx_model_validator.model.ir.geometry import (
     IrCoordinateSystem,
@@ -22,24 +38,6 @@ from ocx_model_validator.model.ir.geometry import (
     IrUnboundedGeometry,
     IrVector3D,
 )
-from ocx_model_validator.model.ir.connections import (
-    IrConnectionConfiguration,
-    IrPenetration,
-)
-from ocx_model_validator.model.ir.sections import IrSection
-from ocx_model_validator.model.ir.catalogues import (
-    IrHoleShapeCatalogue,
-    IrMaterial,
-)
-from ocx_model_validator.model.ir.arrangement import (
-    IrBulkCargo,
-    IrCompartment,
-    IrDesignView,
-    IrGaseousCargo,
-    IrLiquidCargo,
-    IrPhysicalSpace,
-    IrUnitCargo,
-)
 from ocx_model_validator.model.ir.metadata import (
     IrBuilderInformation,
     IrHeader,
@@ -48,7 +46,7 @@ from ocx_model_validator.model.ir.metadata import (
     IrStatutoryData,
     IrTonnageData,
 )
-
+from ocx_model_validator.model.ir.sections import IrSection
 
 # ---------------------------------------------------------------------------
 # Structural parts

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:CompartmentProperties xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd">
+    <ocx:CenterOfGravity coordinates="176.1 0.0 16.7" unit="Um"/>
+    <ocx:Volume numericvalue="33586.556" unit="Um3"/>
+</ocx:CompartmentProperties>

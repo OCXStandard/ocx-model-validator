@@ -9,7 +9,6 @@ from dataclasses import dataclass, field
 
 from ocx_model_validator.model.ir.base import Quantity
 
-
 # --- primitive value types ---
 
 @dataclass(frozen=True)

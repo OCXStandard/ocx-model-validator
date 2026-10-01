@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR5TC14A-NAST.3docx -->
+<ocx:Cylinder3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid938" name="REF_TUNNELSURF" ocx:GUIDRef="58f90c40-d906-46f3-a078-d62ce33f7776">
+    <ocx:PointOnSurface coordinates="159.2 0.0 1.0375" unit="Um"/>
+    <ocx:Normal direction="0.0 0.0 -1.0"/>
+    <ocx:Origin coordinates="159.2 -10.0 2.1" unit="Um"/>
+    <ocx:Axis direction="0.0 1.0 0.0"/>
+    <ocx:Radius numericvalue="1.0625" unit="Um"/>
+    <ocx:Height numericvalue="20.0" unit="Um"/>
+</ocx:Cylinder3D>

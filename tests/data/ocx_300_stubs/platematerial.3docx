@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:PlateMaterial xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" localRef="nplcid4" ocx:GUIDRef="5425144e-f7fb-46e9-96f4-c5cb3220cf95" name="HT36" ocx:refType="ocx:Material">
+    <ocx:Thickness numericvalue="0.03" unit="Um"/>
+</ocx:PlateMaterial>

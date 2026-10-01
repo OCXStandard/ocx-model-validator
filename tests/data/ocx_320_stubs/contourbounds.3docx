@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<ocx:ContourBounds xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd">
+    <ocx:ContourStart coordinates="42.90068 7.205 2.5" unit="Um"/>
+    <ocx:ContourEnd coordinates="42.79803 5.575 2.5" unit="Um"/>
+</ocx:ContourBounds>

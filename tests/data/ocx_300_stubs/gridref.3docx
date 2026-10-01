@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:GridRef xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" localRef="nplcid5347" ocx:GUIDRef="58082c2d-524c-4792-9db0-4f39f31d6039" name="X201.9" ocx:refType="ocx:ReferencePlane">
+    <ocx:ContourBounds>
+        <ocx:ContourStart coordinates="201.9 -30.0 29.7055" unit="Um"/>
+        <ocx:ContourEnd coordinates="201.9 30.0 29.7055" unit="Um"/>
+    </ocx:ContourBounds>
+</ocx:GridRef>

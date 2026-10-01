@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:ClassificationData xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" ocx:newbuildingSociety="DNV" identification="">
+    <ocx:PrincipalParticulars ocx:freeboardType="A">
+        <ocx:Lpp numericvalue="321.58002" unit="Um"/>
+        <ocx:RuleLength numericvalue="321.58002" unit="Um"/>
+        <ocx:BlockCoefficient numericvalue="0.0" unit="UDimless"/>
+        <ocx:FP_Pos numericvalue="315.68002" unit="Um"/>
+        <ocx:MouldedBreadth numericvalue="60.0" unit="Um"/>
+        <ocx:MouldedDepth numericvalue="28.0" unit="Um"/>
+        <ocx:ScantlingDraught numericvalue="20.0" unit="Um"/>
+        <ocx:DesignSpeed numericvalue="0.0" unit="UKnots"/>
+        <ocx:FreeboardLength numericvalue="329.93521" unit="Um"/>
+        <ocx:AP_Pos numericvalue="-5.89999" unit="Um"/>
+    </ocx:PrincipalParticulars>
+</ocx:ClassificationData>

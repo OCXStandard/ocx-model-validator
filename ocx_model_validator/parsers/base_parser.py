@@ -2,12 +2,10 @@
 
 # System imports
 from abc import ABC, abstractmethod
-from dataclasses import dataclass
 from typing import TypeVar
 
 T = TypeVar("T")
 
-import packaging.version
 
 
 class IModuleDeclaration(ABC):

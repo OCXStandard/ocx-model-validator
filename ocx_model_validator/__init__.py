@@ -10,6 +10,7 @@ Exceptions
 ----------
 XmlParserError, SourceError, DynamicLoaderError, ConverterError
 """
+from ocx_model_validator.builders.factory import get_builder
 from ocx_model_validator.exeptions import (
     ConverterError,
     ConverterWarning,
@@ -18,9 +19,8 @@ from ocx_model_validator.exeptions import (
     XmlParserError,
 )
 from ocx_model_validator.model.ir import IrVessel
-from ocx_model_validator.builders.factory import get_builder
-from ocx_model_validator.parsers.parser import OcxParser
 from ocx_model_validator.parsers.dynamic_loader import DeclarationOfOcxImport, DynamicLoader
+from ocx_model_validator.parsers.parser import OcxParser
 
 __version__ = "0.1.0"
 

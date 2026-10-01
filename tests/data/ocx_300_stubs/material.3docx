@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:Material xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" id="nplcid4" name="HT36" ocx:grade="A36" ocx:GUIDRef="5425144e-f7fb-46e9-96f4-c5cb3220cf95">
+    <ocx:Density numericvalue="7850.0" unit="UKgOverm3"/>
+    <ocx:YoungsModulus numericvalue="206000.0" unit="UNOvermm2"/>
+    <ocx:PoissonRatio numericvalue="0.3" unit="UDimless"/>
+    <ocx:YieldStress numericvalue="355.0" unit="UNOvermm2"/>
+    <ocx:UltimateStress numericvalue="4.0" unit="UNOvermm2"/>
+</ocx:Material>
