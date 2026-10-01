@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:PhysicalProperties xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd">
+    <ocx:DryWeight numericvalue="26040.099" unit="UKg"/>
+    <ocx:CenterOfGravity coordinates="159.25 26.916 29.87495" unit="Um"/>
+</ocx:PhysicalProperties>

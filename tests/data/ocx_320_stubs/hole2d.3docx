@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<ocx:Hole2D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid28" name="400X600" ocx:GUIDRef="4b66ef64-00c8-0dad-72ef-5ae78998843c">
+    <ocx:SymmetricalHole id="nplcid27">
+        <ocx:Height numericvalue="0.6" unit="Um"/>
+        <ocx:Width numericvalue="0.4" unit="Um"/>
+    </ocx:SymmetricalHole>
+</ocx:Hole2D>

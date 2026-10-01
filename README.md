@@ -17,13 +17,12 @@ making downstream tools independent of any particular OCX schema version.
 - Converts UnitsML unit definitions to SI factors via `build_unit_registry`
 - CLI subcommands for model reports and `validator generate-stubs [--force]` for auto-generating xsdata test stubs
 - Duplicate-id and dangling-ref integrity checks built into the builder
-- **Cross-section extraction** (`ocx_model_validator.sections`): builds a Nauticus-style
-  frame table from the model's X reference planes, intersects the 3D model at any
-  longitudinal position (analytic lines/circles/arcs + de Boor NURBS evaluation with
-  tangency refinement), and assembles stiffener/plate/compartment data into a
-  JSON document (schema `nh-cross-section/2`)
-- **MCP server** `ocx-mcp` exposing the parse → frame table → cross-section → JSON
-  pipeline to LLM clients
+- **Frame table extraction** (`ocx_model_validator.frame_table`): derives frame
+  labels, positions and spacings (mm) from the model's X reference planes
+- **Model reports** (`validator report …`): frame table, compartments,
+  catalogues and bill of materials, rendered rich to stdout or as Markdown
+- **MCP server** `ocx-mcp` exposing model loading, info, frame table,
+  compartments and scantling write-back to LLM clients
 
 ---
 
@@ -59,31 +58,17 @@ for plate in ir.plates.values():
     print(plate.id, plate.thickness)
 ```
 
-### Cross-section extraction
+### Frame table extraction
 
 ```python
-from ocx_model_validator.sections import build_frame_table, build_document, save_document
+from ocx_model_validator.frame_table import build_frame_table
 
 frame_table = build_frame_table(ir)
 print(len(frame_table.positions), "frame positions,",
       len(frame_table.entries), "spacing entries")
 
 label, x_mm = frame_table.nearest_frame(161_000.0)   # e.g. midship
-doc = build_document(ir, source_file="model.3docx", x_mm=x_mm)
-
-section = doc["cross_section"]
-print(len(section["stiffeners"]), "stiffeners,", len(section["plates"]), "plates")
-save_document(doc, "midship.json")
 ```
-
-The document (schema `nh-cross-section/2`) contains four blocks — `frame_table`,
-`cross_section`, `compartments` and `warnings` — with all coordinates in **mm**,
-volumes in **m³** and yield stress in **MPa**, matching the input conventions of
-the DNV Nauticus Hull `RulesAPI` (see the companion
-[`nh-mcp`](../nh-mcp/) project).
-The `cross_section.plates` entries are elementary plate panels (EPPs), split at
-longitudinal stiffeners, with `_EPP{n}` name suffixes plus `bound_lower`,
-`bound_upper` and `breadth_mm` fields.
 
 ### MCP server
 
@@ -112,8 +97,6 @@ MCP client configuration (e.g. `mcp.json`):
 | `get_model_info` | Vessel name, schema version and entity counts |
 | `get_frame_table` | Frame 0 offset, spacing entries and frame positions (mm) |
 | `get_compartments` | Compartment names, tank types, COGs, volumes and extents |
-| `build_cross_section` | Full `nh-cross-section/2` document at a frame label or x position |
-| `save_cross_section` | Build the document and persist it to a JSON file |
 | `apply_scantlings` | Apply an `nh-optimisation/1` report to a `.3docx`: plate thicknesses plus stiffener `BarSection`s, written to a new file |
 
 ---
@@ -129,20 +112,18 @@ ocx-model-validator/
 │   ├── generate_stubs.py       ← xsdata stub generator
 │   ├── exeptions.py            ← custom exception hierarchy
 │   ├── utils.py                ← MetaData helpers
+│   ├── frame_table.py          ← FrameTable, build_frame_table
+│   ├── writeback.py            ← apply scantling reports to .3docx files
 │   ├── model/
-│   │   ├── ir.py               ← all IR dataclasses
-│   │   └── units.py            ← UnitConverter, build_unit_registry
-│   ├── sections/
-│   │   ├── units.py            ← quantity → mm/MPa conversion helpers
-│   │   ├── geometry.py         ← curve/plane intersection engine
-│   │   ├── frame_table.py      ← FrameTable, build_frame_table
-│   │   ├── section_builder.py  ← CrossSection, build_cross_section
-│   │   ├── segment_math.py     ← per-segment arc/chord geometry helpers
-│   │   ├── epp.py              ← EppPlate, split_plates_to_epps (EPP splitting)
-│   │   └── document.py         ← nh-cross-section/2 JSON document
+│   │   ├── ir/                 ← IR dataclasses (base, structural, sections, …)
+│   │   └── units.py            ← UnitConverter, build_unit_registry, SI helpers
+│   ├── reporting/
+│   │   ├── model.py            ← Report, ReportSection, ReportTable
+│   │   ├── generators/         ← frame table, compartments, catalogues, BOM
+│   │   └── renderers/          ← rich and markdown renderers
 │   ├── mcp/
 │   │   ├── state.py            ← session state (loaded vessel)
-│   │   └── server.py           ← FastMCP "ocx-mcp" server (7 tools)
+│   │   └── server.py           ← FastMCP "ocx-mcp" server (5 tools)
 │   ├── parsers/
 │   │   ├── base_parser.py
 │   │   ├── dynamic_loader.py   ← runtime xsdata module loader
@@ -174,65 +155,12 @@ validator report catalogues   model.3docx --catalogue material
 validator report bom          model.3docx --detailed
 validator report all          model.3docx --destination report.md
 
-# cross sections: JSON document at a frame or x-position, then SVG plot
-# (--frame / --x are repeatable: one output file per position)
-validator section create model.3docx --frame FR20 -o section.json
-validator section create model.3docx --x 50000 --x 60000
-# attach hull-girder section properties from a JSON input file (see below)
-validator section create model.3docx --x 90000 --section-props props.json
-validator section plot section.json -o section.svg
-
-# export cross sections as Nauticus Hull XML (2DLX default, or HMX)
-validator section export model.3docx --frame FR20 -o section.2dlx
-validator section export model.3docx --frame FR20 --frame FR30
-validator section export model.3docx --x 50000 --format hmx --rule-set CSR-H
-
 # generate xsdata stubs from .3docx models in ./models/
 validator generate-stubs
 
 # wipe and regenerate all stubs
 validator generate-stubs --force
 ```
-
-### Section properties JSON input (`--section-props`)
-
-`validator section create` accepts a JSON file with hull-girder section
-properties per longitudinal position (see `section_props_sample.json`):
-
-```json
-[
-  {
-    "x_pos": 165800.0,
-    "z_n": 14.2659,
-    "iy_n50": 1516.878,
-    "iz_n50": 4446.297
-  }
-]
-```
-
-| Key | Unit | Description |
-| --- | --- | --- |
-| `x_pos` | mm | Longitudinal position the entry applies to (required). |
-| `z_n` | m | Height of the hull girder's neutral axis above the baseline. |
-| `iy_n50` | m⁴ | Hull-girder moment of inertia (net, half corrosion deducted) about the horizontal axis. |
-| `iz_n50` | m⁴ | Hull-girder moment of inertia (net) about the vertical axis. |
-
-The entry whose `x_pos` lies within 1 mm of the section position is merged
-into the `cross_section.sect_props` block of the output document. If no entry
-matches — or `--section-props` is omitted — a warning is recorded in the
-document's `warnings` list.
-
-Three further properties are derived from the OCX model (all in m) and must
-**not** appear in the input file:
-
-- `bx` — local breadth from the y-extent of the section plates (doubled for
-  half-breadth models);
-- `z_deck_corner` — height of the strength-deck edge (outboard-most
-  deck-plate endpoint);
-- `ibh` — height of the inner bottom, from inner-bottom/double-bottom typed
-  plates, falling back to the second plate intersection with the vertical
-  line y = 50 mm (the first being the bottom shell). Underivable values are
-  `null` with a warning.
 
 ---
 
@@ -264,12 +192,11 @@ get_builder(schema_version)
 IOcxBuilder.build(root) → IrVessel   ← schema-neutral IR
     │
     ▼
-sections.build_frame_table(vessel) → FrameTable        (X ref planes → frames)
-sections.build_cross_section(vessel, x_mm) → CrossSection   (plane intersection)
-sections.build_document(vessel, ...) → dict            (nh-cross-section/2 JSON)
-    │
+frame_table.build_frame_table(vessel) → FrameTable      (X ref planes → frames)
+reporting.generators → Report                           (frame table, compartments,
+    │                                                    catalogues, BOM)
     ▼
-ocx-mcp MCP server / DNV Nauticus Hull rule checks (nh-mcp)
+validator CLI / ocx-mcp MCP server
 ```
 
 ---

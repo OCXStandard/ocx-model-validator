@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:MaterialCatalogue xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" id="nplcid3">
+    <ocx:Material id="nplcid4" name="HT36" ocx:grade="A36" ocx:GUIDRef="5425144e-f7fb-46e9-96f4-c5cb3220cf95">
+        <ocx:Density numericvalue="7850.0" unit="UKgOverm3"/>
+        <ocx:YoungsModulus numericvalue="206000.0" unit="UNOvermm2"/>
+        <ocx:PoissonRatio numericvalue="0.3" unit="UDimless"/>
+        <ocx:YieldStress numericvalue="355.0" unit="UNOvermm2"/>
+        <ocx:UltimateStress numericvalue="4.0" unit="UNOvermm2"/>
+    </ocx:Material>
+    <ocx:Material id="nplcid5" name="MS" ocx:grade="A" ocx:GUIDRef="d317e90e-7f23-48a7-854d-3993736bf5cc">
+        <ocx:Density numericvalue="7850.0" unit="UKgOverm3"/>
+        <ocx:YoungsModulus numericvalue="206000.0" unit="UNOvermm2"/>
+        <ocx:PoissonRatio numericvalue="0.3" unit="UDimless"/>
+        <ocx:YieldStress numericvalue="235.0" unit="UNOvermm2"/>
+        <ocx:UltimateStress numericvalue="3.0" unit="UNOvermm2"/>
+    </ocx:Material>
+    <ocx:Material id="nplcid6" name="HT40" ocx:grade="A40" ocx:GUIDRef="779d3eda-c778-4568-8341-f11e981de197">
+        <ocx:Density numericvalue="7850.0" unit="UKgOverm3"/>
+        <ocx:YoungsModulus numericvalue="206000.0" unit="UNOvermm2"/>
+        <ocx:PoissonRatio numericvalue="0.3" unit="UDimless"/>
+        <ocx:YieldStress numericvalue="390.0" unit="UNOvermm2"/>
+        <ocx:UltimateStress numericvalue="5.0" unit="UNOvermm2"/>
+    </ocx:Material>
+    <ocx:Material id="nplcid7" name="HT32" ocx:grade="A32" ocx:GUIDRef="d2e24f24-14b3-485f-8384-1c9509656dd4">
+        <ocx:Density numericvalue="7850.0" unit="UKgOverm3"/>
+        <ocx:YoungsModulus numericvalue="206000.0" unit="UNOvermm2"/>
+        <ocx:PoissonRatio numericvalue="0.3" unit="UDimless"/>
+        <ocx:YieldStress numericvalue="315.0" unit="UNOvermm2"/>
+        <ocx:UltimateStress numericvalue="4.0" unit="UNOvermm2"/>
+    </ocx:Material>
+</ocx:MaterialCatalogue>

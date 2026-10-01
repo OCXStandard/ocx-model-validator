@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<ocx:SurfaceCollection xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid264" name="REF_S.Z_47_REF" ocx:GUIDRef="ba300e07-2d73-46ab-8493-8569c3de6ca8">
+    <ocx:Plane3D id="nplcid265" name="REF_S.Z_47_REF_0" ocx:GUIDRef="3fe7d6d5-7a4b-42fa-b8ec-977ea212a839">
+        <ocx:FaceBoundaryCurve isUVspace="false">
+            <ocx:NURBS3D id="nplcid266" ocx:GUIDRef="a9f13ca3-4864-49cf-bb8c-5ff90aa5ac49" is2D="false">
+                <ocx:CurveLength numericvalue="25.57371" unit="Um"/>
+                <ocx:NURBSproperties degree="1" numCtrlPts="5" numKnots="7" form="Unknown" isRational="false"/>
+                <ocx:KnotVector value="0.0 0.0 11.92 12.85536 24.77536 25.71072 25.71072"/>
+                <ocx:ControlPtList>
+                    <ocx:ControlPoint coordinates="73.83 -7.38 0.8" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="61.91 -7.38 0.8" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="61.91 -6.45 0.7" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="73.83 -6.45 0.7" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="73.83 -7.38 0.8" unit="Um" weight="1.0"/>
+                </ocx:ControlPtList>
+            </ocx:NURBS3D>
+        </ocx:FaceBoundaryCurve>
+        <ocx:PointOnSurface coordinates="73.83 -7.38 0.8" unit="Um"/>
+        <ocx:Normal direction="0.0 0.10691 0.99427"/>
+    </ocx:Plane3D>
+    <ocx:Plane3D id="nplcid267" name="REF_S.Z_47_REF_1" ocx:GUIDRef="3733a4e8-0458-458b-85a5-1338131f3eb8">
+        <ocx:FaceBoundaryCurve isUVspace="false">
+            <ocx:NURBS3D id="nplcid268" ocx:GUIDRef="5fa9feeb-2989-48b9-b4a8-de187cd23942" is2D="false">
+                <ocx:CurveLength numericvalue="99.2911" unit="Um"/>
+                <ocx:NURBSproperties degree="1" numCtrlPts="5" numKnots="7" form="Unknown" isRational="false"/>
+                <ocx:KnotVector value="0.0 0.0 11.92 12.8007 24.7207 25.60139 25.60139"/>
+                <ocx:ControlPtList>
+                    <ocx:ControlPoint coordinates="73.83 -6.45 0.7" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="61.91 -6.45 0.7" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="61.91 -5.575 0.8" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="73.83 -5.575 0.8" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="73.83 -6.45 0.7" unit="Um" weight="1.0"/>
+                </ocx:ControlPtList>
+            </ocx:NURBS3D>
+        </ocx:FaceBoundaryCurve>
+        <ocx:PointOnSurface coordinates="73.83 -6.45 0.7" unit="Um"/>
+        <ocx:Normal direction="0.0 -0.11355 0.99353"/>
+    </ocx:Plane3D>
+</ocx:SurfaceCollection>

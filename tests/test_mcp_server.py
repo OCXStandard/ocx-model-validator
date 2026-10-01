@@ -14,15 +14,13 @@ def clean_state():
     state.reset()
 
 
-def test_seven_tools_registered():
+def test_five_tools_registered():
     tools = asyncio.run(server.mcp.list_tools())
     assert {t.name for t in tools} == {
         "load_model",
         "get_model_info",
         "get_frame_table",
         "get_compartments",
-        "build_cross_section",
-        "save_cross_section",
         "apply_scantlings",
     }
 
@@ -50,20 +48,15 @@ def test_load_model_missing_file():
     assert out["ok"] is False
 
 
-def test_pipeline_with_synthetic_model(monkeypatch, tmp_path):
+def test_pipeline_with_synthetic_model(monkeypatch):
     monkeypatch.setattr(server, "_load_vessel", lambda path: make_synthetic_vessel())
     assert server.load_model("fake.ocx")["ok"] is True
     info = server.get_model_info()
     assert info["ok"] and info["counts"]["stiffeners"] >= 1
     ft = server.get_frame_table()
     assert ft["ok"] and ft["frame_table"]["positions"]
-    cs = server.build_cross_section(x_mm=5000.0)
-    assert cs["ok"] and cs["document"]["cross_section"]["plates"]
-    assert server.build_cross_section()["ok"] is False
-    assert server.build_cross_section(x_mm=1.0, frame="0")["ok"] is False
-    out = tmp_path / "sec.json"
-    saved = server.save_cross_section(str(out), x_mm=5000.0)
-    assert saved["ok"] and out.exists()
+    comp = server.get_compartments()
+    assert comp["ok"]
 
 
 def test_apply_scantlings_ok(tmp_path):

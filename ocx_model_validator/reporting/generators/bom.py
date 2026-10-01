@@ -16,7 +16,7 @@ from ocx_model_validator.reporting.generators._common import (
     report_metadata,
 )
 from ocx_model_validator.reporting.model import Cell, Report, ReportSection, ReportTable
-from ocx_model_validator.sections.units import to_si
+from ocx_model_validator.model.units import to_si
 
 _NO_MATERIAL = "(no material)"
 _NO_SECTION = "(no section)"

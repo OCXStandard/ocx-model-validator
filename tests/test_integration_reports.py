@@ -1,4 +1,5 @@
 """Integration test: BOM report against the real VLCC reference model."""
+import os
 from pathlib import Path
 
 import pytest
@@ -6,7 +7,8 @@ from typer.testing import CliRunner
 
 from ocx_model_validator.cli import app
 
-MODEL = Path(r"C:\PythonDev\nh-mcp\examples\D-VLCC_1-HOLD-OCX-simple_v3.3docx")
+MODEL = Path(os.environ.get("OCX_VLCC_MODEL",
+                            r"C:\PythonDev\models\D-VLCC_1-HOLD-OCX-simple_v3.3docx"))
 
 pytestmark = [
     pytest.mark.integration,

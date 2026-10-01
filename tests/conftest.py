@@ -78,19 +78,3 @@ def stub_dir_310() -> Path:
 @pytest.fixture(scope="session")
 def declaration_310() -> DeclarationOfOcxImport:
     return DeclarationOfOcxImport(name="ocx", version="3.1.0")
-
-
-@pytest.fixture(scope="session")
-def hmx_schema():
-    import xmlschema
-
-    xsd = Path(__file__).parent / "data" / "hmx_schema" / "HullModel_HMX.xsd"
-    return xmlschema.XMLSchema11(str(xsd))
-
-
-@pytest.fixture(scope="session")
-def dlx_schema():
-    import xmlschema
-
-    xsd = Path(__file__).parent / "data" / "hmx_schema" / "CrossSection_2DLX.xsd"
-    return xmlschema.XMLSchema11(str(xsd))

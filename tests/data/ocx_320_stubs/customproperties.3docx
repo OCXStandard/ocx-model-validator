@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR05TC09-NAST.3docx -->
+<ocx:CustomProperties xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd">
+    <ocx:CustomProperty id="CPROP1" name="LABEL1" value="PSH-TANKER"/>
+    <ocx:CustomProperty id="CPROP2" name="LABEL2" value="LBTRNS_C_1R"/>
+</ocx:CustomProperties>

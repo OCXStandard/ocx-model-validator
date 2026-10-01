@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:LimitedBy xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd">
+    <ocx:PanelRef localRef="nplcid344" ocx:GUIDRef="94eb49d7-40f4-4a0a-b093-8f51c5584fe0" name="SHELLS" ocx:refType="ocx:Panel">
+        <ocx:ContourBounds>
+            <ocx:ContourStart coordinates="150.3 -30.0 29.7055" unit="Um"/>
+            <ocx:ContourEnd coordinates="201.9 -30.0 29.7055" unit="Um"/>
+        </ocx:ContourBounds>
+    </ocx:PanelRef>
+    <ocx:PanelRef localRef="nplcid454" ocx:GUIDRef="fe1f6234-1af9-4eb3-849b-8a44e0a3c6c2" name="SHELLP" ocx:refType="ocx:Panel">
+        <ocx:ContourBounds>
+            <ocx:ContourStart coordinates="201.9 30.0 29.7055" unit="Um"/>
+            <ocx:ContourEnd coordinates="150.3 30.0 29.7055" unit="Um"/>
+        </ocx:ContourBounds>
+    </ocx:PanelRef>
+    <ocx:EdgeCurveRef localRef="nplcid5139" ocx:GUIDRef="3b283ebd-6127-4bc2-8c88-596bbe7a3d0b" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5153" ocx:GUIDRef="99507a65-9bb0-4b2b-a497-095658eb9431" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5158" ocx:GUIDRef="0b97ab96-68a1-4ac2-98fe-7957ee9b7cf9" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5172" ocx:GUIDRef="d7333d02-3c95-44ee-985f-f1de4ef99447" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5177" ocx:GUIDRef="a8c82b59-44d7-4fa2-badc-ede7b3830308" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5188" ocx:GUIDRef="5058c782-b54e-49a6-8c37-f2a0fc4f72ab" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5193" ocx:GUIDRef="1cc80729-b953-4d54-b8d7-988cf1ac6dcf" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5206" ocx:GUIDRef="915359cb-121d-48bb-ad15-edb974b6b8bd" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5223" ocx:GUIDRef="eb72c01b-2b65-474e-a7c3-5208f00f200f" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5230" ocx:GUIDRef="d50ab2a3-e9b9-43f6-91f1-c026e628723f" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5235" ocx:GUIDRef="0948c8ed-a758-406c-8857-5261cebe036c" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5240" ocx:GUIDRef="72bf4ff7-b493-42e0-997c-d4c51f64c9a5" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5245" ocx:GUIDRef="3393f313-a6cd-4696-b263-f8916ee626be" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5250" ocx:GUIDRef="010a7edf-8ecf-466a-9342-4129465eefdd" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5255" ocx:GUIDRef="b3b77e5b-54d1-49be-b5e6-d34b3dfc1831" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5260" ocx:GUIDRef="b7604d3b-807c-44c6-a806-728c0f741d3c" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5268" ocx:GUIDRef="4639bb0b-ae13-41a1-913c-19c00fa32ca1" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5275" ocx:GUIDRef="3f470727-0427-4e0d-bde8-8890446391a6" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5283" ocx:GUIDRef="bb16771d-db11-4ab4-a42a-470baa3553b4" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5290" ocx:GUIDRef="3f686874-a567-426e-87e7-277bbfe48294" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5295" ocx:GUIDRef="4eb4c4c6-ded5-4f87-80c1-0d8c905ee699" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5302" ocx:GUIDRef="51548005-69f8-4b68-a820-341eaf68287e" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5307" ocx:GUIDRef="222f0c5c-5a40-4fc0-8f06-ec4d6d84b4df" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5317" ocx:GUIDRef="eb50aa73-980b-4b4d-ae0b-f7e97df46709" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5322" ocx:GUIDRef="09e77bc1-f847-4a07-bc20-863435bb49bc" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5332" ocx:GUIDRef="03be7b95-ae22-4d03-abc4-87daf2c243a0" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5337" ocx:GUIDRef="fc2674bf-2e50-4e4c-85df-780e8af1e77e" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:EdgeCurveRef localRef="nplcid5344" ocx:GUIDRef="9bdb94a4-9b2d-45e7-9c95-e0b99c1ea5a8" name="B:100/DECK" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:GridRef localRef="nplcid5347" ocx:GUIDRef="58082c2d-524c-4792-9db0-4f39f31d6039" name="X201.9" ocx:refType="ocx:ReferencePlane">
+        <ocx:ContourBounds>
+            <ocx:ContourStart coordinates="201.9 -30.0 29.7055" unit="Um"/>
+            <ocx:ContourEnd coordinates="201.9 30.0 29.7055" unit="Um"/>
+        </ocx:ContourBounds>
+    </ocx:GridRef>
+    <ocx:GridRef localRef="nplcid5348" ocx:GUIDRef="e32d9735-ffc8-439e-9330-6043d652b6bb" name="X150.3" ocx:refType="ocx:ReferencePlane">
+        <ocx:ContourBounds>
+            <ocx:ContourStart coordinates="150.3 30.0 29.7055" unit="Um"/>
+            <ocx:ContourEnd coordinates="150.3 -30.0 29.7055" unit="Um"/>
+        </ocx:ContourBounds>
+    </ocx:GridRef>
+</ocx:LimitedBy>

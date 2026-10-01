@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:Contour xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd">
+    <ocx:CompositeCurve3D id="nplcid7794" ocx:GUIDRef="b1ca92d2-efd7-43b3-af5f-76b10afcc742" is2D="true">
+        <ocx:CurveLength numericvalue="11.6738" unit="Um"/>
+        <ocx:Line3D id="nplcid7796" ocx:GUIDRef="d72c89fb-6854-49c0-ba5c-f6524db718ba" is2D="false">
+            <ocx:CurveLength numericvalue="1.17074" unit="Um"/>
+            <ocx:StartPoint coordinates="27.5 3.0 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="26.32926 3.0 0.0" unit="Um"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="nplcid7798" ocx:GUIDRef="b7c1702a-10d3-4308-8564-e04c2265adb9" is2D="false">
+            <ocx:CurveLength numericvalue="2.28167" unit="Um"/>
+            <ocx:StartPoint coordinates="25.52983 4.60076 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="26.90057 6.4248 0.0" unit="Um"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="nplcid7800" ocx:GUIDRef="4eb8ac12-b04b-4686-9292-fe789aea7e6b" is2D="false">
+            <ocx:CurveLength numericvalue="1.62404" unit="Um"/>
+            <ocx:StartPoint coordinates="28.7 5.82404 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="28.7 4.2 0.0" unit="Um"/>
+        </ocx:Line3D>
+        <ocx:CircumArc3D id="nplcid7795" ocx:GUIDRef="9f069bee-5897-4204-abd0-a641bbb146f6" is2D="false">
+            <ocx:CurveLength numericvalue="1.88496" unit="Um"/>
+            <ocx:StartPoint coordinates="28.7 4.2 0.0" unit="Um"/>
+            <ocx:IntermediatePoint coordinates="28.34853 3.35147 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="27.5 3.0 0.0" unit="Um"/>
+        </ocx:CircumArc3D>
+        <ocx:CircumArc3D id="nplcid7797" ocx:GUIDRef="7e87fa9e-8b66-4492-bfde-b4441257acf0" is2D="false">
+            <ocx:CurveLength numericvalue="2.21525" unit="Um"/>
+            <ocx:StartPoint coordinates="26.32926 3.0 0.0" unit="Um"/>
+            <ocx:IntermediatePoint coordinates="25.43462 3.5532 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="25.52983 4.60076 0.0" unit="Um"/>
+        </ocx:CircumArc3D>
+        <ocx:CircumArc3D id="nplcid7799" ocx:GUIDRef="9c5f2ecf-2d61-4aef-94e9-a68700a16d22" is2D="false">
+            <ocx:CurveLength numericvalue="2.49714" unit="Um"/>
+            <ocx:StartPoint coordinates="26.90057 6.4248 0.0" unit="Um"/>
+            <ocx:IntermediatePoint coordinates="28.01668 6.77257 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="28.7 5.82404 0.0" unit="Um"/>
+        </ocx:CircumArc3D>
+    </ocx:CompositeCurve3D>
+</ocx:Contour>

@@ -9,8 +9,8 @@ from ocx_model_validator.exeptions import GeometryError
 from ocx_model_validator.model.ir.structural import IrVessel
 from ocx_model_validator.reporting.generators._common import report_metadata
 from ocx_model_validator.reporting.model import Cell, Report, ReportSection, ReportTable
-from ocx_model_validator.sections.document import _curve_points_mm
-from ocx_model_validator.sections.units import point_mm
+from ocx_model_validator.model.units import point_mm
+from ocx_model_validator.reporting.generators._compartment_data import _curve_points_mm
 
 _TITLE = "Model extent report"
 

@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:CutBy xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd">
+    <ocx:Hole2DContour id="nplcid6216" name="O:20RX980XGD/FL73" ocx:GUIDRef="6aedd9ce-117b-4843-adea-03d3bd06619b">
+        <ocx:HoleRef localRef="nplcid49" ocx:GUIDRef="81e6c4c7-1be7-4f84-997a-6d00177d2b8e" name="E*600*800" ocx:refType="ocx:Hole2D"/>
+        <ocx:Transformation>
+            <ocx:Origin coordinates="156.5 -19.125 1.35004" unit="Um"/>
+            <ocx:PrimaryAxis direction="0.0 1.0 0.0"/>
+            <ocx:SecondaryAxis direction="0.0 0.0 1.0"/>
+        </ocx:Transformation>
+    </ocx:Hole2DContour>
+    <ocx:Hole2DContour id="nplcid6217" name="O:54Z37NSBBY/FL73" ocx:GUIDRef="92e7a84c-5043-43bd-b6be-bb998e456afc">
+        <ocx:HoleRef localRef="nplcid49" ocx:GUIDRef="81e6c4c7-1be7-4f84-997a-6d00177d2b8e" name="E*600*800" ocx:refType="ocx:Hole2D"/>
+        <ocx:Transformation>
+            <ocx:Origin coordinates="156.5 1.275 1.35004" unit="Um"/>
+            <ocx:PrimaryAxis direction="0.0 1.0 0.0"/>
+            <ocx:SecondaryAxis direction="0.0 0.0 1.0"/>
+        </ocx:Transformation>
+    </ocx:Hole2DContour>
+    <ocx:Hole2DContour id="nplcid6218" name="O:84YSTL7KYR/FL73" ocx:GUIDRef="02284c1f-6d37-4dc5-967b-e7c73cd1e208">
+        <ocx:HoleRef localRef="nplcid49" ocx:GUIDRef="81e6c4c7-1be7-4f84-997a-6d00177d2b8e" name="E*600*800" ocx:refType="ocx:Hole2D"/>
+        <ocx:Transformation>
+            <ocx:Origin coordinates="156.5 19.125 1.35004" unit="Um"/>
+            <ocx:PrimaryAxis direction="0.0 1.0 0.0"/>
+            <ocx:SecondaryAxis direction="0.0 0.0 1.0"/>
+        </ocx:Transformation>
+    </ocx:Hole2DContour>
+    <ocx:Hole2DContour id="nplcid6219" name="O:IGKMP2KJ8F/FL73" ocx:GUIDRef="7800a05c-5077-4b4f-8ad7-1b063441ea60">
+        <ocx:HoleRef localRef="nplcid51" ocx:GUIDRef="bcbf0907-a3e0-4e00-a065-250a3f6f22e7" name="E*600*1000" ocx:refType="ocx:Hole2D"/>
+        <ocx:Transformation>
+            <ocx:Origin coordinates="156.5 13.175 1.35004" unit="Um"/>
+            <ocx:PrimaryAxis direction="0.0 1.0 0.0"/>
+            <ocx:SecondaryAxis direction="0.0 0.0 1.0"/>
+        </ocx:Transformation>
+    </ocx:Hole2DContour>
+    <ocx:Hole2DContour id="nplcid6220" name="O:JXDD1CV5KD/FL73" ocx:GUIDRef="d5362989-31d4-4241-a893-9f619d70aac9">
+        <ocx:HoleRef localRef="nplcid49" ocx:GUIDRef="81e6c4c7-1be7-4f84-997a-6d00177d2b8e" name="E*600*800" ocx:refType="ocx:Hole2D"/>
+        <ocx:Transformation>
+            <ocx:Origin coordinates="156.5 -8.075 1.35004" unit="Um"/>
+            <ocx:PrimaryAxis direction="0.0 1.0 0.0"/>
+            <ocx:SecondaryAxis direction="0.0 0.0 1.0"/>
+        </ocx:Transformation>
+    </ocx:Hole2DContour>
+    <ocx:Hole2DContour id="nplcid6221" name="O:PNM0HGQXT2/FL73" ocx:GUIDRef="aa3ff3ee-ec23-4cc2-a76e-6710932b9268">
+        <ocx:HoleRef localRef="nplcid49" ocx:GUIDRef="81e6c4c7-1be7-4f84-997a-6d00177d2b8e" name="E*600*800" ocx:refType="ocx:Hole2D"/>
+        <ocx:Transformation>
+            <ocx:Origin coordinates="156.5 -1.275 1.35004" unit="Um"/>
+            <ocx:PrimaryAxis direction="0.0 1.0 0.0"/>
+            <ocx:SecondaryAxis direction="0.0 0.0 1.0"/>
+        </ocx:Transformation>
+    </ocx:Hole2DContour>
+    <ocx:Hole2DContour id="nplcid6222" name="O:UVNP45IVSL/FL73" ocx:GUIDRef="a0f46007-924e-41fd-b755-35580a39120a">
+        <ocx:HoleRef localRef="nplcid51" ocx:GUIDRef="bcbf0907-a3e0-4e00-a065-250a3f6f22e7" name="E*600*1000" ocx:refType="ocx:Hole2D"/>
+        <ocx:Transformation>
+            <ocx:Origin coordinates="156.5 -13.175 1.35004" unit="Um"/>
+            <ocx:PrimaryAxis direction="0.0 1.0 0.0"/>
+            <ocx:SecondaryAxis direction="0.0 0.0 1.0"/>
+        </ocx:Transformation>
+    </ocx:Hole2DContour>
+    <ocx:Hole2DContour id="nplcid6223" name="O:Z7DBW4FL1Z/FL73" ocx:GUIDRef="e5707e37-c7d8-4e73-b2d6-b00ba056209b">
+        <ocx:HoleRef localRef="nplcid49" ocx:GUIDRef="81e6c4c7-1be7-4f84-997a-6d00177d2b8e" name="E*600*800" ocx:refType="ocx:Hole2D"/>
+        <ocx:Transformation>
+            <ocx:Origin coordinates="156.5 8.075 1.35004" unit="Um"/>
+            <ocx:PrimaryAxis direction="0.0 1.0 0.0"/>
+            <ocx:SecondaryAxis direction="0.0 0.0 1.0"/>
+        </ocx:Transformation>
+    </ocx:Hole2DContour>
+</ocx:CutBy>

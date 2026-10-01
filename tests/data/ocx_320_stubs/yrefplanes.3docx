@@ -1,0 +1,394 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<ocx:YRefPlanes xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" isMainSystem="true">
+    <ocx:RefPlane id="LR-22" name="Y-13.53" ocx:GUIDRef="bd097e95-2166-b043-9003-cf53af095f46" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-13.53" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-21" name="Y-12.915" ocx:GUIDRef="ade20c90-4006-4f41-9a1e-0fac2106aaaa" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-12.915" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-20" name="Y-12.3" ocx:GUIDRef="21a68e58-ffb8-7fce-866b-a83366d25548" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-12.3" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-19" name="Y-11.685" ocx:GUIDRef="70f1cca8-1e4f-a1ed-5e5f-9f3ff7a2e6a3" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-11.685" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-18" name="Y-11.07" ocx:GUIDRef="4022591a-4ae6-67a1-fab6-07cd5af478be" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-11.07" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-17" name="Y-10.455" ocx:GUIDRef="3ff4007b-7e57-e58c-02bc-011916e9fce8" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-10.455" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-16" name="Y-9.84" ocx:GUIDRef="0c52076f-2d4f-f369-4745-6c24199cdb2e" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-9.84" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-15" name="Y-9.225" ocx:GUIDRef="9319cd95-c8a3-198c-201b-c3bea6c298e1" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-9.225" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-14" name="Y-8.61" ocx:GUIDRef="8cb063d7-cc75-515b-16b4-7465350d99ab" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-8.61" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-13" name="Y-7.995" ocx:GUIDRef="a98bdf14-f02f-5166-6f70-c7f5291536c0" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-7.995" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-12" name="Y-7.38" ocx:GUIDRef="23a7a342-3773-4115-02d9-e21c3623a56b" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-7.38" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-11" name="Y-6.765" ocx:GUIDRef="f607e37f-0c3b-7369-ea27-209c5060ec95" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-6.765" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-10" name="Y-6.15" ocx:GUIDRef="0d3d2ced-362c-1af3-81bb-84d915d9e9a6" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-6.15" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-9" name="Y-5.535" ocx:GUIDRef="f176a23e-7ed3-06b4-024d-24022730392d" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-5.535" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-8" name="Y-4.92" ocx:GUIDRef="f932254c-a905-42df-01bb-3de1f19b45e9" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-4.92" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-7" name="Y-4.305" ocx:GUIDRef="6a43c2dc-3c7e-abf4-7c7b-61c8de7cedbc" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-4.305" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-6" name="Y-3.69" ocx:GUIDRef="06741182-349a-f120-7913-25c47d18ee62" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-3.69" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-5" name="Y-3.075" ocx:GUIDRef="8fa577f6-2194-a8d7-01d6-13c08f79ec54" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-3.075" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-4" name="Y-2.46" ocx:GUIDRef="fc88bf1d-a894-86c9-d8dc-6d5b340fc22c" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-2.46" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-3" name="Y-1.845" ocx:GUIDRef="38b9fd92-53e9-3121-aaac-07b3dbfb2b1c" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-1.845" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-2" name="Y-1.23" ocx:GUIDRef="2e008eef-7718-512c-bb6e-f6f75f56987b" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-1.23" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR-1" name="Y-0.615" ocx:GUIDRef="ba294fd6-b302-7d39-4875-38f42997eb2e" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="-0.615" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR0" name="Y0" ocx:GUIDRef="a33702cf-2e61-4e8e-742f-0b6f862b48a2" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="0.0" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR1" name="Y0.615" ocx:GUIDRef="7677fb97-2ce9-1119-8982-d2e4bf9e8a0d" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="0.615" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR2" name="Y1.23" ocx:GUIDRef="81088f73-396d-6290-1ae3-5cb35deaa372" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="1.23" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR3" name="Y1.845" ocx:GUIDRef="34933c3e-d245-f8ec-c9c8-d5a5c5fd0402" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="1.845" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR4" name="Y2.46" ocx:GUIDRef="a6f8911a-1eca-7fff-8463-d9af358bf7ba" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="2.46" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR5" name="Y3.075" ocx:GUIDRef="f41e2235-c86e-6ed7-5a2c-4470d66c9b0d" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="3.075" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR6" name="Y3.69" ocx:GUIDRef="e0aa6831-b489-3f34-f282-fb7ad645f31a" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="3.69" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR7" name="Y4.305" ocx:GUIDRef="60c5d1a9-02e4-35bf-1793-7bd3d47bf7f1" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="4.305" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR8" name="Y4.92" ocx:GUIDRef="2a6ee0bd-baa4-7bfb-ad79-a69dca216c09" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="4.92" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR9" name="Y5.535" ocx:GUIDRef="dbfc0957-c1f2-45b2-ec0b-6a47981e1e8e" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="5.535" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR10" name="Y6.15" ocx:GUIDRef="ac53ce08-ddf2-1dc5-70b3-ba0a5d6ccc7b" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="6.15" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR11" name="Y6.765" ocx:GUIDRef="2613f44d-e084-96e3-6d15-a84f0af87465" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="6.765" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR12" name="Y7.38" ocx:GUIDRef="ab990e1c-b022-1896-6e6d-f3173c940c6c" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="7.38" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR13" name="Y7.995" ocx:GUIDRef="5ef15da4-bd57-1e6d-e818-83241b097bf5" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="7.995" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR14" name="Y8.61" ocx:GUIDRef="5015186c-e7e0-9b7a-7495-d86bcfc680f5" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="8.61" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR15" name="Y9.225" ocx:GUIDRef="fce1eb5c-2bf3-9ef6-bcb3-ca5b4b15cbed" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="9.225" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR16" name="Y9.84" ocx:GUIDRef="05cbf352-fc65-ef4e-b73e-c564ec57c540" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="9.84" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR17" name="Y10.455" ocx:GUIDRef="c4b82da2-ac2c-b681-ef1f-ad5d1dc5c3ed" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="10.455" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR18" name="Y11.07" ocx:GUIDRef="1e535eca-a3ab-a378-4373-684a84507dc4" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="11.07" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR19" name="Y11.685" ocx:GUIDRef="30f5b5b6-8af6-a1a0-4e1c-e30d2e3084e7" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="11.685" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR20" name="Y12.3" ocx:GUIDRef="448ae243-c59e-4bee-b322-8fa21e301031" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="12.3" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR21" name="Y12.915" ocx:GUIDRef="cca64355-7d37-202c-74ad-03189ef5eeca" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="12.915" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="LR22" name="Y13.53" ocx:GUIDRef="6d820436-df8d-4611-dd0f-1a57e5f7b423" displayGrid="true">
+        <ocx:ReferenceLocation numericvalue="13.53" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="BL3" name="Y-19.45" ocx:GUIDRef="44d4424e-6c7a-cd83-4db6-66153068440d" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-19.45" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="BL4" name="Y19.45" ocx:GUIDRef="669fe799-2727-e5dc-7632-c6886c1215f5" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="19.45" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid9179" name="Y0.7" ocx:GUIDRef="a89a343c-4670-9ffc-f4b7-4f5b985c8b3f" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="0.7" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid9214" name="Y-9.553" ocx:GUIDRef="1d6df86d-cb4b-1b89-edf5-bb205da9b98c" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-9.553" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid9392" name="Y10.439" ocx:GUIDRef="71816f17-ca8e-8774-0403-b7d69b427095" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="10.439" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid9650" name="Y2.48" ocx:GUIDRef="a31f4b06-017e-502c-3db1-54d1da66fbee" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="2.48" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid9653" name="Y-2.48" ocx:GUIDRef="4c1ff181-cd76-bf8f-788d-ebe7f1e6b603" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-2.48" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid9665" name="Y5.575" ocx:GUIDRef="2c31dad1-6207-2926-e060-c189c499c729" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="5.575" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid9668" name="Y-5.575" ocx:GUIDRef="d8c5f954-7ae2-7e43-151e-a5d2df6497de" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-5.575" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid9671" name="Y-2.281" ocx:GUIDRef="e466e743-6dc6-47c9-eb54-46037d3101b1" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-2.281" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid9672" name="Y-4.21" ocx:GUIDRef="c1ac2671-3a35-ccf2-66eb-d7cb058626e1" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-4.21" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid9675" name="Y4.21" ocx:GUIDRef="80119b46-d38e-0ad9-c02f-55fc312de629" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="4.21" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid9676" name="Y2.281" ocx:GUIDRef="50c167da-f827-75df-5b9c-7570c7bc31f5" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="2.281" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid10129" name="Y9.43" ocx:GUIDRef="f88668dc-1405-bacc-fc4c-b0b3324aa3df" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="9.43" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid10154" name="Y-9.43" ocx:GUIDRef="37b31936-3e2f-b9ce-52d8-03b060706305" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-9.43" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid10221" name="Y-2.248" ocx:GUIDRef="98a652ac-9e4a-b7ae-1c68-967473eba0e1" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-2.248" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid10253" name="Y2.248" ocx:GUIDRef="cd05a286-9742-b541-30ca-8e68380cad59" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="2.248" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid10260" name="Y-2.778" ocx:GUIDRef="a3190f98-7e08-6691-b159-d7421232dda8" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-2.778" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid10291" name="Y2.778" ocx:GUIDRef="a53dc411-aafb-3aee-655f-46981efedb95" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="2.778" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid10302" name="Y2.777" ocx:GUIDRef="7263595d-6b11-0229-c679-6f620d346c80" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="2.777" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid10667" name="Y10.686" ocx:GUIDRef="49b76f68-6341-4761-acc0-cc8ca471d0bf" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="10.686" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid10679" name="Y-10.686" ocx:GUIDRef="ad59ddeb-5b26-c585-3f6c-71abbe33c4c8" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-10.686" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid10690" name="Y-9.534" ocx:GUIDRef="16392840-8a1b-8d2d-c1d1-76dbddc5ec7c" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-9.534" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid10709" name="Y-10.558" ocx:GUIDRef="c19105d9-bc8a-b03e-20d1-4865dd8d5367" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-10.558" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11080" name="Y3.814" ocx:GUIDRef="41c6c9de-5c27-b9db-89f7-0d9a9d543b05" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="3.814" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11097" name="Y4.275" ocx:GUIDRef="4c8061bd-81ca-d396-db56-a24413f53b91" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="4.275" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11112" name="Y4.65" ocx:GUIDRef="74d5c97e-6206-7817-ff4a-933863a528a9" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="4.65" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11127" name="Y5.025" ocx:GUIDRef="28e16698-f57c-4981-2039-e8c6aba20cc7" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="5.025" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11142" name="Y5.4" ocx:GUIDRef="7646e009-f464-17ea-209d-b99831d0317f" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="5.4" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11157" name="Y5.775" ocx:GUIDRef="0a187370-05e8-ecaa-7e52-c2ea9cfed513" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="5.775" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11202" name="Y-5.775" ocx:GUIDRef="88c74230-2aee-8d05-92f7-e375110dc1bc" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-5.775" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11217" name="Y-5.4" ocx:GUIDRef="6c6ba8b3-e625-34e3-449a-61576dd405ea" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-5.4" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11232" name="Y-5.025" ocx:GUIDRef="5a712ee5-c7c6-5b95-020a-667dd3d92515" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-5.025" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11247" name="Y-4.65" ocx:GUIDRef="9f1c21ac-c64e-1ca7-73e3-aef391afaaee" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-4.65" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11262" name="Y-4.275" ocx:GUIDRef="368bebdb-b447-a077-939f-d7f631102870" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-4.275" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11279" name="Y-3.814" ocx:GUIDRef="3e06d131-c37d-499f-dcfe-b8a004c0da24" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-3.814" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11475" name="Y8" ocx:GUIDRef="8baad2c8-37a9-f97e-dde4-c69be2c71756" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="8.0" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11496" name="Y8.58" ocx:GUIDRef="d8d14d13-0a42-5f78-ce51-5edee83d7037" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="8.58" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11513" name="Y-8.58" ocx:GUIDRef="6d099dce-c973-496f-73d0-426d50939ba3" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-8.58" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11520" name="Y-8" ocx:GUIDRef="5807bd31-9f5f-c67a-fbc5-e9fe4d516044" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-8.0" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11848" name="Y11.075" ocx:GUIDRef="435e351a-f6d1-ef74-2605-6a53dd451f0a" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="11.075" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11861" name="Y-11.075" ocx:GUIDRef="65d3e206-799f-77ce-17f2-01cf9577a354" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-11.075" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11936" name="Y-7.789" ocx:GUIDRef="0a6567e4-499e-1e7c-3bad-84e094aa9b99" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-7.789" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11939" name="Y-7.563" ocx:GUIDRef="0e305eb1-b329-59c8-4258-cebc15adbce9" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-7.563" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11942" name="Y-7.337" ocx:GUIDRef="31114b33-4001-a143-ee88-8893a0545a73" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-7.337" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11945" name="Y-7.111" ocx:GUIDRef="bef636a3-7bdc-ac90-e03d-b090ee337313" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-7.111" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11954" name="Y-6.52" ocx:GUIDRef="ee58222d-5c8b-9535-742f-87d11d132baf" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-6.52" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11969" name="Y-6.145" ocx:GUIDRef="eb6e5172-5793-af0d-144a-4e1252d8259c" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-6.145" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11984" name="Y-5.77" ocx:GUIDRef="b6a0eed1-4d41-ba8c-954e-d7395e48179a" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-5.77" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid11997" name="Y-5.02" ocx:GUIDRef="2f568949-30b7-4baf-fc07-6a9ccf1b7fd1" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-5.02" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12012" name="Y-4.645" ocx:GUIDRef="0463dc87-8382-3bde-ff2e-f02864439bab" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-4.645" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12029" name="Y-4.184" ocx:GUIDRef="c66aec5d-6bfc-1aaf-f825-7852b0c66406" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-4.184" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12048" name="Y-3.251" ocx:GUIDRef="991b4630-c465-e54e-51a4-a706a25fedb1" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-3.251" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12065" name="Y-2.784" ocx:GUIDRef="1da3ba2e-7523-59b1-8a61-fdbba70fbe1d" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-2.784" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12082" name="Y-2.317" ocx:GUIDRef="0fb0957e-58d7-dfc9-75f8-c66262f912c2" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-2.317" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12087" name="Y2.317" ocx:GUIDRef="a245efe0-12bf-d095-b590-9c03c410dafd" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="2.317" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12104" name="Y2.784" ocx:GUIDRef="590a9e0b-827a-81af-27b8-98f9518fb049" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="2.784" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12123" name="Y3.251" ocx:GUIDRef="8093fa9c-29c9-6704-9dc3-646c56be5fc7" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="3.251" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12144" name="Y4.184" ocx:GUIDRef="26e950e4-6568-ab40-d943-db760604bc47" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="4.184" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12161" name="Y4.645" ocx:GUIDRef="34781612-66de-868c-8275-0d453ab4bd35" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="4.645" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12176" name="Y5.02" ocx:GUIDRef="7f4806fa-d06b-1107-ec87-7c044b4dd4ca" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="5.02" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12189" name="Y5.77" ocx:GUIDRef="79f652ad-4bd9-de42-7b92-9a8f83c816e2" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="5.77" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12204" name="Y6.145" ocx:GUIDRef="fed87eb3-06d1-64a3-760b-eff687cfeef1" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="6.145" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12219" name="Y6.52" ocx:GUIDRef="b641844c-9adf-eab6-db95-8ddfb8fb7788" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="6.52" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12230" name="Y7.111" ocx:GUIDRef="be870a25-61e7-76db-eca8-5c92c8819b68" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="7.111" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12233" name="Y7.337" ocx:GUIDRef="050e528c-e24e-b9f9-bdab-594375b0ee1e" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="7.337" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12236" name="Y7.563" ocx:GUIDRef="4340a0d3-c4be-1a39-aca6-872ff9274c54" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="7.563" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12239" name="Y7.789" ocx:GUIDRef="010eb054-e49d-4ddc-48fd-82bb8747e859" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="7.789" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid12471" name="Y3.565" ocx:GUIDRef="16fbd152-de20-a877-b924-0e02820c281d" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="3.565" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid13192" name="Y8.115" ocx:GUIDRef="4b52551e-125d-29b1-fc2a-1c0ed5d79635" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="8.115" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid13208" name="Y-7.28" ocx:GUIDRef="474394d9-a487-86db-a57c-346084c7af7e" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-7.28" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid16035" name="Y11.993" ocx:GUIDRef="376bec2e-8781-51e8-351d-9fb6ed0d5790" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="11.993" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid16666" name="Y-10.055" ocx:GUIDRef="e10a27ec-e297-0931-b19a-298d39e360d9" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-10.055" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid17827" name="Y10.305" ocx:GUIDRef="7c449823-39d2-694a-1db3-68ed078fc94a" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="10.305" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid19242" name="Y13.2" ocx:GUIDRef="246d14d6-4911-1555-2988-ca5079aff6d9" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="13.2" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid19243" name="Y-13.2" ocx:GUIDRef="a34162c1-0b3c-fdb6-d714-60742338b8e2" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-13.2" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid20188" name="Y-1" ocx:GUIDRef="2d80c4e9-7b4f-f458-72f1-71f247753951" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-1.0" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid20193" name="Y-3.305" ocx:GUIDRef="c2c39e1f-67c6-eb37-0065-1c4fbd4584ba" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-3.305" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid20799" name="Y15.375" ocx:GUIDRef="fd8e88fe-8b10-a775-18a3-27a8887a181f" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="15.375" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid20810" name="Y-15.375" ocx:GUIDRef="951388a5-8ecb-9b73-47d6-3e9a702eb906" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-15.375" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid22866" name="Y-11.9" ocx:GUIDRef="08d13cec-1473-d81d-6a7a-d80bff2b59f5" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-11.9" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid23080" name="Y-11.722" ocx:GUIDRef="9985472d-c297-38d8-4ad7-c00c7c074aac" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="-11.722" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid23850" name="Y12.223" ocx:GUIDRef="c7e75e0b-99cb-57a6-08ef-49104dc45350" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="12.223" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid23851" name="Y12.103" ocx:GUIDRef="c0d643b9-cbdd-a211-cbbb-f7e80d109880" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="12.103" unit="Um"/>
+    </ocx:RefPlane>
+    <ocx:RefPlane id="nplcid24019" name="Y11.9" ocx:GUIDRef="ba72c589-ae63-6f64-6d52-18e9fa1edb19" displayGrid="false">
+        <ocx:ReferenceLocation numericvalue="11.9" unit="Um"/>
+    </ocx:RefPlane>
+</ocx:YRefPlanes>

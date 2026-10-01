@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:TraceLine xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd">
+    <ocx:CompositeCurve3D id="nplcid5349" ocx:GUIDRef="8bf0a7e4-2427-4ee0-a69e-646247541518" is2D="false">
+        <ocx:CurveLength numericvalue="49.59999" unit="Um"/>
+        <ocx:Line3D id="nplcid5350" ocx:GUIDRef="cd8a7c15-d08a-47a8-bb72-b1305c72d973" is2D="false">
+            <ocx:CurveLength numericvalue="49.59999" unit="Um"/>
+            <ocx:StartPoint coordinates="151.7 0.0 30.7" unit="Um"/>
+            <ocx:EndPoint coordinates="201.3 0.0 30.7" unit="Um"/>
+        </ocx:Line3D>
+    </ocx:CompositeCurve3D>
+</ocx:TraceLine>

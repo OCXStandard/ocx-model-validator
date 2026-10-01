@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:Hole2DContour xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" id="nplcid6216" name="O:20RX980XGD/FL73" ocx:GUIDRef="6aedd9ce-117b-4843-adea-03d3bd06619b">
+    <ocx:HoleRef localRef="nplcid49" ocx:GUIDRef="81e6c4c7-1be7-4f84-997a-6d00177d2b8e" name="E*600*800" ocx:refType="ocx:Hole2D"/>
+    <ocx:Transformation>
+        <ocx:Origin coordinates="156.5 -19.125 1.35004" unit="Um"/>
+        <ocx:PrimaryAxis direction="0.0 1.0 0.0"/>
+        <ocx:SecondaryAxis direction="0.0 0.0 1.0"/>
+    </ocx:Transformation>
+</ocx:Hole2DContour>

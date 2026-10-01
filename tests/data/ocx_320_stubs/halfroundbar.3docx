@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: TR5TC04A-NAST.3docx -->
+<ocx:HalfRoundBar xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd">
+    <ocx:Diameter numericvalue="0.075" unit="Um"/>
+</ocx:HalfRoundBar>

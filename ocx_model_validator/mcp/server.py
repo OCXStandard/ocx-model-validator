@@ -1,4 +1,4 @@
-"""FastMCP server exposing OCX model cross-section tools."""
+"""FastMCP server exposing OCX model tools."""
 from __future__ import annotations
 
 import json
@@ -9,16 +9,11 @@ from mcp.server.fastmcp import FastMCP
 
 from ocx_model_validator import writeback
 from ocx_model_validator.builders.factory import get_builder
+from ocx_model_validator.frame_table import build_frame_table, frame_table_block
 from ocx_model_validator.mcp import state
 from ocx_model_validator.model.ir.structural import IrVessel
 from ocx_model_validator.parsers.parser import OcxParser
-from ocx_model_validator.sections import (
-    build_compartments_block,
-    build_document,
-    build_frame_table,
-    frame_table_block,
-    save_document,
-)
+from ocx_model_validator.reporting.generators._compartment_data import build_compartments_block
 
 mcp = FastMCP("ocx-mcp")
 
@@ -86,7 +81,7 @@ def get_model_info() -> dict[str, Any]:
 
 @mcp.tool()
 def get_frame_table() -> dict[str, Any]:
-    """Retrieve Nauticus frame table with labels, positions and spacings in mm derived from X reference planes. Requires load_model."""
+    """Retrieve frame table with labels, positions and spacings in mm derived from X reference planes. Requires load_model."""
     try:
         vessel = _require_model()
         frame_table, warnings = _frame_table_dict(vessel)
@@ -107,49 +102,14 @@ def get_compartments() -> dict[str, Any]:
 
 
 @mcp.tool()
-def build_cross_section(
-    x_mm: float | None = None,
-    frame: str | None = None,
-) -> dict[str, Any]:
-    """Build cross-section JSON document at a transverse plane; provide exactly one of x_mm (mm) or frame (frame label string). Requires load_model."""
-    try:
-        vessel = _require_model()
-        if state.source_file is None:
-            raise RuntimeError("No source file recorded; call load_model first")
-        doc = build_document(vessel, state.source_file, x_mm=x_mm, frame=frame)
-        return {"ok": True, "document": doc}
-    except Exception as exc:
-        return {"ok": False, "error": str(exc)}
-
-
-@mcp.tool()
-def save_cross_section(
-    path: str,
-    x_mm: float | None = None,
-    frame: str | None = None,
-) -> dict[str, Any]:
-    """Build and save the cross-section document to a JSON file path; provide exactly one of x_mm (mm) or frame (frame label string). Requires load_model."""
-    try:
-        vessel = _require_model()
-        if state.source_file is None:
-            raise RuntimeError("No source file recorded; call load_model first")
-        doc = build_document(vessel, state.source_file, x_mm=x_mm, frame=frame)
-        save_document(doc, path)
-        return {"ok": True, "path": path}
-    except Exception as exc:
-        return {"ok": False, "error": str(exc)}
-
-
-@mcp.tool()
 def apply_scantlings(model_path: str, report_path: str,
                      output_path: str) -> dict[str, Any]:
-    """Apply an nh-optimisation/1 report (from the nauticushull-mcp
-    optimise_cross_section tool) to an OCX .3docx model. Patches plate
-    thicknesses (max over each plate's EPP strips) and repoints stiffener
-    SectionRefs to new BarSections with the optimised dimensions. Writes
-    the patched model to output_path (must differ from model_path); never
-    modifies the input. Returns counts of updated items and any unmatched
-    report rows."""
+    """Apply an nh-optimisation/1 scantling report to an OCX .3docx model.
+    Patches plate thicknesses (max over each plate's EPP strips) and
+    repoints stiffener SectionRefs to new BarSections with the optimised
+    dimensions. Writes the patched model to output_path (must differ from
+    model_path); never modifies the input. Returns counts of updated items
+    and any unmatched report rows."""
     try:
         report = json.loads(
             Path(report_path).read_text(encoding="utf-8"))

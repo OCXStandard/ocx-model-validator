@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<ocx:Stiffener xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid156" name="S:YSDHAMF03S/TTOP" ocx:GUIDRef="46691cc3-97c8-3d48-8a40-af47c6c6c404" ocx:orientationRule="Normal">
+    <ocx:MassProperties>
+        <ocx:MouldedDryWeight numericvalue="128.041" unit="UKg"/>
+        <ocx:MouldedCenterOfGravity coordinates="48.87275 2.45356 2.16016" unit="Um"/>
+    </ocx:MassProperties>
+    <ocx:TraceLine>
+        <ocx:CompositeCurve3D id="nplcid9496" ocx:GUIDRef="85b6018d-a517-4230-9704-f47c0757aa9f" is2D="false">
+            <ocx:CurveLength numericvalue="11.19362" unit="Um"/>
+            <ocx:NURBS3D id="nplcid9497" ocx:GUIDRef="59880a79-226c-4844-9cf3-a8b1fe1b6f42" is2D="false">
+                <ocx:CurveLength numericvalue="11.19362" unit="Um"/>
+                <ocx:NURBSproperties degree="3" numCtrlPts="10" numKnots="14" form="Open" isRational="false"/>
+                <ocx:KnotVector value="0.0 0.0 0.0 0.0 1.0 1.0 1.0 2.0 2.0 2.0 3.0 3.0 3.0 3.0"/>
+                <ocx:ControlPtList>
+                    <ocx:ControlPoint coordinates="43.285 2.46 2.5" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="44.08 2.46 2.5" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="44.875 2.46 2.5" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="45.67 2.46 2.5" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="47.905 2.46 2.33333" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="50.14 2.46 2.16667" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="52.375 2.46 2.0" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="53.07 2.46 2.0" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="53.765 2.46 2.0" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="54.46 2.46 2.0" unit="Um" weight="1.0"/>
+                </ocx:ControlPtList>
+            </ocx:NURBS3D>
+        </ocx:CompositeCurve3D>
+    </ocx:TraceLine>
+    <ocx:MaterialRef localRef="nplcid4" ocx:GUIDRef="e226cb64-b098-4f97-a043-c0a676cccf66" ocx:refType="ocx:Material"/>
+    <ocx:SectionRef localRef="nplcid6" ocx:GUIDRef="e3a0ec73-41b1-07a9-51d3-d127e723dec0" ocx:refType="ocx:BarSection">
+        <ocx:OffsetU numericvalue="0.0" unit="Um"/>
+        <ocx:OffsetV numericvalue="0.0" unit="Um"/>
+    </ocx:SectionRef>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 0.0 -1.0"/>
+        <ocx:FlangeDirection direction="0.0 -1.0 0.0"/>
+        <ocx:Position coordinates="43.285 2.46 2.5" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="-0.07436 0.0 -0.99723"/>
+        <ocx:FlangeDirection direction="0.0 -1.0 0.0"/>
+        <ocx:Position coordinates="48.87292 2.46 2.26115" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 0.0 -1.0"/>
+        <ocx:FlangeDirection direction="0.0 -1.0 0.0"/>
+        <ocx:Position coordinates="54.46 2.46 2.0" unit="Um"/>
+    </ocx:Inclination>
+</ocx:Stiffener>

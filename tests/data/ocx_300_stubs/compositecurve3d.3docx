@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:CompositeCurve3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" id="nplcid67" ocx:GUIDRef="e789bf89-23ab-41e2-9bd8-0b24710e02f8" is2D="false">
+    <ocx:CurveLength numericvalue="103.54478" unit="Um"/>
+    <ocx:NURBS3D id="nplcid68" ocx:GUIDRef="7524b105-e16f-489e-878a-fb00fcd280ef" is2D="false">
+        <ocx:CurveLength numericvalue="103.54478" unit="Um"/>
+        <ocx:NURBSproperties degree="1" numCtrlPts="5" numKnots="7" form="Unknown" isRational="false"/>
+        <ocx:KnotVector value="0.0 0.0 28.0 51.8 79.8 103.6 103.6"/>
+        <ocx:ControlPtList>
+            <ocx:ControlPoint coordinates="150.9 -11.9 30.7" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="150.9 -11.9 2.7" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="150.9 11.9 2.7" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="150.9 11.9 30.7" unit="Um" weight="1.0"/>
+            <ocx:ControlPoint coordinates="150.9 -11.9 30.7" unit="Um" weight="1.0"/>
+        </ocx:ControlPtList>
+    </ocx:NURBS3D>
+</ocx:CompositeCurve3D>

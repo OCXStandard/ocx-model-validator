@@ -20,7 +20,7 @@ REPORT_SCHEMA = "nh-optimisation/1"
 # metres per unit for OCX quantity attributes
 _UNIT_TO_M = {"Um": 1.0, "Umm": 0.001, "Ucm": 0.01}
 
-# nauticushull profile type -> (OCX bar child tag, dimension child tags)
+# report profile type -> (OCX bar child tag, dimension child tags)
 _PROFILE_TAGS = {
     "AngleBar": ("LBar", ("Height", "Width", "WebThickness",
                           "FlangeThickness")),

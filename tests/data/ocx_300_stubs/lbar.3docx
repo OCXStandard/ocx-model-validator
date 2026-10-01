@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:LBar xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd">
+    <ocx:Height numericvalue="0.45" unit="Um"/>
+    <ocx:Width numericvalue="0.15" unit="Um"/>
+    <ocx:WebThickness numericvalue="0.011" unit="Um"/>
+    <ocx:FlangeThickness numericvalue="0.014" unit="Um"/>
+</ocx:LBar>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:Stiffener xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" id="nplcid276" name="S:AGQGGJTMEZ/DECK" ocx:GUIDRef="2093460e-7d8b-4919-9fbb-3a370e73224b">
+    <ocx:PhysicalProperties>
+        <ocx:DryWeight numericvalue="2685.026" unit="UKg"/>
+        <ocx:CenterOfGravity coordinates="176.5 -0.02666 30.41348" unit="Um"/>
+    </ocx:PhysicalProperties>
+    <ocx:TraceLine>
+        <ocx:CompositeCurve3D id="nplcid5349" ocx:GUIDRef="8bf0a7e4-2427-4ee0-a69e-646247541518" is2D="false">
+            <ocx:CurveLength numericvalue="49.59999" unit="Um"/>
+            <ocx:Line3D id="nplcid5350" ocx:GUIDRef="cd8a7c15-d08a-47a8-bb72-b1305c72d973" is2D="false">
+                <ocx:CurveLength numericvalue="49.59999" unit="Um"/>
+                <ocx:StartPoint coordinates="151.7 0.0 30.7" unit="Um"/>
+                <ocx:EndPoint coordinates="201.3 0.0 30.7" unit="Um"/>
+            </ocx:Line3D>
+        </ocx:CompositeCurve3D>
+    </ocx:TraceLine>
+    <ocx:MaterialRef localRef="nplcid7" ocx:GUIDRef="d2e24f24-14b3-485f-8384-1c9509656dd4" name="HT32" ocx:refType="ocx:Material"/>
+    <ocx:SectionRef localRef="nplcid9" ocx:GUIDRef="450X11 + 150X14 L2" name="450X11 + 150X14 L2" ocx:refType="ocx:BarSection">
+        <ocx:OffsetU numericvalue="0.0" unit="Um"/>
+        <ocx:OffsetV numericvalue="0.0" unit="Um"/>
+    </ocx:SectionRef>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 0.0 -1.0"/>
+        <ocx:FlangeDirection direction="0.0 -1.0 0.0"/>
+        <ocx:Position coordinates="176.5 0.0 30.7" unit="Um"/>
+    </ocx:Inclination>
+</ocx:Stiffener>

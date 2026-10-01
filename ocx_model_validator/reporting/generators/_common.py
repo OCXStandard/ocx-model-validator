@@ -12,7 +12,7 @@ from ocx_model_validator.exeptions import GeometryError
 from ocx_model_validator.model.ir.base import IrUnit, Quantity
 from ocx_model_validator.model.ir.structural import IrVessel
 from ocx_model_validator.reporting.model import Cell
-from ocx_model_validator.sections.units import to_si
+from ocx_model_validator.model.units import to_si
 
 
 def _safe_convert(

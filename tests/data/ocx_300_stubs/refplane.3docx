@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:RefPlane xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" id="FR0" name="X0" ocx:GUIDRef="4ec1c178-6b4d-4fc0-868d-09f94b9c6a48">
+    <ocx:ReferenceLocation numericvalue="0.0" unit="Um"/>
+</ocx:RefPlane>

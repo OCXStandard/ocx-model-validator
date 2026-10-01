@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:LiquidCargo xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" ocx:liquidCargoType="crude oil">
+    <ocx:Density numericvalue="970.0" unit="UKgOverm3"/>
+    <ocx:CarriagePressure numericvalue="0.0" unit="UNOverm2"/>
+</ocx:LiquidCargo>

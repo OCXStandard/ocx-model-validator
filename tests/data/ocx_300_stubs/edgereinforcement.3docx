@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: D-VLCC_1-HOLD-OCX-simple_v3.3docx -->
+<ocx:EdgeReinforcement xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V300//OCX_Schema.xsd" id="nplcid1335" name="S:2U2O4MEUFR/HGIRDER_4_P" ocx:GUIDRef="d87be832-f61b-4dc8-a4ff-8baa6877e892">
+    <ocx:PhysicalProperties>
+        <ocx:DryWeight numericvalue="28.456" unit="UKg"/>
+        <ocx:CenterOfGravity coordinates="200.49375 10.625 9.5" unit="Um"/>
+    </ocx:PhysicalProperties>
+    <ocx:SectionRef localRef="nplcid25" ocx:GUIDRef="200X12.5 FB" name="200X12.5 FB" ocx:refType="ocx:BarSection">
+        <ocx:OffsetU numericvalue="0.0" unit="Um"/>
+        <ocx:OffsetV numericvalue="-0.02" unit="Um"/>
+    </ocx:SectionRef>
+    <ocx:MaterialRef localRef="nplcid7" ocx:GUIDRef="d2e24f24-14b3-485f-8384-1c9509656dd4" name="HT32" ocx:refType="ocx:Material"/>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 0.0 1.0"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="200.5 10.625 9.42" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:EdgeCurveRef localRef="nplcid7738" ocx:GUIDRef="f20291aa-83fa-4e5c-8227-b09dcb66e785" name="S:2U2O4MEUFR/HGIRDER_4_P2305825689123691201_2" ocx:refType="ocx:FreeEdgeCurve3D"/>
+    <ocx:TraceLine>
+        <ocx:CompositeCurve3D id="nplcid7741" ocx:GUIDRef="0c60117f-6c3b-4c70-bf62-7c08db582ade" is2D="false">
+            <ocx:CurveLength numericvalue="1.45" unit="Um"/>
+            <ocx:Line3D id="nplcid7742" ocx:GUIDRef="b61d0889-b9c6-4e75-a8e8-dfb07f3f4de1" is2D="false">
+                <ocx:CurveLength numericvalue="1.45" unit="Um"/>
+                <ocx:StartPoint coordinates="200.5 9.9 9.42" unit="Um"/>
+                <ocx:EndPoint coordinates="200.5 11.35 9.42" unit="Um"/>
+            </ocx:Line3D>
+        </ocx:CompositeCurve3D>
+    </ocx:TraceLine>
+</ocx:EdgeReinforcement>
