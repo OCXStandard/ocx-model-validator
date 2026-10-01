@@ -31,7 +31,19 @@ packages = ["ocx_model_validator"]
 dev = [
     "pytest>=9.0",
     "pytest-cov>=7.0",
+    "pre-commit>=4.0",
+    "pdoc>=15.0",
 ]
+
+[tool.ruff]
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "I"]
+
+[tool.ruff.lint.per-file-ignores]
+# one-line OCX stub classes are intentional in this test module
+"tests/test_builder_extensions.py" = ["E701"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

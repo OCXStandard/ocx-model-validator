@@ -1,13 +1,11 @@
 """OCX Parser module."""
-from typing import TypeVar
-
 import re
 from abc import ABC
 from pathlib import Path
+from typing import TypeVar
+
 import lxml
-from .base_parser import IParser
-from .dynamic_loader import DynamicLoader,DeclarationOfOcxImport
-from ..exeptions import SourceError, XmlParserError
+
 # 3rd party imports
 import lxml.etree
 from loguru import logger
@@ -16,6 +14,10 @@ from xsdata.formats.dataclass.context import XmlContext, XmlContextError
 from xsdata.formats.dataclass.parsers import XmlParser
 from xsdata.formats.dataclass.parsers.config import ParserConfig
 from xsdata.formats.dataclass.parsers.handlers import LxmlEventHandler
+
+from ..exeptions import SourceError, XmlParserError
+from .base_parser import IParser
+from .dynamic_loader import DeclarationOfOcxImport, DynamicLoader
 
 T = TypeVar("T")
 
@@ -113,8 +115,8 @@ class OcxParser(IParser, ABC):
             The OCX dataclass instance of the parsed OCX XML string.
         """
         try:
-            # Load target schema version module
-            ocx_module = DynamicLoader.import_module(declaration)
+            # Load target schema version module (side effect: registers bindings)
+            DynamicLoader.import_module(declaration)
             ocx_parser = XmlParser(
                 handler=LxmlEventHandler,
                 config=self._parser_config,
@@ -125,7 +127,6 @@ class OcxParser(IParser, ABC):
             match = re.search(pattern, xml_str)
             entity_name = match.group(1) if match else None
             if entity_name is not None:
-                clazz = DynamicLoader.import_class(module_declaration=declaration, class_name=entity_name)
                 ocx_class = DynamicLoader.import_class(module_declaration=declaration, class_name=entity_name)
                 return ocx_parser.from_string(xml_str, ocx_class)
             else:

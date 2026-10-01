@@ -5,7 +5,6 @@ from ocx_model_validator.model.ir.base import IrCog, ParentKind, ParentRef, Quan
 from ocx_model_validator.model.ir.catalogues import IrMaterial
 from ocx_model_validator.model.ir.geometry import (
     IrCoordinateSystem,
-    IrCurve3D,
     IrLine3D,
     IrPoint3D,
     IrPolyLine3D,

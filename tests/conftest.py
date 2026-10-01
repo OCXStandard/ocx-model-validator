@@ -12,9 +12,9 @@ from pathlib import Path
 
 import pytest
 
-from ocx_model_validator.parsers.dynamic_loader import DeclarationOfOcxImport
 from ocx_model_validator.builders.factory import get_builder
 from ocx_model_validator.model.ir import IrVessel
+from ocx_model_validator.parsers.dynamic_loader import DeclarationOfOcxImport
 from ocx_model_validator.parsers.parser import OcxParser
 from tests.stubs import version_from_folder
 

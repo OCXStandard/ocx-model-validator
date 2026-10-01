@@ -61,8 +61,9 @@ def test_pipeline_with_synthetic_model(monkeypatch):
 
 def test_apply_scantlings_ok(tmp_path):
     # reuse the writeback test fixture model
-    from tests.test_writeback import make_model, make_report, plate_row
     import json
+
+    from tests.test_writeback import make_model, make_report, plate_row
 
     model = make_model(tmp_path)
     report_path = tmp_path / "report.json"

@@ -2,10 +2,10 @@
 from __future__ import annotations
 
 from ocx_model_validator.exeptions import GeometryError, SectionError
+from ocx_model_validator.frame_table import build_frame_table
 from ocx_model_validator.model.ir.structural import IrVessel
 from ocx_model_validator.reporting.generators._common import report_metadata
 from ocx_model_validator.reporting.model import Report, ReportSection, ReportTable
-from ocx_model_validator.frame_table import build_frame_table
 
 _TITLE = "Frame table report"
 

@@ -1,9 +1,10 @@
 """Serializer module"""
-from .base_parser import ISerializer, T
-from .dynamic_loader import MetaData
 from xsdata.formats.dataclass.context import XmlContext
 from xsdata.formats.dataclass.serializers import JsonSerializer, XmlSerializer
 from xsdata.formats.dataclass.serializers.config import SerializerConfig
+
+from .base_parser import ISerializer, T
+from .dynamic_loader import MetaData
 
 
 class Serializer(ISerializer):

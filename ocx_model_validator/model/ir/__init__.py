@@ -16,6 +16,17 @@ Design decisions:
 """
 from __future__ import annotations
 
+from ocx_model_validator.model.ir.arrangement import (
+    IrBulkCargo,
+    IrCompartment,
+    IrDesignView,
+    IrGaseousCargo,
+    IrLiquidCargo,
+    IrOccurrence,
+    IrOccurrenceGroup,
+    IrPhysicalSpace,
+    IrUnitCargo,
+)
 from ocx_model_validator.model.ir.base import (
     IrCog,
     IrUnit,
@@ -29,26 +40,9 @@ from ocx_model_validator.model.ir.catalogues import (
     IrHoleShapeCatalogue,
     IrMaterial,
 )
-from ocx_model_validator.model.ir.sections import (
-    IrAngleSection,
-    IrBulbFlatSection,
-    IrFlatBarSection,
-    IrGenericSection,
-    IrHalfRoundSection,
-    IrHexagonSection,
-    IrISection,
-    IrLSection,
-    IrLSectionOvershootFlange,
-    IrLSectionOvershootWeb,
-    IrOctagonSection,
-    IrRectangularTubeSection,
-    IrRoundSection,
-    IrSection,
-    IrSquareSection,
-    IrTSection,
-    IrTubeSection,
-    IrUSection,
-    IrZSection,
+from ocx_model_validator.model.ir.connections import (
+    IrConnectionConfiguration,
+    IrPenetration,
 )
 from ocx_model_validator.model.ir.geometry import (
     IrCircle3D,
@@ -73,21 +67,6 @@ from ocx_model_validator.model.ir.geometry import (
     IrSurfaceCollection,
     IrVector3D,
 )
-from ocx_model_validator.model.ir.connections import (
-    IrConnectionConfiguration,
-    IrPenetration,
-)
-from ocx_model_validator.model.ir.arrangement import (
-    IrBulkCargo,
-    IrCompartment,
-    IrDesignView,
-    IrGaseousCargo,
-    IrLiquidCargo,
-    IrOccurrence,
-    IrOccurrenceGroup,
-    IrPhysicalSpace,
-    IrUnitCargo,
-)
 from ocx_model_validator.model.ir.metadata import (
     IrBuilderInformation,
     IrHeader,
@@ -95,6 +74,27 @@ from ocx_model_validator.model.ir.metadata import (
     IrShipDesignation,
     IrStatutoryData,
     IrTonnageData,
+)
+from ocx_model_validator.model.ir.sections import (
+    IrAngleSection,
+    IrBulbFlatSection,
+    IrFlatBarSection,
+    IrGenericSection,
+    IrHalfRoundSection,
+    IrHexagonSection,
+    IrISection,
+    IrLSection,
+    IrLSectionOvershootFlange,
+    IrLSectionOvershootWeb,
+    IrOctagonSection,
+    IrRectangularTubeSection,
+    IrRoundSection,
+    IrSection,
+    IrSquareSection,
+    IrTSection,
+    IrTubeSection,
+    IrUSection,
+    IrZSection,
 )
 from ocx_model_validator.model.ir.structural import (
     IrBracket,

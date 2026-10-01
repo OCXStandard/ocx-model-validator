@@ -38,12 +38,10 @@ folders in tests/data/ocx_{version}_stubs.
 from __future__ import annotations
 
 import inspect
-import json
-import re
 from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List, Optional, Set, Tuple
+from typing import Dict, List, Optional, Tuple
 
 import lxml.etree as etree
 from loguru import logger
@@ -59,7 +57,6 @@ from ocx_model_validator.parsers.load_tools import (
     OcxVersion,
 )
 from ocx_model_validator.parsers.serializer import Serializer
-
 
 # ---------------------------------------------------------------------------
 # Configuration

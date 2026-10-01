@@ -17,77 +17,82 @@ from loguru import logger
 
 from ocx_model_validator.model.ir import (
     IrBracket,
-    IrBulbFlatSection,
-    IrCog,
-    IrCompartment,
-    IrEdgeReinforcement,
-    IrFlatBarSection,
-    IrGenericSection,
-    IrInclination,
-    IrLimitedByRef,
-    IrLSectionOvershootFlange,
-    IrLSectionOvershootWeb,
-    IrMaterial,
-    IrPanel,
-    IrPhysicalSpace,
-    IrPillar,
-    IrPlate,
-    IrSection,
-    IrTSection,
-    IrLSection,
-    IrStiffener,
-    IrRoundSection,
-    IrRectangularTubeSection,
-    IrTubeSection,
-    IrVessel,
-    ParentKind,
-    ParentRef,
-    Quantity,
-    Ref, IrOctagonSection, IrSquareSection, IrUSection, IrISection, IrZSection, IrHalfRoundSection, IrHexagonSection,
-)
-from ocx_model_validator.model.units import build_unit_registry
-from ocx_model_validator.model.ir import (
     IrBuilderInformation,
+    IrBulbFlatSection,
     IrBulkCargo,
     IrCircle3D,
     IrCircumArc3D,
+    IrCog,
+    IrCompartment,
     IrCompositeCurve3D,
     IrCone3D,
     IrCoordinateSystem,
     IrCylinder3D,
     IrDesignView,
+    IrEdgeReinforcement,
     IrEllipse3D,
     IrEndCut,
     IrExtrudedSurface,
     IrFeatureCope,
+    IrFlatBarSection,
     IrGaseousCargo,
+    IrGenericSection,
+    IrHalfRoundSection,
     IrHeader,
+    IrHexagonSection,
     IrHole2D,
     IrHoleShapeCatalogue,
+    IrInclination,
+    IrISection,
+    IrLimitedByRef,
     IrLine3D,
     IrLiquidCargo,
+    IrLSection,
+    IrLSectionOvershootFlange,
+    IrLSectionOvershootWeb,
+    IrMaterial,
     IrNurbs3D,
     IrNurbsSurface,
     IrOccurrence,
     IrOccurrenceGroup,
+    IrOctagonSection,
+    IrPanel,
+    IrPhysicalSpace,
+    IrPillar,
     IrPlane3D,
+    IrPlate,
     IrPoint3D,
     IrPolyLine3D,
     IrPrincipalParticulars,
+    IrRectangularTubeSection,
     IrRefPlane,
+    IrRoundSection,
     IrSeam,
+    IrSection,
     IrShipDesignation,
     IrSphere3D,
+    IrSquareSection,
     IrStatutoryData,
+    IrStiffener,
     IrSurface,
     IrSurfaceCollection,
     IrTonnageData,
+    IrTSection,
+    IrTubeSection,
     IrUnitCargo,
+    IrUSection,
     IrVector3D,
+    IrVessel,
+    IrZSection,
+    ParentKind,
+    ParentRef,
+    Quantity,
+    Ref,
 )
 from ocx_model_validator.model.ir.geometry import IrUnboundedGeometry
-from .base import IOcxBuilder, MetaData
+from ocx_model_validator.model.units import build_unit_registry
 
+from .base import IOcxBuilder, MetaData
 
 # ---------------------------------------------------------------------------
 # Mapping from lowercased class-name substring → normalised stype string.
@@ -1310,17 +1315,6 @@ class OcxV3Builder(IOcxBuilder):
 
     def _check_integrity(self, ir: IrVessel) -> None:
         """Detect dangling references and report them on the IrVessel."""
-        all_ids: set[str] = (
-            set(ir.panels)
-            | set(ir.plates)
-            | set(ir.brackets)
-            | set(ir.stiffeners)
-            | set(ir.pillars)
-            | set(ir.materials)
-            | set(ir.sections)
-            | set(ir.compartments)
-        )
-
         dangling: list[str] = []
 
         # Check panel adjacency refs

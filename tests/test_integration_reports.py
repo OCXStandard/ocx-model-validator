@@ -29,6 +29,6 @@ def test_bom_report_on_reference_model(tmp_path: Path):
     assert "### Summary" in text
     assert "### Items" in text
     assert "**Grand total**" in text
-    total_line = next(l for l in text.splitlines() if "Grand total" in l)
+    total_line = next(ln for ln in text.splitlines() if "Grand total" in ln)
     weight = float(total_line.split("|")[5].strip().strip("*"))
     assert weight > 0

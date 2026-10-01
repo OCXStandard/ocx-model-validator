@@ -2,10 +2,10 @@
 import pytest
 
 from ocx_model_validator.exeptions import SectionError
+from ocx_model_validator.frame_table import build_frame_table
 from ocx_model_validator.model.ir.base import Quantity
 from ocx_model_validator.model.ir.geometry import IrCoordinateSystem, IrRefPlane
 from ocx_model_validator.model.ir.structural import IrVessel
-from ocx_model_validator.frame_table import FrameTable, build_frame_table
 
 
 def _vessel(planes, x_ids=None):

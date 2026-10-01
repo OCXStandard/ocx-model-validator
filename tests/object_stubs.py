@@ -27,10 +27,7 @@ Usage in tests::
 """
 from __future__ import annotations
 
-from dataclasses import dataclass, field
-
-import ocx
-from ocx.ocx_310 import ocx_310
+from dataclasses import dataclass
 
 # ---------------------------------------------------------------------------
 # Primitive stubs
