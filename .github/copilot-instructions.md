@@ -54,6 +54,7 @@ Two equivalent entrypoints are registered (`validator` and `ocx-validate`):
 validator report frame-table  model.3docx
 validator report compartments model.3docx
 validator report panels       model.3docx
+validator report plates       model.3docx
 validator report all          model.3docx --destination report.md
 validator report all          model.3docx --destination report.html
 

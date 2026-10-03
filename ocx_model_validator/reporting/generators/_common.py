@@ -48,6 +48,19 @@ def qty_m3_cell(qty, registry, notes, context) -> Cell:
     return _safe_convert(qty, registry, 1.0, 2, notes, context)
 
 
+def qty_m2_cell(qty, registry, notes, context) -> Cell:
+    """SI m² → m², 2 decimals."""
+    return _safe_convert(qty, registry, 1.0, 2, notes, context)
+
+
+def xyz_m_cells(x: float, y: float, z: float, unit: str, registry,
+                notes, context) -> list[Cell]:
+    """Three coordinate cells in metres, 3 decimals."""
+    return [_safe_convert(Quantity(v, unit), registry, 1.0, 3, notes,
+                          f"{context} {axis}")
+            for axis, v in (("x", x), ("y", y), ("z", z))]
+
+
 def qty_tonnes_cell(qty, registry, notes, context) -> Cell:
     """SI kg → tonnes, 3 decimals."""
     return _safe_convert(qty, registry, 1e-3, 3, notes, context)

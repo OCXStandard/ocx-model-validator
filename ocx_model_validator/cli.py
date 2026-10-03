@@ -6,6 +6,7 @@ Usage::
     validator report compartments MODEL.3docx ...
     validator report catalogues MODEL.3docx [--catalogue material|section|opening|all] ...
     validator report panels MODEL.3docx ...
+    validator report plates MODEL.3docx ...
     validator report bom MODEL.3docx ...
     validator report all MODEL.3docx ...
     validator generate-stubs [--force]
@@ -183,6 +184,19 @@ def panels_cmd(
     _emit(panels.build(vessel, source_file=str(model)), fmt, destination)
 
 
+@report_app.command("plates")
+def plates_cmd(
+    model: Path = _MODEL_ARG,
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """Plates: attributes, thicknesses, net area and opening counts."""
+    from ocx_model_validator.reporting.generators import plates
+
+    vessel = _load_vessel(model)
+    _emit(plates.build(vessel, source_file=str(model)), fmt, destination)
+
+
 @report_app.command("bom")
 def bom_cmd(
     model: Path = _MODEL_ARG,
@@ -210,6 +224,7 @@ def all_cmd(
         frame_table,
         model_extent,
         panels,
+        plates,
     )
 
     vessel = _load_vessel(model)
@@ -219,6 +234,7 @@ def all_cmd(
         frame_table.build(vessel, source_file=source),
         compartments.build(vessel, source_file=source),
         panels.build(vessel, source_file=source),
+        plates.build(vessel, source_file=source),
         catalogues.build(vessel, source_file=source),
         bom.build(vessel, source_file=source),
     ]

@@ -6,12 +6,11 @@ parts. Panel geometry is intentionally excluded.
 """
 from __future__ import annotations
 
-from ocx_model_validator.model.ir.base import Quantity
 from ocx_model_validator.model.ir.structural import IrPanel, IrVessel
 from ocx_model_validator.reporting.generators._common import (
-    _safe_convert,
     qty_tonnes_cell,
     report_metadata,
+    xyz_m_cells,
 )
 from ocx_model_validator.reporting.model import Cell, Report, ReportSection, ReportTable
 
@@ -28,12 +27,8 @@ def _cog_cells(panel: IrPanel, vessel: IrVessel,
     cog = (mp.moulded_cog or mp.physical_cog) if mp is not None else None
     if cog is None:
         return [None, None, None]
-    cells: list[Cell] = []
-    for axis in ("x", "y", "z"):
-        qty = Quantity(getattr(cog, axis), cog.unit)
-        cells.append(_safe_convert(qty, vessel.unit_registry, 1.0, 3, notes,
-                                   f"panel {panel.id} COG {axis}"))
-    return cells
+    return xyz_m_cells(cog.x, cog.y, cog.z, cog.unit, vessel.unit_registry,
+                       notes, f"panel {panel.id} COG")
 
 
 def build(vessel: IrVessel, source_file: str = "") -> Report:

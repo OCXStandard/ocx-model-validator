@@ -154,6 +154,7 @@ validator report compartments model.3docx
 validator report catalogues   model.3docx --catalogue material
 validator report bom          model.3docx
 validator report panels       model.3docx
+validator report plates       model.3docx
 validator report all          model.3docx --destination report.md
 
 # generate xsdata stubs from .3docx models in ./models/
