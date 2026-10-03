@@ -25,7 +25,7 @@ def _vessel() -> IrVessel:
     v.stiffeners["ST1"] = IrStiffener(
         id="ST1", parent_ref=ParentRef(kind=ParentKind.PANEL, id="PAN1"),
         name="Deck long", function_type="STIFFENER",
-        material_ref=Ref("M1"), section_ref=Ref("S1"),
+        material_ref=Ref("M1", offset=Quantity(5.0, "Umm")), section_ref=Ref("S1"),
         mass_properties=IrMassProperties(
             moulded_dry_weight=Quantity(250.0, "UKg")),
         trace=IrCurve3D(curve_length=Quantity(12.5, "Um")),
@@ -49,8 +49,8 @@ def test_stiffeners_report_shape():
     table = section.tables[0]
     assert table.columns == [
         "Id", "Name", "Parent Panel", "Function", "Material", "Profile",
-        "Length (m)", "Dry weight (t)", "Inclinations", "Penetrations",
-        "End cut 1", "End cut 2",
+        "Offset (mm)", "Length (m)", "Dry weight (t)", "Inclinations",
+        "Penetrations", "End cut 1", "End cut 2",
     ]
 
 
@@ -59,9 +59,9 @@ def test_stiffeners_rows_sorted_with_attributes_and_counts():
     table = report.sections[0].tables[0]
     assert table.rows == [
         ["ST2", "Bare stiffener", "Deck panel", "(DECK PART)", None, None,
-         None, None, 0, 0, None, None],
+         None, None, None, 0, 0, None, None],
         ["ST1", "Deck long", "Deck panel", "STIFFENER", "NV A36", "FB200x20",
-         12.5, 0.25, 2, 1, "EC-A", "sniped"],
+         5.0, 12.5, 0.25, 2, 1, "EC-A", "sniped"],
     ]
 
 

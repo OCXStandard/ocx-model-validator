@@ -1,8 +1,9 @@
 """Stiffener report generator.
 
 One row per stiffener: attributes (panel parent, function, material,
-profile), trace length, physical properties (moulded dry weight) and
-counts of inclinations and penetrations plus the end-cut connections.
+profile), material offset, trace length, physical properties (moulded
+dry weight) and counts of inclinations and penetrations plus the
+end-cut connections.
 Stiffener geometry is intentionally excluded.
 """
 from __future__ import annotations
@@ -12,6 +13,7 @@ from ocx_model_validator.model.ir.structural import IrEndCut, IrStiffener, IrVes
 from ocx_model_validator.reporting.generators._common import (
     inherited_function_cell,
     qty_m_cell,
+    qty_mm_cell,
     qty_tonnes_cell,
     report_metadata,
 )
@@ -19,8 +21,8 @@ from ocx_model_validator.reporting.model import Cell, Report, ReportSection, Rep
 
 _COLUMNS = [
     "Id", "Name", "Parent Panel", "Function", "Material", "Profile",
-    "Length (m)", "Dry weight (t)", "Inclinations", "Penetrations",
-    "End cut 1", "End cut 2",
+    "Offset (mm)", "Length (m)", "Dry weight (t)", "Inclinations",
+    "Penetrations", "End cut 1", "End cut 2",
 ]
 
 
@@ -59,10 +61,12 @@ def build(vessel: IrVessel, source_file: str = "") -> Report:
         ctx = f"stiffener {s.id}"
         mp = s.mass_properties
         length = s.trace.curve_length if s.trace is not None else None
+        offset = s.material_ref.offset if s.material_ref is not None else None
         rows.append([
             s.id, s.name, _panel_name(s, vessel),
             inherited_function_cell(s.function_type, s.parent_ref, vessel),
             _material_name(s, vessel), _profile_name(s, vessel),
+            qty_mm_cell(offset, reg, notes, f"{ctx} offset"),
             qty_m_cell(length, reg, notes, f"{ctx} length"),
             qty_tonnes_cell(mp.moulded_dry_weight if mp is not None else None,
                             reg, notes, f"{ctx} dry weight"),
