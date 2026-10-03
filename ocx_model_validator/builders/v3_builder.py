@@ -835,22 +835,60 @@ class OcxV3Builder(IOcxBuilder):
         mc = getattr(cc, "material_catalogue", None)
         if mc is None:
             return
-        for m in getattr(mc, "material", []):
-            mid = getattr(m, "id", None) or getattr(m, "guidref", None)
-            if not mid:
-                continue
-            ir_mat = IrMaterial(
+
+        def _common(m, mid: str, material_type: str | None) -> IrMaterial:
+            return IrMaterial(
                 id=mid,
                 name=getattr(m, "name", None),
                 guidref=getattr(m, "guidref", None),
-                grade=self._enum(getattr(m, "grade", None)),
+                material_type=material_type,
                 density=self._qty(getattr(m, "density", None)),
-                yield_stress=self._qty(getattr(m, "yield_stress", None)),
-                ultimate_stress=self._qty(getattr(m, "ultimate_stress", None)),
                 youngs_modulus=self._qty(getattr(m, "youngs_modulus", None)),
                 poisson_ratio=self._qty(getattr(m, "poisson_ratio", None)),
-                thermal_expansion=self._qty(getattr(m, "thermal_expansion", None)),
+                thermal_expansion=self._qty(
+                    getattr(m, "thermal_expansion", None)
+                    or getattr(m, "thermal_expansion_coefficient", None)
+                ),
             )
+
+        for m in getattr(mc, "steel", None) or []:
+            mid = getattr(m, "id", None) or getattr(m, "guidref", None)
+            if not mid:
+                continue
+            ir_mat = _common(m, mid, "steel")
+            ir_mat.grade = self._enum(getattr(m, "grade", None))
+            ir_mat.yield_stress = self._qty(getattr(m, "yield_stress", None))
+            ir_mat.ultimate_stress = self._qty(getattr(m, "ultimate_stress", None))
+            self._register(ir.materials, mid, ir_mat, ir.duplicate_ids)
+
+        for m in getattr(mc, "aluminium", None) or []:
+            mid = getattr(m, "id", None) or getattr(m, "guidref", None)
+            if not mid:
+                continue
+            ir_mat = _common(m, mid, "aluminium")
+            ir_mat.unwelded_yield_strength = self._qty(
+                getattr(m, "unwelded_yield_strength", None)
+            )
+            ir_mat.welded_yield_strength = self._qty(
+                getattr(m, "welded_yield_strength", None)
+            )
+            ir_mat.unwelded_tensile_strength = self._qty(
+                getattr(m, "unwelded_tensile_strength", None)
+            )
+            ir_mat.welded_tensile_strength = self._qty(
+                getattr(m, "welded_tensile_strength", None)
+            )
+            ir_mat.alloy_designation = getattr(m, "alloy_designation", None)
+            self._register(ir.materials, mid, ir_mat, ir.duplicate_ids)
+
+        for m in getattr(mc, "material", None) or []:
+            mid = getattr(m, "id", None) or getattr(m, "guidref", None)
+            if not mid:
+                continue
+            ir_mat = _common(m, mid, None)
+            ir_mat.grade = self._enum(getattr(m, "grade", None))
+            ir_mat.yield_stress = self._qty(getattr(m, "yield_stress", None))
+            ir_mat.ultimate_stress = self._qty(getattr(m, "ultimate_stress", None))
             self._register(ir.materials, mid, ir_mat, ir.duplicate_ids)
 
     # ------------------------------------------------------------------
