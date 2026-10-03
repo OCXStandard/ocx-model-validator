@@ -57,6 +57,12 @@ anchor (tolerated, never an error).
     `Link(group_name, f"section-{section_id}")` when the section ref resolves.
     Thickness groups (`t=...`) stay plain.
   - Subtotal and grand-total rows stay plain strings.
+  - BOM groups by *display name*, so link targets are resolved via
+    display-name → anchor maps. If two catalogue entries share a display
+    name, their parts collapse into one BOM group and the link points to one
+    representative catalogue row (first id wins). *(Correction recorded
+    during implementation: the original per-ref wording above is not
+    well-defined at group level.)*
 
 Anchor id convention: `material-<IR id>` / `section-<IR id>` — IR ids are the
 dict keys in `IrVessel.materials` / `IrVessel.sections`, so anchors are unique
