@@ -164,3 +164,8 @@ def test_group_toggle_script_present():
     out = HtmlRenderer().render(_grouped_report())
     assert "tr.group" in out
     assert "toggleAttribute('hidden')" in out
+
+
+def test_group_rows_styled_bold():
+    out = HtmlRenderer().render(_grouped_report())
+    assert "tr.group > td { font-weight: 600; }" in out

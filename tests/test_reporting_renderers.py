@@ -147,7 +147,7 @@ def _grouped_report() -> Report:
 def test_markdown_child_rows_follow_parent():
     out = MarkdownRenderer().render(_grouped_report())
     lines = [ln for ln in out.splitlines() if ln.startswith("|")]
-    assert lines[2] == "| G1 | 2 |"
+    assert lines[2] == "| **G1** | **2** |"  # group rows are bold
     assert lines[3] == "| item-a | N/A |"
     assert lines[4] == "| item-b | N/A |"
     assert lines[5] == "| Subtotal | 2 |"

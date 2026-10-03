@@ -42,6 +42,7 @@ th, td { border: 1px solid #d0d7de; padding: 0.3rem 0.6rem; text-align: left; }
 th { background: #f6f8fa; }
 tfoot td { font-weight: 700; }
 tr.group { cursor: pointer; }
+tr.group > td { font-weight: 600; }
 tr.group > td:first-child::before { content: "\\25B8\\00A0"; color: #57606a; }
 tr.group.open > td:first-child::before { content: "\\25BE\\00A0"; }
 tr.child td { background: #fafbfc; color: #57606a; }
