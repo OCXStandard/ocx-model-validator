@@ -1,7 +1,7 @@
 """Tests for report renderers."""
 import pytest
 
-from ocx_model_validator.reporting.model import Report, ReportSection, ReportTable
+from ocx_model_validator.reporting.model import Link, Report, ReportSection, ReportTable
 from ocx_model_validator.reporting.renderers import get_renderer
 from ocx_model_validator.reporting.renderers.markdown import MarkdownRenderer
 from ocx_model_validator.reporting.renderers.rich import RichRenderer
@@ -111,3 +111,24 @@ def test_rich_renderer_escapes_markup_in_titles_and_notes():
     )
     out = RichRenderer().render(report)  # must not raise MarkupError
     assert "weird" in out
+
+
+def _link_report() -> Report:
+    return Report(title="R", sections=[
+        ReportSection(title="S", tables=[
+            ReportTable("T", ["Material"],
+                        [[Link("NV A36", "material-M1")]])
+        ])
+    ])
+
+
+def test_markdown_link_renders_as_plain_text():
+    out = MarkdownRenderer().render(_link_report())
+    assert "| NV A36 |" in out
+    assert "material-M1" not in out
+
+
+def test_rich_link_renders_as_plain_text():
+    out = RichRenderer().render(_link_report())
+    assert "NV A36" in out
+    assert "material-M1" not in out

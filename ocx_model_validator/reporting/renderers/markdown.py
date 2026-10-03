@@ -1,7 +1,7 @@
 """Markdown renderer for Report objects."""
 from __future__ import annotations
 
-from ocx_model_validator.reporting.model import Cell, Report, ReportSection, ReportTable
+from ocx_model_validator.reporting.model import Cell, Link, Report, ReportSection, ReportTable
 
 _NA = "N/A"
 
@@ -11,6 +11,8 @@ def _escape(text: str) -> str:
 
 
 def _cell(c: Cell) -> str:
+    if isinstance(c, Link):
+        c = c.text
     return _NA if c is None else _escape(str(c))
 
 

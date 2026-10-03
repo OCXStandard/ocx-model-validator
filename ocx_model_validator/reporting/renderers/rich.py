@@ -5,12 +5,14 @@ from rich.console import Console
 from rich.markup import escape
 from rich.table import Table
 
-from ocx_model_validator.reporting.model import Cell, Report, ReportSection
+from ocx_model_validator.reporting.model import Cell, Link, Report, ReportSection
 
 _NA = "N/A"
 
 
 def _cell(c: Cell) -> str:
+    if isinstance(c, Link):
+        c = c.text
     return _NA if c is None else str(c)
 
 
