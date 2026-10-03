@@ -15,6 +15,7 @@ from ocx_model_validator.model.ir.arrangement import (
 )
 from ocx_model_validator.model.ir.base import (
     IrCog,
+    IrMassProperties,
     IrUnit,
     ParentRef,
     Quantity,
@@ -71,6 +72,7 @@ class IrPlate:
     thickness: Quantity | None = None
     dry_weight: Quantity | None = None
     cog: IrCog | None = None
+    mass_properties: IrMassProperties | None = None
     net_area: Quantity | None = None
     function_type: str | None = None
     outer_contour: IrCurve3D | None = None
@@ -87,6 +89,7 @@ class IrBracket:
     thickness: Quantity | None = None
     dry_weight: Quantity | None = None
     cog: IrCog | None = None
+    mass_properties: IrMassProperties | None = None
     arm_length_u: Quantity | None = None
     arm_length_v: Quantity | None = None
     has_edge_reinforcement: bool = False
@@ -104,6 +107,7 @@ class IrStiffener:
     section_ref: Ref | None = None
     dry_weight: Quantity | None = None
     cog: IrCog | None = None
+    mass_properties: IrMassProperties | None = None
     function_type: str | None = None
     end_cut_end1: IrEndCut | None = None
     end_cut_end2: IrEndCut | None = None
@@ -123,6 +127,7 @@ class IrPillar:
     section_ref: Ref | None = None
     dry_weight: Quantity | None = None
     cog: IrCog | None = None
+    mass_properties: IrMassProperties | None = None
     function_type: str | None = None
 
 
@@ -137,6 +142,7 @@ class IrEdgeReinforcement:
     section_ref: Ref | None = None
     dry_weight: Quantity | None = None
     cog: IrCog | None = None
+    mass_properties: IrMassProperties | None = None
     function_type: str | None = None
 
 
@@ -166,6 +172,7 @@ class IrMember:
     guidref: str | None = None
     dry_weight: Quantity | None = None
     cog: IrCog | None = None
+    mass_properties: IrMassProperties | None = None
     external_geometry_ref: Ref | None = None
 
 
@@ -257,6 +264,7 @@ class IrPanel:
     tightness: str | None = None
     dry_weight: Quantity | None = None
     cog: IrCog | None = None
+    mass_properties: IrMassProperties | None = None
     # Child part id references (into IrVessel dicts)
     plate_ids: list[str] = field(default_factory=list)
     bracket_ids: list[str] = field(default_factory=list)

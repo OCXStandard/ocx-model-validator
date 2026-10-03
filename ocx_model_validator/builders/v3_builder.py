@@ -50,6 +50,7 @@ from ocx_model_validator.model.ir import (
     IrLSection,
     IrLSectionOvershootFlange,
     IrLSectionOvershootWeb,
+    IrMassProperties,
     IrMaterial,
     IrNurbs3D,
     IrNurbsSurface,
@@ -294,11 +295,8 @@ class OcxV3Builder(IOcxBuilder):
         return mat_ref, thickness
 
     @staticmethod
-    def _cog(physical_properties) -> IrCog | None:
-        """Extract centre of gravity from a PhysicalPropertiesT."""
-        if physical_properties is None:
-            return None
-        cog_raw = getattr(physical_properties, "center_of_gravity", None)
+    def _cog_point(cog_raw) -> IrCog | None:
+        """Extract an IrCog from a CoG-style element (coordinates + unit)."""
         if cog_raw is None:
             return None
         coords = getattr(cog_raw, "coordinates", None)
@@ -314,6 +312,35 @@ class OcxV3Builder(IOcxBuilder):
             )
         except (TypeError, ValueError):
             return None
+
+    @staticmethod
+    def _cog(physical_properties) -> IrCog | None:
+        """Extract centre of gravity from a legacy PhysicalPropertiesT."""
+        if physical_properties is None:
+            return None
+        return OcxV3Builder._cog_point(
+            getattr(physical_properties, "center_of_gravity", None))
+
+    @classmethod
+    def _mass_properties(cls, raw) -> IrMassProperties | None:
+        """Extract IrMassProperties: 3.2.0 MassProperties first, legacy
+        3.0/3.1 PhysicalProperties fallback (mapped onto moulded fields)."""
+        mp = getattr(raw, "mass_properties", None)
+        if mp is not None:
+            return IrMassProperties(
+                moulded_dry_weight=cls._qty(getattr(mp, "moulded_dry_weight", None)),
+                physical_dry_weight=cls._qty(getattr(mp, "physical_dry_weight", None)),
+                moulded_cog=cls._cog_point(getattr(mp, "moulded_center_of_gravity", None)),
+                physical_cog=cls._cog_point(getattr(mp, "physical_center_of_gravity", None)),
+            )
+        pp = getattr(raw, "physical_properties", None)
+        if pp is None:
+            return None
+        dw = cls._qty(getattr(pp, "dry_weight", None))
+        cog = cls._cog(pp)
+        if dw is None and cog is None:
+            return None
+        return IrMassProperties(moulded_dry_weight=dw, moulded_cog=cog)
 
     @staticmethod
     def _register(ir_dict: dict, obj_id: str, obj, duplicates: list[str]) -> None:
@@ -1032,6 +1059,7 @@ class OcxV3Builder(IOcxBuilder):
             thickness=thickness,
             dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
             cog=self._cog(pp),
+            mass_properties=self._mass_properties(raw),
             net_area=self._qty(getattr(raw, "net_area", None)),
             function_type=self._enum(getattr(raw, "function_type", None)),
             outer_contour=self._build_contour(getattr(raw, "outer_contour", None)),
@@ -1054,6 +1082,7 @@ class OcxV3Builder(IOcxBuilder):
             thickness=thickness,
             dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
             cog=self._cog(pp),
+            mass_properties=self._mass_properties(raw),
             arm_length_u=self._qty(getattr(bp, "arm_length_u", None) if bp else None),
             arm_length_v=self._qty(getattr(bp, "arm_length_v", None) if bp else None),
             has_edge_reinforcement=bool(getattr(bp, "has_edge_reinforcement", False) if bp else False),
@@ -1074,6 +1103,7 @@ class OcxV3Builder(IOcxBuilder):
             section_ref=self._ref(getattr(raw, "section_ref", None)),
             dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
             cog=self._cog(pp),
+            mass_properties=self._mass_properties(raw),
             function_type=self._enum(getattr(raw, "function_type", None)),
             end_cut_end1=self._build_end_cut(getattr(raw, "end_cut_end1", None)),
             end_cut_end2=self._build_end_cut(getattr(raw, "end_cut_end2", None)),
@@ -1095,6 +1125,7 @@ class OcxV3Builder(IOcxBuilder):
             section_ref=self._ref(getattr(raw, "section_ref", None)),
             dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
             cog=self._cog(pp),
+            mass_properties=self._mass_properties(raw),
             function_type=self._enum(getattr(raw, "function_type", None)),
         )
 
@@ -1113,6 +1144,7 @@ class OcxV3Builder(IOcxBuilder):
             section_ref=self._ref(getattr(raw, "section_ref", None)),
             dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
             cog=self._cog(pp),
+            mass_properties=self._mass_properties(raw),
             function_type=self._enum(getattr(raw, "function_type", None)),
         )
 
@@ -1248,6 +1280,7 @@ class OcxV3Builder(IOcxBuilder):
             tightness=self._enum(getattr(raw, "tightness", None)),
             dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
             cog=self._cog(pp),
+            mass_properties=self._mass_properties(raw),
             plate_ids=plate_ids,
             bracket_ids=bracket_ids,
             stiffener_ids=stiffener_ids,
