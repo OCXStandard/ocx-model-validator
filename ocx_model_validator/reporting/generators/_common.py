@@ -1,8 +1,8 @@
 """Shared unit-conversion and formatting helpers for report generators.
 
 All helpers degrade gracefully: missing quantities become None (rendered as
-N/A) and unknown units become a raw ``"<value> <unit>"`` string plus a note —
-generators never raise on bad units.
+an empty cell) and unknown units become a raw ``"<value> <unit>"`` string
+plus a note — generators never raise on bad units.
 """
 from __future__ import annotations
 

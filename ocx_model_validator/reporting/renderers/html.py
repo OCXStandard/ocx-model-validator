@@ -18,7 +18,7 @@ from ocx_model_validator.reporting.model import (
     ReportTable,
 )
 
-_NA = "N/A"
+_NA = ""
 
 _CSS = """
 body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif;

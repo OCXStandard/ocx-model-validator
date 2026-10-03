@@ -93,9 +93,10 @@ def test_row_anchor_emitted_as_id():
     assert '<tr id="material-M1">' in out
 
 
-def test_none_renders_na_and_footer_in_tfoot():
+def test_none_renders_empty_cell_and_footer_in_tfoot():
     out = HtmlRenderer().render(_report())
-    assert "<td>N/A</td>" in out
+    assert "<td></td>" in out
+    assert "N/A" not in out
     assert "<tfoot>" in out
     assert "<td>Grand total</td>" in out
 

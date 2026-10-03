@@ -1,7 +1,8 @@
 """Neutral report data model consumed by renderers.
 
 Cells are plain scalars with units already resolved by the generators.
-Renderers never see IR objects or Quantity values. ``None`` renders as N/A.
+Renderers never see IR objects or Quantity values. ``None`` renders as an
+empty cell.
 ``Link`` cells are internal cross-references: ``target`` names a row anchor
 (see ``ReportTable.row_anchors``); renderers that cannot link render the text.
 """

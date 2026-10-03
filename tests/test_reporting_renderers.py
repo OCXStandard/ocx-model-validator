@@ -38,7 +38,7 @@ def test_markdown_full_document():
         "| Id | Weight (t) |\n"
         "|---|---|\n"
         "| P1 | 1.5 |\n"
-        "| P2 | N/A |\n"
+        "| P2 |  |\n"
         "| **Total** | **1.5** |\n"
         "\n"
         "> 1 item missing weight\n"
@@ -87,7 +87,7 @@ def test_rich_renderer_smoke():
     out = RichRenderer().render(_sample_report())
     assert "Test report" in out
     assert "P1" in out
-    assert "N/A" in out
+    assert "N/A" not in out
     assert "Total" in out
 
 
@@ -148,8 +148,8 @@ def test_markdown_child_rows_follow_parent():
     out = MarkdownRenderer().render(_grouped_report())
     lines = [ln for ln in out.splitlines() if ln.startswith("|")]
     assert lines[2] == "| **G1** | **2** |"  # group rows are bold
-    assert lines[3] == "| item-a | N/A |"
-    assert lines[4] == "| item-b | N/A |"
+    assert lines[3] == "| item-a |  |"
+    assert lines[4] == "| item-b |  |"
     assert lines[5] == "| Subtotal | 2 |"
 
 

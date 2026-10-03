@@ -4,8 +4,8 @@ Grouping hierarchy: material → part type → sub-group (thickness for plates
 and brackets, cross-section for stiffeners, pillars and edge
 reinforcements). Each group row carries the group totals and expands into
 its individual items (``ReportTable.row_children``). Items without a
-moulded dry weight show N/A, are excluded from totals, and are counted per
-group in the "Missing weight" column.
+moulded dry weight render an empty weight cell, are excluded from totals,
+and are counted per group in the "Missing weight" column.
 """
 from __future__ import annotations
 

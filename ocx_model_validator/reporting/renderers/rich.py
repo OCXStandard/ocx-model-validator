@@ -7,7 +7,7 @@ from rich.table import Table
 
 from ocx_model_validator.reporting.model import Cell, Link, Report, ReportSection
 
-_NA = "N/A"
+_NA = ""
 
 
 def _cell(c: Cell) -> str:

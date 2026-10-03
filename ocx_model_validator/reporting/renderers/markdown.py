@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from ocx_model_validator.reporting.model import Cell, Link, Report, ReportSection, ReportTable
 
-_NA = "N/A"
+_NA = ""
 
 
 def _escape(text: str) -> str:
