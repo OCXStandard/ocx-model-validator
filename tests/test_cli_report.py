@@ -113,6 +113,15 @@ def test_report_brackets(model_310: Path):
     assert "Arm length U (mm)" in result.output
 
 
+def test_report_pillars(model_310: Path):
+    result = runner.invoke(app, ["report", "pillars", str(model_310),
+                                 "--format", "markdown"])
+    assert result.exit_code == 0
+    assert "# Pillar report" in result.output
+    assert "## Pillars" in result.output
+    assert "Length (m)" in result.output
+
+
 def test_report_all(model_310: Path, tmp_path: Path):
     dest = tmp_path / "all.md"
     result = runner.invoke(app, ["report", "all", str(model_310),
@@ -122,7 +131,7 @@ def test_report_all(model_310: Path, tmp_path: Path):
     assert text.startswith("# Model report")
     for heading in ["## Model extent", "## Frame table", "## Compartments",
                     "## Panels", "## Plates", "## Stiffeners", "## Brackets",
-                    "## Materials", "## Bill of material"]:
+                    "## Pillars", "## Materials", "## Bill of material"]:
         assert heading in text
     # model extent comes first
     assert text.index("## Model extent") < text.index("## Frame table")

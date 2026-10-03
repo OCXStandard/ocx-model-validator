@@ -9,6 +9,7 @@ Usage::
     validator report plates MODEL.3docx ...
     validator report stiffeners MODEL.3docx ...
     validator report brackets MODEL.3docx ...
+    validator report pillars MODEL.3docx ...
     validator report bom MODEL.3docx ...
     validator report all MODEL.3docx ...
     validator generate-stubs [--force]
@@ -225,6 +226,19 @@ def brackets_cmd(
     _emit(brackets.build(vessel, source_file=str(model)), fmt, destination)
 
 
+@report_app.command("pillars")
+def pillars_cmd(
+    model: Path = _MODEL_ARG,
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """Pillars: attributes, profile, trace length and counts."""
+    from ocx_model_validator.reporting.generators import pillars
+
+    vessel = _load_vessel(model)
+    _emit(pillars.build(vessel, source_file=str(model)), fmt, destination)
+
+
 @report_app.command("bom")
 def bom_cmd(
     model: Path = _MODEL_ARG,
@@ -253,6 +267,7 @@ def all_cmd(
         frame_table,
         model_extent,
         panels,
+        pillars,
         plates,
         stiffeners,
     )
@@ -267,6 +282,7 @@ def all_cmd(
         plates.build(vessel, source_file=source),
         stiffeners.build(vessel, source_file=source),
         brackets.build(vessel, source_file=source),
+        pillars.build(vessel, source_file=source),
         catalogues.build(vessel, source_file=source),
         bom.build(vessel, source_file=source),
     ]

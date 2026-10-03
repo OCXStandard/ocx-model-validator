@@ -157,6 +157,7 @@ validator report panels       model.3docx
 validator report plates       model.3docx
 validator report stiffeners   model.3docx
 validator report brackets     model.3docx
+validator report pillars      model.3docx
 validator report all          model.3docx --destination report.md
 
 # generate xsdata stubs from .3docx models in ./models/

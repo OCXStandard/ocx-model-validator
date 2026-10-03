@@ -1281,6 +1281,8 @@ class OcxV3Builder(IOcxBuilder):
             **self._section_scantlings(raw_sec),
             mass_properties=self._mass_properties(raw),
             function_type=self._enum(getattr(raw, "function_type", None)),
+            trace=self._build_contour(getattr(raw, "trace_line", None)),
+            inclinations=self._build_inclinations(getattr(raw, "inclination", None)),
         )
 
     def _build_edge_reinforcement(self, raw, parent: ParentRef) -> IrEdgeReinforcement | None:
