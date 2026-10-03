@@ -33,6 +33,16 @@ def test_sections_table_row_anchors():
     assert table.row_anchors == ["section-S1"]
 
 
+def test_sections_table_reports_unique_sections_once():
+    v = _vessel()
+    # Builders register the same section under id and guidref
+    v.sections["GUID-S1"] = v.sections["S1"]
+    report = catalogues_gen.build(v, which="section")
+    table = report.sections[0].tables[0]
+    assert [r[0] for r in table.rows] == ["S1"]
+    assert table.row_anchors == ["section-S1"]
+
+
 def test_openings_table_has_no_anchors():
     report = catalogues_gen.build(_vessel(), which="opening")
     assert report.sections[0].tables[0].row_anchors == []
@@ -94,9 +104,9 @@ def test_bom_subtotal_and_total_rows_stay_plain():
     assert table.footer_rows[0][0] == "Grand total"
 
 
-def test_bom_detailed_items_are_links_too():
-    report = bom_gen.build(_vessel_with_parts(), detailed=True)
-    items = report.sections[0].tables[1]
-    st1_row = next(r for r in items.rows if r[3] == "ST1")
-    assert st1_row[0] == Link("NV A36", "material-M1")
-    assert st1_row[2] == Link("FB200x20", "section-S1")
+def test_bom_item_child_rows_are_plain():
+    report = bom_gen.build(_vessel_with_parts())
+    table = report.sections[0].tables[0]
+    st_idx = next(i for i, r in enumerate(table.rows) if r[1] == "Stiffener")
+    children = table.row_children[st_idx]
+    assert children == [[None, None, "ST1", None, 0.25, None]]

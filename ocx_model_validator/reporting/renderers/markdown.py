@@ -23,8 +23,11 @@ def _table_lines(t: ReportTable) -> list[str]:
     if not t.rows and not t.footer_rows:
         cells = ["(empty)"] + [""] * (len(t.columns) - 1)
         lines.append("| " + " | ".join(cells) + " |")
-    for row in t.rows:
+    for i, row in enumerate(t.rows):
         lines.append("| " + " | ".join(_cell(c) for c in row) + " |")
+        children = t.row_children[i] if i < len(t.row_children) else []
+        for child in children:
+            lines.append("| " + " | ".join(_cell(c) for c in child) + " |")
     for row in t.footer_rows:
         cells = []
         for c in row:

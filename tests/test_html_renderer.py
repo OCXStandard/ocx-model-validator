@@ -130,3 +130,37 @@ def test_html_escaping():
 
 def test_registry_dispatch():
     assert isinstance(get_renderer("html"), HtmlRenderer)
+
+
+def _grouped_report() -> Report:
+    table = ReportTable(
+        title="Summary",
+        columns=["Group", "Count"],
+        rows=[["G1", 2], ["G2", 1], ["Subtotal", 3]],
+        row_children=[[["item-a", None], ["item-b", None]],
+                      [["item-c", None]],
+                      []],
+    )
+    return Report(title="Grouped",
+                  sections=[ReportSection(title="BOM", tables=[table])])
+
+
+def test_group_rows_get_class_and_unique_group_ids():
+    out = HtmlRenderer().render(_grouped_report())
+    assert '<tr class="group" data-group="g0">' in out
+    assert '<tr class="group" data-group="g1">' in out
+    # Subtotal row has no children → no group class
+    assert out.count('class="group"') == 2
+
+
+def test_child_rows_hidden_and_parented():
+    out = HtmlRenderer().render(_grouped_report())
+    assert out.count('<tr class="child" data-parent="g0" hidden>') == 2
+    assert out.count('<tr class="child" data-parent="g1" hidden>') == 1
+    assert "<td>item-a</td>" in out
+
+
+def test_group_toggle_script_present():
+    out = HtmlRenderer().render(_grouped_report())
+    assert "tr.group" in out
+    assert "toggleAttribute('hidden')" in out

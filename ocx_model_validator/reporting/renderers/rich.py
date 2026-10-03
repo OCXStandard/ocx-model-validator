@@ -41,8 +41,11 @@ class RichRenderer:
                 table.add_column(escape(col))
             if not t.rows and not t.footer_rows:
                 table.add_row("(empty)", *[""] * (len(t.columns) - 1))
-            for row in t.rows:
+            for i, row in enumerate(t.rows):
                 table.add_row(*[escape(_cell(c)) for c in row])
+                children = t.row_children[i] if i < len(t.row_children) else []
+                for child in children:
+                    table.add_row(*[f"[dim]{escape(_cell(c))}[/]" for c in child])
             for row in t.footer_rows:
                 table.add_row(*[f"[bold]{escape(_cell(c))}[/]" for c in row])
             console.print(table)

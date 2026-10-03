@@ -5,7 +5,7 @@ Usage::
     validator report frame-table MODEL.3docx [--format rich|markdown|html] [--destination FILE]
     validator report compartments MODEL.3docx ...
     validator report catalogues MODEL.3docx [--catalogue material|section|opening|all] ...
-    validator report bom MODEL.3docx [--detailed] ...
+    validator report bom MODEL.3docx ...
     validator report all MODEL.3docx ...
     validator generate-stubs [--force]
 """
@@ -172,9 +172,6 @@ def catalogues_cmd(
 @report_app.command("bom")
 def bom_cmd(
     model: Path = _MODEL_ARG,
-    detailed: bool = typer.Option(
-        False, "--detailed",
-        help="Add per-item rows below the summary.", is_flag=True),
     fmt: ReportFormat | None = _FORMAT_OPT,
     destination: Path | None = _DEST_OPT,
 ) -> None:
@@ -182,8 +179,7 @@ def bom_cmd(
     from ocx_model_validator.reporting.generators import bom
 
     vessel = _load_vessel(model)
-    _emit(bom.build(vessel, detailed=detailed, source_file=str(model)),
-          fmt, destination)
+    _emit(bom.build(vessel, source_file=str(model)), fmt, destination)
 
 
 @report_app.command("all")

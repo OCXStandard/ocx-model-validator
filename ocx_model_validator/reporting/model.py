@@ -32,6 +32,10 @@ class ReportTable:
     # Optional anchor id per row (parallel to ``rows``); shorter list = no
     # anchor for the remaining rows. Empty (default) = no anchors.
     row_anchors: list[str | None] = field(default_factory=list)
+    # Optional child rows per row (parallel to ``rows``); each entry is a list
+    # of rows with the same columns. HTML renders them as expandable detail
+    # rows; other renderers emit them directly after the parent row.
+    row_children: list[list[list[Cell]]] = field(default_factory=list)
 
 
 @dataclass(frozen=True)

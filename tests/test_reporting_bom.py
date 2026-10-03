@@ -111,16 +111,28 @@ def test_bom_notes_deduplicated():
     assert len(notes) == len(set(notes))
 
 
-def test_bom_detailed_items_table():
-    report = bom_gen.build(_vessel(), detailed=True)
-    tables = report.sections[0].tables
-    assert [t.title for t in tables] == ["Summary", "Items"]
-    items = tables[1]
-    assert items.columns == ["Material", "Part type", "Group", "Id", "Name", "Weight (t)"]
-    p3_row = next(r for r in items.rows if r[3] == "P3")
-    assert p3_row[5] is None  # missing weight renders None
+def test_bom_expandable_group_items():
+    report = bom_gen.build(_vessel())
+    table = report.sections[0].tables[0]
+    assert len(table.row_children) == len(table.rows)
+    # Subtotal rows have no children
+    for row, children in zip(table.rows, table.row_children):
+        if isinstance(row[0], str) and row[0].startswith("Subtotal"):
+            assert children == []
+        else:
+            assert children  # every group row expands into its items
+    # NV A36 / Plate / t=10.0 mm group → P1, P2, P3 (sorted by id)
+    idx = next(i for i, r in enumerate(table.rows)
+               if r[1] == "Plate" and r[2] == "t=10.0 mm")
+    children = table.row_children[idx]
+    assert children == [
+        [None, None, "P1", None, 1.0, None],
+        [None, None, "P2", None, 0.5, None],
+        [None, None, "P3", None, None, None],  # missing weight renders None
+    ]
 
 
-def test_bom_detailed_item_count():
-    report = bom_gen.build(_vessel(), detailed=True)
-    assert len(report.sections[0].tables[1].rows) == 6
+def test_bom_item_count_across_groups():
+    report = bom_gen.build(_vessel())
+    table = report.sections[0].tables[0]
+    assert sum(len(c) for c in table.row_children) == 6

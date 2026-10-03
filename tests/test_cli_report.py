@@ -69,12 +69,12 @@ def test_report_catalogues_filter(model_310: Path):
     assert "## Cross sections" not in result.output
 
 
-def test_report_bom_detailed(model_310: Path):
+def test_report_bom(model_310: Path):
     result = runner.invoke(app, ["report", "bom", str(model_310),
-                                 "--detailed", "--format", "markdown"])
+                                 "--format", "markdown"])
     assert result.exit_code == 0
     assert "# Bill of material report" in result.output
-    assert "### Items" in result.output
+    assert "### Summary" in result.output
 
 
 def test_report_all(model_310: Path, tmp_path: Path):

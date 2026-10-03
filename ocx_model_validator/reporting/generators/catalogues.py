@@ -65,7 +65,10 @@ def _section_type_name(section) -> str:
 def _sections_section(vessel: IrVessel) -> ReportSection:
     notes: list[str] = []
     reg = vessel.unit_registry
-    secs = sorted(vessel.sections.values(), key=lambda s: s.name or s.id)
+    # Sections may be registered under both id and guidref (same object,
+    # two keys) — report each unique section once (set semantics).
+    unique = {id(s): s for s in vessel.sections.values()}
+    secs = sorted(unique.values(), key=lambda s: s.name or s.id)
     dim_names = sorted({
         f.name for s in secs for f in dataclasses.fields(s)
         if f.name not in _SECTION_BASE_FIELDS

@@ -22,12 +22,11 @@ def test_bom_report_on_reference_model(tmp_path: Path):
     dest = tmp_path / "bom.md"
     result = runner.invoke(
         app,
-        ["report", "bom", str(MODEL), "--detailed", "--destination", str(dest)],
+        ["report", "bom", str(MODEL), "--destination", str(dest)],
     )
     assert result.exit_code == 0
     text = dest.read_text(encoding="utf-8")
     assert "### Summary" in text
-    assert "### Items" in text
     assert "**Grand total**" in text
     total_line = next(ln for ln in text.splitlines() if "Grand total" in ln)
     weight = float(total_line.split("|")[5].strip().strip("*"))

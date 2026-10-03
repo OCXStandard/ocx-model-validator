@@ -132,3 +132,28 @@ def test_rich_link_renders_as_plain_text():
     out = RichRenderer().render(_link_report())
     assert "NV A36" in out
     assert "material-M1" not in out
+
+
+def _grouped_report() -> Report:
+    table = ReportTable(
+        title="T",
+        columns=["Group", "Count"],
+        rows=[["G1", 2], ["Subtotal", 2]],
+        row_children=[[["item-a", None], ["item-b", None]], []],
+    )
+    return Report(title="R", sections=[ReportSection(title="S", tables=[table])])
+
+
+def test_markdown_child_rows_follow_parent():
+    out = MarkdownRenderer().render(_grouped_report())
+    lines = [ln for ln in out.splitlines() if ln.startswith("|")]
+    assert lines[2] == "| G1 | 2 |"
+    assert lines[3] == "| item-a | N/A |"
+    assert lines[4] == "| item-b | N/A |"
+    assert lines[5] == "| Subtotal | 2 |"
+
+
+def test_rich_child_rows_render():
+    out = RichRenderer().render(_grouped_report())
+    assert "item-a" in out
+    assert "item-b" in out
