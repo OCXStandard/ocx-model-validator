@@ -5,6 +5,7 @@ Usage::
     validator report frame-table MODEL.3docx [--format rich|markdown|html] [--destination FILE]
     validator report compartments MODEL.3docx ...
     validator report catalogues MODEL.3docx [--catalogue material|section|opening|all] ...
+    validator report panels MODEL.3docx ...
     validator report bom MODEL.3docx ...
     validator report all MODEL.3docx ...
     validator generate-stubs [--force]
@@ -169,6 +170,19 @@ def catalogues_cmd(
                            source_file=str(model)), fmt, destination)
 
 
+@report_app.command("panels")
+def panels_cmd(
+    model: Path = _MODEL_ARG,
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """Panels: attributes, physical properties and child counts."""
+    from ocx_model_validator.reporting.generators import panels
+
+    vessel = _load_vessel(model)
+    _emit(panels.build(vessel, source_file=str(model)), fmt, destination)
+
+
 @report_app.command("bom")
 def bom_cmd(
     model: Path = _MODEL_ARG,
@@ -195,6 +209,7 @@ def all_cmd(
         compartments,
         frame_table,
         model_extent,
+        panels,
     )
 
     vessel = _load_vessel(model)
@@ -203,6 +218,7 @@ def all_cmd(
         model_extent.build(vessel, source_file=source),
         frame_table.build(vessel, source_file=source),
         compartments.build(vessel, source_file=source),
+        panels.build(vessel, source_file=source),
         catalogues.build(vessel, source_file=source),
         bom.build(vessel, source_file=source),
     ]

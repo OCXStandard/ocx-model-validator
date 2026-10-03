@@ -77,6 +77,15 @@ def test_report_bom(model_310: Path):
     assert "### Summary" in result.output
 
 
+def test_report_panels(model_310: Path):
+    result = runner.invoke(app, ["report", "panels", str(model_310),
+                                 "--format", "markdown"])
+    assert result.exit_code == 0
+    assert "# Panel report" in result.output
+    assert "## Panels" in result.output
+    assert "LimitedBy" in result.output
+
+
 def test_report_all(model_310: Path, tmp_path: Path):
     dest = tmp_path / "all.md"
     result = runner.invoke(app, ["report", "all", str(model_310),
@@ -85,7 +94,7 @@ def test_report_all(model_310: Path, tmp_path: Path):
     text = dest.read_text(encoding="utf-8")
     assert text.startswith("# Model report")
     for heading in ["## Model extent", "## Frame table", "## Compartments",
-                    "## Materials", "## Bill of material"]:
+                    "## Panels", "## Materials", "## Bill of material"]:
         assert heading in text
     # model extent comes first
     assert text.index("## Model extent") < text.index("## Frame table")
