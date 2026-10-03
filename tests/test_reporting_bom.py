@@ -136,3 +136,17 @@ def test_bom_item_count_across_groups():
     report = bom_gen.build(_vessel())
     table = report.sections[0].tables[0]
     assert sum(len(c) for c in table.row_children) == 6
+
+
+def test_bom_item_rows_show_name_not_id():
+    v = _vessel()
+    v.plates["P9"] = IrPlate(id="P9", parent_ref=_PARENT, name="Deck plate",
+                             material_ref=Ref("M1"),
+                             thickness=Quantity(10.0, "Umm"),
+                             mass_properties=IrMassProperties(
+                                 moulded_dry_weight=Quantity(100.0, "UKg")))
+    report = bom_gen.build(v)
+    table = report.sections[0].tables[0]
+    labels = [c[2] for children in table.row_children for c in children]
+    assert "Deck plate" in labels
+    assert "P9" not in labels

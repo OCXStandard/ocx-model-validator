@@ -101,11 +101,10 @@ def _link(name: str, anchors: dict[str, str]) -> Cell:
 
 
 def _item_rows(g: _Group) -> list[list[Cell]]:
-    """Child rows for a group: id/name under Group, weight under Weight (t)."""
+    """Child rows for a group: item name under Group, weight under Weight (t)."""
     children: list[list[Cell]] = []
     for item_id, name, w in sorted(g.items, key=lambda it: it[0]):
-        label = item_id if not name or name == item_id else f"{item_id} — {name}"
-        children.append([None, None, label, None,
+        children.append([None, None, name or item_id, None,
                          round(w, 3) if w is not None else None, None])
     return children
 
