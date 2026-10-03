@@ -163,12 +163,13 @@ def test_compartments_report():
     )
     report = compartments_gen.build(vessel, source_file="m.3docx")
     table = report.sections[0].tables[0]
-    assert table.columns[:4] == ["Name", "Tank type", "Volume (m³)", "COG x (mm)"]
+    assert table.columns[:4] == ["Name", "Tank type", "Cargo type", "Volume (m³)"]
     row = table.rows[0]
     assert row[0] == "WB Tank 1"
     assert row[1] == "BALLASTWATERTANK"
-    assert row[2] == 120.0
-    assert row[3] == 10000.0
+    assert row[2] is None  # no cargo assigned
+    assert row[3] == 120.0
+    assert row[4] == 10000.0
 
 
 def test_compartments_report_empty():

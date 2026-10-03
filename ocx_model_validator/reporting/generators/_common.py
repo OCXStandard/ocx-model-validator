@@ -48,6 +48,11 @@ def qty_mpa_cell(qty, registry, notes, context) -> Cell:
     return int(cell) if isinstance(cell, float) else cell
 
 
+def qty_kpa_cell(qty, registry, notes, context) -> Cell:
+    """SI Pa → kPa, 2 decimals."""
+    return _safe_convert(qty, registry, 1e-3, 2, notes, context)
+
+
 def qty_m3_cell(qty, registry, notes, context) -> Cell:
     """SI m³ → m³, 2 decimals."""
     return _safe_convert(qty, registry, 1.0, 2, notes, context)
