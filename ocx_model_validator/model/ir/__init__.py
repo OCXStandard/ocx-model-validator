@@ -66,6 +66,7 @@ from ocx_model_validator.model.ir.geometry import (
     IrSurface,
     IrSurface3D,
     IrSurfaceCollection,
+    IrUnboundedGeometry,
     IrVector3D,
 )
 from ocx_model_validator.model.ir.metadata import (
@@ -130,6 +131,7 @@ __all__ = [
     "IrNurbs3D", "IrSurface3D", "IrPlane3D", "IrSphere3D", "IrCone3D",
     "IrCylinder3D", "IrExtrudedSurface", "IrNurbsSurface",
     "IrCoordinateSystem", "IrRefPlane", "IrSurface", "IrSurfaceCollection",
+    "IrUnboundedGeometry",
     # connections
     "IrConnectionConfiguration", "IrPenetration",
     # structural
