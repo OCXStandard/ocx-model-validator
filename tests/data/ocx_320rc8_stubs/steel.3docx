@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Source: tr04_tc04a_ai3dx.3docx -->
-<ocx:Steel xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" id="nplcid39" name="Steel A" ocx:GUIDRef="5209a351-7f02-4641-9e5f-ef6d036d85dc" ocx:grade="A">
-    <ocx:Density numericvalue="7850.0" unit="UKgOverm3"/>
-    <ocx:YoungsModulus numericvalue="210000000000.0" unit="UNOverm2"/>
-    <ocx:PoissonRatio numericvalue="0.3" unit="UDimless"/>
-    <ocx:YieldStress numericvalue="235000000.0" unit="UNOverm2"/>
-    <ocx:UltimateStress numericvalue="400000000.0" unit="UNOverm2"/>
-</ocx:Steel>

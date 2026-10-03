@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
-<ocx:Line3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid9470" ocx:GUIDRef="09b93ad1-043b-48b6-b586-9aa2273e273a" is2D="false">
-    <ocx:CurveLength numericvalue="13.55436" unit="Um"/>
-    <ocx:StartPoint coordinates="52.06372 10.4392 2.0232" unit="Um"/>
-    <ocx:EndPoint coordinates="52.225 10.455 2.0112" unit="Um"/>
+<!-- Source: tr05_tc04a_aitac.3docx -->
+<ocx:Line3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid18" is2D="false">
+    <ocx:CurveLength numericvalue="13.3275751" unit="Um"/>
+    <ocx:StartPoint coordinates="-2.0 -9.4083915 0.0" unit="Um"/>
+    <ocx:EndPoint coordinates="-2.0 3.9191836 0.0" unit="Um"/>
 </ocx:Line3D>

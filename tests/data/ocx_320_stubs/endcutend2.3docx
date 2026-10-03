@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:EndCutEnd2 xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="endcut_369" symmetricFlange="false" sniped="true">
+    <ocx:CutbackDistance numericvalue="0.196397" unit="Um"/>
+    <ocx:WebCutBackAngle numericvalue="45.0" unit="UDeg"/>
+    <ocx:WebNoseHeight numericvalue="0.025" unit="Um"/>
+    <ocx:FlangeCutBackAngle numericvalue="30.0" unit="UDeg"/>
+    <ocx:FlangeNoseHeight numericvalue="0.012" unit="Um"/>
+</ocx:EndCutEnd2>

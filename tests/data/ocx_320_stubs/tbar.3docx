@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<!-- Source: tr05_tc04a_aitac.3docx -->
 <ocx:TBar xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd">
-    <ocx:Height numericvalue="0.415" unit="Um"/>
-    <ocx:Width numericvalue="0.15" unit="Um"/>
+    <ocx:Height numericvalue="0.2" unit="Um"/>
+    <ocx:Width numericvalue="0.08" unit="Um"/>
     <ocx:WebThickness numericvalue="0.01" unit="Um"/>
     <ocx:FlangeThickness numericvalue="0.015" unit="Um"/>
 </ocx:TBar>

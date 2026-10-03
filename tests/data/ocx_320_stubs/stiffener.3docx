@@ -1,50 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
-<ocx:Stiffener xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid156" name="S:YSDHAMF03S/TTOP" ocx:GUIDRef="46691cc3-97c8-3d48-8a40-af47c6c6c404" ocx:orientationRule="Normal">
+<!-- Source: tr05_tc04a_aitac.3docx -->
+<ocx:Stiffener xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid9" name="ShVStf-Y=1000" ocx:GUIDRef="cffd5921-2cdc-45f7-a623-b610fd794015" ocx:orientationRule="X-plane">
     <ocx:MassProperties>
-        <ocx:MouldedDryWeight numericvalue="128.041" unit="UKg"/>
-        <ocx:MouldedCenterOfGravity coordinates="48.87275 2.45356 2.16016" unit="Um"/>
+        <ocx:MouldedDryWeight numericvalue="288.8798185" unit="UKg"/>
+        <ocx:MouldedCenterOfGravity coordinates="0.9995455 6.8748786 4.2129789" unit="Um"/>
     </ocx:MassProperties>
     <ocx:TraceLine>
-        <ocx:CompositeCurve3D id="nplcid9496" ocx:GUIDRef="85b6018d-a517-4230-9704-f47c0757aa9f" is2D="false">
-            <ocx:CurveLength numericvalue="11.19362" unit="Um"/>
-            <ocx:NURBS3D id="nplcid9497" ocx:GUIDRef="59880a79-226c-4844-9cf3-a8b1fe1b6f42" is2D="false">
-                <ocx:CurveLength numericvalue="11.19362" unit="Um"/>
-                <ocx:NURBSproperties degree="3" numCtrlPts="10" numKnots="14" form="Open" isRational="false"/>
-                <ocx:KnotVector value="0.0 0.0 0.0 0.0 1.0 1.0 1.0 2.0 2.0 2.0 3.0 3.0 3.0 3.0"/>
-                <ocx:ControlPtList>
-                    <ocx:ControlPoint coordinates="43.285 2.46 2.5" unit="Um" weight="1.0"/>
-                    <ocx:ControlPoint coordinates="44.08 2.46 2.5" unit="Um" weight="1.0"/>
-                    <ocx:ControlPoint coordinates="44.875 2.46 2.5" unit="Um" weight="1.0"/>
-                    <ocx:ControlPoint coordinates="45.67 2.46 2.5" unit="Um" weight="1.0"/>
-                    <ocx:ControlPoint coordinates="47.905 2.46 2.33333" unit="Um" weight="1.0"/>
-                    <ocx:ControlPoint coordinates="50.14 2.46 2.16667" unit="Um" weight="1.0"/>
-                    <ocx:ControlPoint coordinates="52.375 2.46 2.0" unit="Um" weight="1.0"/>
-                    <ocx:ControlPoint coordinates="53.07 2.46 2.0" unit="Um" weight="1.0"/>
-                    <ocx:ControlPoint coordinates="53.765 2.46 2.0" unit="Um" weight="1.0"/>
-                    <ocx:ControlPoint coordinates="54.46 2.46 2.0" unit="Um" weight="1.0"/>
-                </ocx:ControlPtList>
-            </ocx:NURBS3D>
+        <ocx:CompositeCurve3D id="nplcid40" ocx:GUIDRef="a91dc115-eb88-464e-bddf-d913b7fec91c" is2D="false">
+            <ocx:CurveLength numericvalue="18.3999884" unit="Um"/>
+            <ocx:Line3D id="nplcid41" is2D="false">
+                <ocx:CurveLength numericvalue="3.9191836" unit="Um"/>
+                <ocx:StartPoint coordinates="1.0 0.0 0.0" unit="Um"/>
+                <ocx:EndPoint coordinates="1.0 3.9191836 0.0" unit="Um"/>
+            </ocx:Line3D>
+            <ocx:Line3D id="nplcid43" is2D="false">
+                <ocx:CurveLength numericvalue="2.8" unit="Um"/>
+                <ocx:StartPoint coordinates="1.0 10.0 9.2" unit="Um"/>
+                <ocx:EndPoint coordinates="1.0 10.0 12.0" unit="Um"/>
+            </ocx:Line3D>
+            <ocx:CircumArc3D id="nplcid42" is2D="false">
+                <ocx:CurveLength numericvalue="11.6808049" unit="Um"/>
+                <ocx:StartPoint coordinates="1.0 3.9191836 0.0" unit="Um"/>
+                <ocx:IntermediatePoint coordinates="1.0 8.3424168 3.6860103" unit="Um"/>
+                <ocx:EndPoint coordinates="1.0 10.0 9.2" unit="Um"/>
+            </ocx:CircumArc3D>
         </ocx:CompositeCurve3D>
     </ocx:TraceLine>
-    <ocx:MaterialRef localRef="nplcid4" ocx:GUIDRef="e226cb64-b098-4f97-a043-c0a676cccf66" ocx:refType="ocx:Material"/>
-    <ocx:SectionRef localRef="nplcid6" ocx:GUIDRef="e3a0ec73-41b1-07a9-51d3-d127e723dec0" ocx:refType="ocx:BarSection">
+    <ocx:MaterialRef localRef="nplcid39" ocx:GUIDRef="ca4d7625-1deb-4b34-b572-0a1c2b40ec09" ocx:refType="ocx:Material"/>
+    <ocx:SectionRef localRef="nplcid44" ocx:GUIDRef="2adf87a0-cdd7-4559-b777-de7d431f9000" ocx:refType="ocx:BarSection">
         <ocx:OffsetU numericvalue="0.0" unit="Um"/>
         <ocx:OffsetV numericvalue="0.0" unit="Um"/>
     </ocx:SectionRef>
     <ocx:Inclination>
-        <ocx:WebDirection direction="0.0 0.0 -1.0"/>
-        <ocx:FlangeDirection direction="0.0 -1.0 0.0"/>
-        <ocx:Position coordinates="43.285 2.46 2.5" unit="Um"/>
+        <ocx:WebDirection direction="0.0 0.0 1.0"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="1.0 0.0 0.0" unit="Um"/>
     </ocx:Inclination>
     <ocx:Inclination>
-        <ocx:WebDirection direction="-0.07436 0.0 -0.99723"/>
-        <ocx:FlangeDirection direction="0.0 -1.0 0.0"/>
-        <ocx:Position coordinates="48.87292 2.46 2.26115" unit="Um"/>
+        <ocx:WebDirection direction="0.0 -0.2103464 0.9776269"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="1.0 3.9645869 0.0194744" unit="Um"/>
     </ocx:Inclination>
     <ocx:Inclination>
-        <ocx:WebDirection direction="0.0 0.0 -1.0"/>
-        <ocx:FlangeDirection direction="0.0 -1.0 0.0"/>
-        <ocx:Position coordinates="54.46 2.46 2.0" unit="Um"/>
+        <ocx:WebDirection direction="0.0 -0.5111407 0.8594971"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="1.0 5.111407 0.6050295" unit="Um"/>
     </ocx:Inclination>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 -0.604521 0.7965892"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="1.0 6.0452101 1.234108" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 -0.6902376 0.7235828"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="1.0 6.9023764 1.9641724" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 -0.7672039 0.6414033"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="1.0 7.6720393 2.7859675" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 -0.8344442 0.5510925"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="1.0 8.3444416 3.689075" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 -0.8911059 0.4537954"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="1.0 8.9110591 4.6620461" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 -0.9364709 0.3507454"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="1.0 9.3647086 5.6925461" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 -0.9699639 0.2432489"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="1.0 9.699639 6.767511" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 -0.9911604 0.1326687"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="1.0 9.9116044 7.8733133" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 -0.9999479 0.0102038"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="1.0 9.9999881 9.1845465" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="0.0 -1.0 0.0"/>
+        <ocx:FlangeDirection direction="-1.0 0.0 0.0"/>
+        <ocx:Position coordinates="1.0 10.0 12.0" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:LimitedBy>
+        <ocx:GridRef localRef="Plane.5" ocx:GUIDRef="608f79c6-50f1-433e-b5a8-719a1ac397a9" ocx:refType="ocx:ReferencePlane">
+            <ocx:ContourBounds>
+                <ocx:ContourStart coordinates="1.0 0.0 0.0" unit="Um"/>
+                <ocx:ContourEnd coordinates="1.0 0.0 0.0" unit="Um"/>
+            </ocx:ContourBounds>
+            <ocx:Offset numericvalue="0.0" unit="Um"/>
+            <ocx:OffsetDirection direction="0.0 0.0 0.0"/>
+        </ocx:GridRef>
+        <ocx:GridRef localRef="Plane.6" ocx:GUIDRef="1652bbc5-dae7-4f0c-a41b-e3db5beced17" ocx:refType="ocx:ReferencePlane">
+            <ocx:ContourBounds>
+                <ocx:ContourStart coordinates="1.0 10.0 12.0" unit="Um"/>
+                <ocx:ContourEnd coordinates="1.0 10.0 12.0" unit="Um"/>
+            </ocx:ContourBounds>
+            <ocx:Offset numericvalue="0.0" unit="Um"/>
+            <ocx:OffsetDirection direction="0.0 0.0 0.0"/>
+        </ocx:GridRef>
+    </ocx:LimitedBy>
 </ocx:Stiffener>

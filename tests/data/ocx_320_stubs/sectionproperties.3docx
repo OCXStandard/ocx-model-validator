@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr05_tc04a_cadhu.3docx -->
+<ocx:SectionProperties xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd">
+    <ocx:Area numericvalue="5.108434" unit="uMeter"/>
+    <ocx:NeutralAxisU direction="1.0 -0.0 0.0"/>
+    <ocx:NeutralAxisV direction="0.0 -1.0 0.0"/>
+    <ocx:InertiaU numericvalue="35119.090412" unit="uMeter"/>
+    <ocx:InertiaV numericvalue="13337.271261" unit="uMeter"/>
+</ocx:SectionProperties>

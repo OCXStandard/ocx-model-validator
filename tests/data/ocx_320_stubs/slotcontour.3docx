@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:SlotContour xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="id_8230" name="SL_WN_A1_000" ocx:GUIDRef="9816b855-db88-408c-960c-39bfa570babb">
+    <ocx:HoleRef localRef="id_8229" ocx:GUIDRef="829aa299-c113-4299-a03d-6936384ab235" ocx:refType="ocx:Hole2D"/>
+    <ocx:Transformation>
+        <ocx:Origin coordinates="2.25 -8.6 9.6900272" unit="Um"/>
+        <ocx:PrimaryAxis direction="0.0 1.0 0.0"/>
+        <ocx:SecondaryAxis direction="0.0 0.0 -1.0"/>
+    </ocx:Transformation>
+</ocx:SlotContour>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:ConnectionConfiguration xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="id_3786" name="Stf_1P/End1">
+    <ocx:SingleBracket>
+        <ocx:ConnectedBracketRef localRef="id_3981" ocx:GUIDRef="a06b790b-21dc-4396-bf63-6752d7a867f2" ocx:refType="ocx:Bracket"/>
+    </ocx:SingleBracket>
+    <ocx:PlateRef localRef="id_717" ocx:GUIDRef="dc974f56-4564-4ffe-a63e-d6a8bfab3623" ocx:refType="ocx:Plate"/>
+    <ocx:Point3D coordinates="0.75 5.283445 1.5" unit="Um"/>
+</ocx:ConnectionConfiguration>

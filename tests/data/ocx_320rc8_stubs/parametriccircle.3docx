@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Source: tr04_tc13_cadhu.3docx -->
-<ocx:ParametricCircle xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" id="_ch241-fixed1-250definition">
-    <ocx:Diameter numericvalue="0.5" unit="uMeter"/>
-</ocx:ParametricCircle>

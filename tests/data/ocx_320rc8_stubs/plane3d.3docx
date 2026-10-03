@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Source: tr04_tc08_cadhu.3docx -->
-<ocx:Plane3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" id="_8panel156plane">
-    <ocx:PointOnSurface coordinates="0.0 -0.0 1.2" unit="uMeter"/>
-    <ocx:Normal direction="-0.0 0.0 -1.0"/>
-</ocx:Plane3D>

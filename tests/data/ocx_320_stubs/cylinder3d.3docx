@@ -1,10 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: TR5TC14A-NAST.3docx -->
-<ocx:Cylinder3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid938" name="REF_TUNNELSURF" ocx:GUIDRef="58f90c40-d906-46f3-a078-d62ce33f7776">
-    <ocx:PointOnSurface coordinates="159.2 0.0 1.0375" unit="Um"/>
-    <ocx:Normal direction="0.0 0.0 -1.0"/>
-    <ocx:Origin coordinates="159.2 -10.0 2.1" unit="Um"/>
-    <ocx:Axis direction="0.0 1.0 0.0"/>
-    <ocx:Radius numericvalue="1.0625" unit="Um"/>
-    <ocx:Height numericvalue="20.0" unit="Um"/>
+<!-- Source: tr05_tc04a_mbrh.3docx -->
+<ocx:Cylinder3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="id_18_surf_f2">
+    <ocx:FaceBoundaryCurve isUVspace="false">
+        <ocx:CompositeCurve3D id="id_18_surf_f2_fbc" is2D="false">
+            <ocx:CurveLength numericvalue="41.361588" unit="Um"/>
+            <ocx:NURBS3D id="nurbs_7" is2D="false">
+                <ocx:CurveLength numericvalue="9.0" unit="Um"/>
+                <ocx:NURBSproperties degree="1" numCtrlPts="2" numKnots="4" form="Open" isRational="false"/>
+                <ocx:KnotVector value="0.0 0.0 9000.0 9000.0"/>
+                <ocx:ControlPtList>
+                    <ocx:ControlPoint coordinates="0.0 10.0 9.2" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="9.0 10.0 9.2" unit="Um" weight="1.0"/>
+                </ocx:ControlPtList>
+            </ocx:NURBS3D>
+            <ocx:NURBS3D id="nurbs_8" is2D="false">
+                <ocx:CurveLength numericvalue="11.680794" unit="Um"/>
+                <ocx:NURBSproperties degree="2" numCtrlPts="3" numKnots="6" form="Open" isRational="true"/>
+                <ocx:KnotVector value="2800.0 2800.0 2800.0 14480.794004806241 14480.794004806241 14480.794004806241"/>
+                <ocx:ControlPtList>
+                    <ocx:ControlPoint coordinates="9.0 10.0 9.2" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="9.0 10.0000046 2.5904247" unit="Um" weight="0.8342419783252338"/>
+                    <ocx:ControlPoint coordinates="9.0 3.9192 0.0" unit="Um" weight="1.0"/>
+                </ocx:ControlPtList>
+            </ocx:NURBS3D>
+            <ocx:NURBS3D id="nurbs_9" is2D="false">
+                <ocx:CurveLength numericvalue="9.0" unit="Um"/>
+                <ocx:NURBSproperties degree="1" numCtrlPts="2" numKnots="4" form="Open" isRational="true"/>
+                <ocx:KnotVector value="-9000.0 -9000.0 -0.0 -0.0"/>
+                <ocx:ControlPtList>
+                    <ocx:ControlPoint coordinates="9.0 3.9192 0.0" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="0.0 3.9192 0.0" unit="Um" weight="1.0"/>
+                </ocx:ControlPtList>
+            </ocx:NURBS3D>
+            <ocx:NURBS3D id="nurbs_10" is2D="false">
+                <ocx:CurveLength numericvalue="11.680794" unit="Um"/>
+                <ocx:NURBSproperties degree="2" numCtrlPts="3" numKnots="6" form="Open" isRational="true"/>
+                <ocx:KnotVector value="-14480.794004806241 -14480.794004806241 -14480.794004806241 -2800.0 -2800.0 -2800.0"/>
+                <ocx:ControlPtList>
+                    <ocx:ControlPoint coordinates="0.0 3.9192 0.0" unit="Um" weight="1.0"/>
+                    <ocx:ControlPoint coordinates="0.0 10.0000046 2.5904247" unit="Um" weight="0.8342419783252338"/>
+                    <ocx:ControlPoint coordinates="0.0 10.0 9.2" unit="Um" weight="1.0"/>
+                </ocx:ControlPtList>
+            </ocx:NURBS3D>
+        </ocx:CompositeCurve3D>
+    </ocx:FaceBoundaryCurve>
+    <ocx:PointOnSurface coordinates="4.5 8.3424236 3.6860137" unit="Um"/>
+    <ocx:Normal direction="0.0 0.8342424 -0.5513979"/>
+    <ocx:Origin coordinates="9.0 0.0 9.199993" unit="Um"/>
+    <ocx:Axis direction="-1.0 0.0 0.0"/>
+    <ocx:Radius numericvalue="10.0" unit="Um"/>
+    <ocx:Height numericvalue="9.0" unit="Um"/>
 </ocx:Cylinder3D>

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
-<ocx:ClassificationData xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" ocx:newbuildingSociety="OTHER" identification="TR5">
+<!-- Source: tr05_tc04a_aitac.3docx -->
+<ocx:ClassificationData xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" ocx:newbuildingSociety="DNV" identification="S01">
     <ocx:PrincipalParticulars ocx:freeboardType="A">
-        <ocx:Lpp numericvalue="191.0" unit="Um"/>
-        <ocx:RuleLength numericvalue="191.0" unit="Um"/>
-        <ocx:BlockCoefficient numericvalue="0.0" unit="UDimless"/>
-        <ocx:FP_Pos numericvalue="191.0" unit="Um"/>
-        <ocx:MouldedBreadth numericvalue="26.4" unit="Um"/>
-        <ocx:MouldedDepth numericvalue="10.0" unit="Um"/>
-        <ocx:ScantlingDraught numericvalue="7.1" unit="Um"/>
-        <ocx:DesignSpeed numericvalue="0.0" unit="UKnots"/>
-        <ocx:FreeboardLength numericvalue="208.1364" unit="Um"/>
-        <ocx:AP_Pos numericvalue="0.0" unit="Um"/>
+        <ocx:Lpp numericvalue="230.0" unit="Um"/>
+        <ocx:RuleLength numericvalue="228.7" unit="Um"/>
+        <ocx:BlockCoefficient numericvalue="0.68" unit="UDimless"/>
+        <ocx:FP_Pos numericvalue="230.0" unit="Um"/>
+        <ocx:MouldedBreadth numericvalue="30.0" unit="Um"/>
+        <ocx:MouldedDepth numericvalue="30.0" unit="Um"/>
+        <ocx:ScantlingDraught numericvalue="8.0" unit="Um"/>
+        <ocx:DesignSpeed numericvalue="18.0" unit="UKnots"/>
+        <ocx:FreeboardLength numericvalue="228.7" unit="Um"/>
     </ocx:PrincipalParticulars>
 </ocx:ClassificationData>

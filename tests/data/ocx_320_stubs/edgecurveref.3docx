@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
-<ocx:EdgeCurveRef xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" localRef="nplcid9173" ocx:GUIDRef="868a25a1-f290-403a-810b-ced79d60931e" ocx:refType="ocx:FreeEdgeCurve3D">
+<!-- Source: tr05_tc04a_cadhu.3docx -->
+<ocx:EdgeCurveRef xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" localRef="_hullgroup2001_layer-01panellimit" ocx:GUIDRef="CE1A744A-219D-1D00-5270-392804727725" ocx:refType="ocx:FreeEdgeCurve3D">
     <ocx:ContourBounds>
-        <ocx:ContourStart coordinates="42.90068 7.205 2.5" unit="Um"/>
-        <ocx:ContourEnd coordinates="42.79803 5.575 2.5" unit="Um"/>
+        <ocx:ContourStart coordinates="9.0 10.0 9.2" unit="uMeter"/>
+        <ocx:ContourEnd coordinates="9.0 10.0 9.2" unit="uMeter"/>
     </ocx:ContourBounds>
-    <ocx:Offset numericvalue="0.0" unit="Um"/>
-    <ocx:OffsetDirection direction="1.0 0.0 0.0"/>
+    <ocx:Offset numericvalue="0.0" unit="uMeter"/>
+    <ocx:OffsetDirection direction="0.0 -0.0 0.0"/>
 </ocx:EdgeCurveRef>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr05_tc04a_aitac.3docx -->
+<ocx:CircumArc3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid19" is2D="false">
+    <ocx:CurveLength numericvalue="11.6808049" unit="Um"/>
+    <ocx:StartPoint coordinates="-2.0 3.9191836 0.0" unit="Um"/>
+    <ocx:IntermediatePoint coordinates="-2.0 8.3424168 3.6860103" unit="Um"/>
+    <ocx:EndPoint coordinates="-2.0 10.0 9.2" unit="Um"/>
+</ocx:CircumArc3D>

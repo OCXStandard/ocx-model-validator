@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<!-- Source: tr05_tc04a_aitac.3docx -->
 <ocx:MassProperties xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd">
-    <ocx:MouldedDryWeight numericvalue="5790.787" unit="UKg"/>
-    <ocx:MouldedCenterOfGravity coordinates="42.98232 -1.31113 2.5" unit="Um"/>
+    <ocx:MouldedDryWeight numericvalue="2235.5985955" unit="UKg"/>
+    <ocx:MouldedCenterOfGravity coordinates="4.5 6.9391348 4.148657" unit="Um"/>
 </ocx:MassProperties>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:SurfaceRef xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" localRef="id_2" ocx:GUIDRef="c0ed234b-a6ae-4a3c-afd9-8872537c8850" ocx:refType="ocx:Surface">
+    <ocx:ContourBounds>
+        <ocx:ContourStart coordinates="9.75 9.9346721 1.5" unit="Um"/>
+        <ocx:ContourEnd coordinates="-0.5 8.5707146 1.5" unit="Um"/>
+    </ocx:ContourBounds>
+    <ocx:Offset numericvalue="0.0" unit="Um"/>
+    <ocx:OffsetDirection direction="0.0 0.0 1.0"/>
+</ocx:SurfaceRef>

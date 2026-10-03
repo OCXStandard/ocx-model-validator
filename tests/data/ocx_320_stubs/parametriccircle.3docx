@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
-<ocx:ParametricCircle xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid29">
-    <ocx:Diameter numericvalue="1.0" unit="Um"/>
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:ParametricCircle xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid47_shape">
+    <ocx:Diameter numericvalue="0.45" unit="Um"/>
 </ocx:ParametricCircle>

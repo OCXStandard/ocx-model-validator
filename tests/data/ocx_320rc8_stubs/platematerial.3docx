@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Source: tr04_tc04a_ai3dx.3docx -->
-<ocx:PlateMaterial xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" localRef="nplcid21" ocx:GUIDRef="7fbdad58-a6a9-4df3-a74c-45968ae1f405" ocx:refType="ocx:Material">
-    <ocx:Thickness numericvalue="0.005" unit="Um"/>
-</ocx:PlateMaterial>

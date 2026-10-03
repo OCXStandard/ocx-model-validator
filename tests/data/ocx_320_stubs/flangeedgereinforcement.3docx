@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:FlangeEdgeReinforcement xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd">
+    <ocx:FlangeWidth numericvalue="0.075" unit="Um"/>
+    <ocx:Radius numericvalue="0.025" unit="Um"/>
+</ocx:FlangeEdgeReinforcement>
