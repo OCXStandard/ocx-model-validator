@@ -1049,7 +1049,6 @@ class OcxV3Builder(IOcxBuilder):
             return None
         pm = getattr(raw, "plate_material", None)
         mat_ref, thickness = self._material_ref(pm)
-        pp = getattr(raw, "physical_properties", None)
         return IrPlate(
             id=pid,
             parent_ref=parent,
@@ -1057,8 +1056,6 @@ class OcxV3Builder(IOcxBuilder):
             guidref=getattr(raw, "guidref", None),
             material_ref=mat_ref,
             thickness=thickness,
-            dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
-            cog=self._cog(pp),
             mass_properties=self._mass_properties(raw),
             net_area=self._qty(getattr(raw, "net_area", None)),
             function_type=self._enum(getattr(raw, "function_type", None)),
@@ -1071,7 +1068,6 @@ class OcxV3Builder(IOcxBuilder):
             return None
         pm = getattr(raw, "plate_material", None)
         mat_ref, thickness = self._material_ref(pm)
-        pp = getattr(raw, "physical_properties", None)
         bp = getattr(raw, "bracket_parameters", None)
         return IrBracket(
             id=bid,
@@ -1080,8 +1076,6 @@ class OcxV3Builder(IOcxBuilder):
             guidref=getattr(raw, "guidref", None),
             material_ref=mat_ref,
             thickness=thickness,
-            dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
-            cog=self._cog(pp),
             mass_properties=self._mass_properties(raw),
             arm_length_u=self._qty(getattr(bp, "arm_length_u", None) if bp else None),
             arm_length_v=self._qty(getattr(bp, "arm_length_v", None) if bp else None),
@@ -1093,7 +1087,6 @@ class OcxV3Builder(IOcxBuilder):
         sid = getattr(raw, "id", None)
         if not sid:
             return None
-        pp = getattr(raw, "physical_properties", None)
         return IrStiffener(
             id=sid,
             parent_ref=parent,
@@ -1101,8 +1094,6 @@ class OcxV3Builder(IOcxBuilder):
             guidref=getattr(raw, "guidref", None),
             material_ref=self._ref(getattr(raw, "material_ref", None)),
             section_ref=self._ref(getattr(raw, "section_ref", None)),
-            dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
-            cog=self._cog(pp),
             mass_properties=self._mass_properties(raw),
             function_type=self._enum(getattr(raw, "function_type", None)),
             end_cut_end1=self._build_end_cut(getattr(raw, "end_cut_end1", None)),
@@ -1115,7 +1106,6 @@ class OcxV3Builder(IOcxBuilder):
         pid = getattr(raw, "id", None)
         if not pid:
             return None
-        pp = getattr(raw, "physical_properties", None)
         return IrPillar(
             id=pid,
             parent_ref=parent,
@@ -1123,8 +1113,6 @@ class OcxV3Builder(IOcxBuilder):
             guidref=getattr(raw, "guidref", None),
             material_ref=self._ref(getattr(raw, "material_ref", None)),
             section_ref=self._ref(getattr(raw, "section_ref", None)),
-            dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
-            cog=self._cog(pp),
             mass_properties=self._mass_properties(raw),
             function_type=self._enum(getattr(raw, "function_type", None)),
         )
@@ -1134,7 +1122,6 @@ class OcxV3Builder(IOcxBuilder):
         eid = getattr(raw, "id", None)
         if not eid:
             return None
-        pp = getattr(raw, "physical_properties", None)
         return IrEdgeReinforcement(
             id=eid,
             parent_ref=parent,
@@ -1142,8 +1129,6 @@ class OcxV3Builder(IOcxBuilder):
             guidref=getattr(raw, "guidref", None),
             material_ref=self._ref(getattr(raw, "material_ref", None)),
             section_ref=self._ref(getattr(raw, "section_ref", None)),
-            dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
-            cog=self._cog(pp),
             mass_properties=self._mass_properties(raw),
             function_type=self._enum(getattr(raw, "function_type", None)),
         )
@@ -1268,8 +1253,6 @@ class OcxV3Builder(IOcxBuilder):
                     )
                 )
 
-        pp = getattr(raw, "physical_properties", None)
-
         seam_ids = self._build_seams_for_panel(raw, ir)
 
         return IrPanel(
@@ -1278,8 +1261,6 @@ class OcxV3Builder(IOcxBuilder):
             guidref=getattr(raw, "guidref", None),
             function_type=self._enum(getattr(raw, "function_type", None)),
             tightness=self._enum(getattr(raw, "tightness", None)),
-            dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
-            cog=self._cog(pp),
             mass_properties=self._mass_properties(raw),
             plate_ids=plate_ids,
             bracket_ids=bracket_ids,

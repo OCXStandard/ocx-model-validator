@@ -2,7 +2,7 @@
 import pytest
 
 from ocx_model_validator.model.ir.arrangement import IrCompartment
-from ocx_model_validator.model.ir.base import IrCog, Quantity
+from ocx_model_validator.model.ir.base import IrCog, IrMassProperties, Quantity
 from ocx_model_validator.model.ir.catalogues import IrHole2D, IrHoleShapeCatalogue, IrMaterial
 from ocx_model_validator.model.ir.geometry import IrCoordinateSystem, IrRefPlane
 from ocx_model_validator.model.ir.sections import (
@@ -349,7 +349,7 @@ def test_model_extent_report():
     vessel = IrVessel(id="V1", name="MV Test")
     vessel.stiffeners["S1"] = IrStiffener(
         id="S1", parent_ref=parent,
-        cog=IrCog(5.0, -1.0, 2.0, "Um"),
+        mass_properties=IrMassProperties(moulded_cog=IrCog(5.0, -3.0, -1.0, "Um")),
         trace=IrLine3D(curve_length=None,
                        start=IrPoint3D(0.0, -2.0, 0.0, "Um"),
                        end=IrPoint3D(10.0, 2.0, 4.0, "Um")),
@@ -370,8 +370,8 @@ def test_model_extent_report():
     assert table.columns == ["Axis", "min (mm)", "max (mm)", "size (mm)"]
     assert table.rows == [
         ["x", -1000.0, 12000.0, 13000.0],
-        ["y", -2000.0, 3000.0, 5000.0],
-        ["z", -500.0, 6000.0, 6500.0],
+        ["y", -3000.0, 3000.0, 6000.0],
+        ["z", -1000.0, 6000.0, 7000.0],
     ]
 
 

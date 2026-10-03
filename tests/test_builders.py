@@ -291,5 +291,5 @@ def test_build_pillar_extracts_dry_weight():
     builder = OcxV3Builder()
     parent = ParentRef(kind=ParentKind.VESSEL, id="V1")
     p = builder._build_pillar(_StubPillar(), parent)
-    assert p.dry_weight.value == 300.0
-    assert p.dry_weight.unit == "UKg"
+    assert p.mass_properties.moulded_dry_weight.value == 300.0
+    assert p.mass_properties.moulded_dry_weight.unit == "UKg"

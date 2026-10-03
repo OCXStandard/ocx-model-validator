@@ -1,6 +1,6 @@
 """Model extent report generator — bounding box over all parsed IR geometry.
 
-Points are gathered from part COGs, stiffener/pillar traces, seam trace
+Points are gathered from part mass-property COGs, stiffener/pillar traces, seam trace
 lines and compartment face boundary curves. Unknown units degrade to notes.
 """
 from __future__ import annotations
@@ -32,7 +32,10 @@ def _gather_points(vessel: IrVessel, notes: list[str]) -> list[tuple[float, floa
 
     for attr in _PART_COLLECTIONS:
         for part in getattr(vessel, attr, {}).values():
-            cog = getattr(part, "cog", None)
+            mass_properties = getattr(part, "mass_properties", None)
+            cog = (mass_properties.moulded_cog
+                   if mass_properties is not None
+                   else None)
             if cog is not None:
                 try:
                     points.append(point_mm(cog, registry))  # type: ignore[arg-type]

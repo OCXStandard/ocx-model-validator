@@ -14,7 +14,6 @@ from ocx_model_validator.model.ir.arrangement import (
     IrUnitCargo,
 )
 from ocx_model_validator.model.ir.base import (
-    IrCog,
     IrMassProperties,
     IrUnit,
     ParentRef,
@@ -70,8 +69,6 @@ class IrPlate:
     guidref: str | None = None
     material_ref: Ref | None = None
     thickness: Quantity | None = None
-    dry_weight: Quantity | None = None
-    cog: IrCog | None = None
     mass_properties: IrMassProperties | None = None
     net_area: Quantity | None = None
     function_type: str | None = None
@@ -87,8 +84,6 @@ class IrBracket:
     guidref: str | None = None
     material_ref: Ref | None = None
     thickness: Quantity | None = None
-    dry_weight: Quantity | None = None
-    cog: IrCog | None = None
     mass_properties: IrMassProperties | None = None
     arm_length_u: Quantity | None = None
     arm_length_v: Quantity | None = None
@@ -105,8 +100,6 @@ class IrStiffener:
     guidref: str | None = None
     material_ref: Ref | None = None
     section_ref: Ref | None = None
-    dry_weight: Quantity | None = None
-    cog: IrCog | None = None
     mass_properties: IrMassProperties | None = None
     function_type: str | None = None
     end_cut_end1: IrEndCut | None = None
@@ -125,8 +118,6 @@ class IrPillar:
     guidref: str | None = None
     material_ref: Ref | None = None
     section_ref: Ref | None = None
-    dry_weight: Quantity | None = None
-    cog: IrCog | None = None
     mass_properties: IrMassProperties | None = None
     function_type: str | None = None
 
@@ -140,8 +131,6 @@ class IrEdgeReinforcement:
     guidref: str | None = None
     material_ref: Ref | None = None
     section_ref: Ref | None = None
-    dry_weight: Quantity | None = None
-    cog: IrCog | None = None
     mass_properties: IrMassProperties | None = None
     function_type: str | None = None
 
@@ -161,7 +150,7 @@ class IrSeam:
 
 @dataclass
 class IrMember:
-    """Structural member element (physical-properties + external geometry ref).
+    """Structural member element (mass properties + external geometry ref).
 
     No reachable vessel-tree source exists in OCX 3.1.0, so the builder leaves
     ``IrVessel.members`` empty; the type is kept aligned for forward schemas.
@@ -170,8 +159,6 @@ class IrMember:
     parent_ref: ParentRef
     name: str | None = None
     guidref: str | None = None
-    dry_weight: Quantity | None = None
-    cog: IrCog | None = None
     mass_properties: IrMassProperties | None = None
     external_geometry_ref: Ref | None = None
 
@@ -262,8 +249,6 @@ class IrPanel:
     guidref: str | None = None
     function_type: str | None = None
     tightness: str | None = None
-    dry_weight: Quantity | None = None
-    cog: IrCog | None = None
     mass_properties: IrMassProperties | None = None
     # Child part id references (into IrVessel dicts)
     plate_ids: list[str] = field(default_factory=list)
