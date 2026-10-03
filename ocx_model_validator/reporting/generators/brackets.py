@@ -3,7 +3,8 @@
 One row per bracket: attributes (panel parent, material), thicknesses
 (as-built, renewal, voluntary addition), material offset, physical
 properties (moulded dry weight) and the full BracketParameters set:
-arm lengths, nose dimensions, free edge radius, edge reinforcement,
+arm lengths, origin and U/V directions, nose dimensions, free edge
+radius, edge reinforcement,
 supports, reinforcement type, FeatureCope and FlangeEdgeReinforcement
 properties. Bracket geometry is intentionally excluded.
 """
@@ -15,6 +16,7 @@ from ocx_model_validator.reporting.generators._common import (
     qty_mm_cell,
     qty_tonnes_cell,
     report_metadata,
+    xyz_m_cells,
 )
 from ocx_model_validator.reporting.model import Cell, Report, ReportSection, ReportTable
 
@@ -23,6 +25,7 @@ _COLUMNS = [
     "Thickness (mm)", "Renewal thickness (mm)",
     "Voluntary addition (mm)", "Offset (mm)", "Dry weight (t)",
     "Arm length U (mm)", "Arm length V (mm)",
+    "Origin (m)", "U direction", "V direction",
     "U nose (mm)", "V nose (mm)", "Free edge radius (mm)",
     "Edge reinforcement", "Supports", "Reinforcement type",
     "Cope radius (mm)", "Cope length (mm)", "Cope height (mm)",
@@ -44,6 +47,12 @@ def _material_name(b: IrBracket, vessel: IrVessel) -> str | None:
     return (m.name or m.grade or m.id) if m is not None else None
 
 
+def _vector_cell(v) -> Cell:
+    if v is None:
+        return None
+    return f"[{v.x}, {v.y}, {v.z}]"
+
+
 def build(vessel: IrVessel, source_file: str = "") -> Report:
     notes: list[str] = []
     reg = vessel.unit_registry
@@ -53,6 +62,11 @@ def build(vessel: IrVessel, source_file: str = "") -> Report:
         mp = b.mass_properties
         offset = b.material_ref.offset if b.material_ref is not None else None
         fc = b.feature_cope
+        origin_cell: Cell = None
+        if b.origin is not None:
+            coords = xyz_m_cells(b.origin.x, b.origin.y, b.origin.z,
+                                 b.origin.unit, reg, notes, f"{ctx} origin")
+            origin_cell = "(" + ", ".join(str(c) for c in coords) + ")"
         rows.append([
             b.id, b.name, _panel_name(b, vessel), _material_name(b, vessel),
             qty_mm_cell(b.thickness, reg, notes, f"{ctx} thickness"),
@@ -65,6 +79,9 @@ def build(vessel: IrVessel, source_file: str = "") -> Report:
                             reg, notes, f"{ctx} dry weight"),
             qty_mm_cell(b.arm_length_u, reg, notes, f"{ctx} arm length U"),
             qty_mm_cell(b.arm_length_v, reg, notes, f"{ctx} arm length V"),
+            origin_cell,
+            _vector_cell(b.udirection),
+            _vector_cell(b.vdirection),
             qty_mm_cell(b.unose, reg, notes, f"{ctx} U nose"),
             qty_mm_cell(b.vnose, reg, notes, f"{ctx} V nose"),
             qty_mm_cell(b.free_edge_radius, reg, notes,

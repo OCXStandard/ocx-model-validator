@@ -2,6 +2,7 @@
 from ocx_model_validator.model.ir import IrMassProperties
 from ocx_model_validator.model.ir.base import ParentKind, ParentRef, Quantity, Ref
 from ocx_model_validator.model.ir.catalogues import IrMaterial
+from ocx_model_validator.model.ir.geometry import IrPoint3D, IrVector3D
 from ocx_model_validator.model.ir.structural import (
     IrBracket,
     IrFeatureCope,
@@ -27,6 +28,9 @@ def _vessel() -> IrVessel:
             moulded_dry_weight=Quantity(50.0, "UKg")),
         arm_length_u=Quantity(300.0, "Umm"),
         arm_length_v=Quantity(350.0, "Umm"),
+        origin=IrPoint3D(x=10.0, y=2.0, z=8.0, unit="Um"),
+        udirection=IrVector3D(x=1.0, y=0.0, z=0.0),
+        vdirection=IrVector3D(x=0.0, y=0.0, z=1.0),
         unose=Quantity(50.0, "Umm"),
         vnose=Quantity(60.0, "Umm"),
         free_edge_radius=Quantity(400.0, "Umm"),
@@ -58,6 +62,7 @@ def test_brackets_report_shape():
         "Thickness (mm)", "Renewal thickness (mm)",
         "Voluntary addition (mm)", "Offset (mm)", "Dry weight (t)",
         "Arm length U (mm)", "Arm length V (mm)",
+        "Origin (m)", "U direction", "V direction",
         "U nose (mm)", "V nose (mm)", "Free edge radius (mm)",
         "Edge reinforcement", "Supports", "Reinforcement type",
         "Cope radius (mm)", "Cope length (mm)", "Cope height (mm)",
@@ -71,12 +76,16 @@ def test_brackets_rows_sorted_with_parameters():
     assert table.rows == [
         ["BR2", "Bare bracket", "Deck panel", None,
          None, None, None, None, None,
-         None, None, None, None, None,
+         None, None,
+         None, None, None,
+         None, None, None,
          None, None, None,
          None, None, None, None, None],
         ["BR1", "Tripping bracket", "Deck panel", "NV A36",
          10.0, 8.0, 1.0, 5.0, 0.05,
-         300.0, 350.0, 50.0, 60.0, 400.0,
+         300.0, 350.0,
+         "(10.0, 2.0, 8.0)", "[1.0, 0.0, 0.0]", "[0.0, 0.0, 1.0]",
+         50.0, 60.0, 400.0,
          "yes", 2, "Flanged",
          30.0, 80.0, 40.0, 100.0, 25.0],
     ]

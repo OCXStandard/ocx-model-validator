@@ -1229,6 +1229,9 @@ class OcxV3Builder(IOcxBuilder):
             feature_cope=self._build_feature_cope(getattr(bp, "feature_cope", None) if bp else None),
             flange_width=self._qty(getattr(fer, "flange_width", None) if fer else None),
             flange_radius=self._qty(getattr(fer, "radius", None) if fer else None),
+            origin=self._pt(getattr(bp, "origin", None) if bp else None),
+            udirection=self._vec(getattr(bp, "udirection", None) if bp else None),
+            vdirection=self._vec(getattr(bp, "vdirection", None) if bp else None),
         )
 
     def _build_feature_cope(self, fc) -> IrFeatureCope | None:

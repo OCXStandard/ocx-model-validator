@@ -34,10 +34,24 @@ class _FlangeEdgeReinforcement:
         self.radius = _Qty(25.0)
 
 
+class _Point:
+    def __init__(self, coords, unit="Um"):
+        self.coordinates = coords
+        self.unit = unit
+
+
+class _Vector:
+    def __init__(self, direction):
+        self.direction = direction
+
+
 class _BracketParameters:
     def __init__(self):
         self.arm_length_u = _Qty(300.0)
         self.arm_length_v = _Qty(350.0)
+        self.origin = _Point([10.0, 2.0, 8.0])
+        self.udirection = _Vector([1.0, 0.0, 0.0])
+        self.vdirection = _Vector([0.0, 0.0, 1.0])
         self.unose = _Qty(50.0)
         self.vnose = _Qty(60.0)
         self.free_edge_radius = _Qty(400.0)
@@ -92,6 +106,14 @@ def test_bracket_flange_edge_reinforcement():
     assert b.flange_radius == Quantity(25.0, "Umm")
 
 
+def test_bracket_origin_and_directions():
+    b = _build()
+    assert (b.origin.x, b.origin.y, b.origin.z) == (10.0, 2.0, 8.0)
+    assert b.origin.unit == "Um"
+    assert (b.udirection.x, b.udirection.y, b.udirection.z) == (1.0, 0.0, 0.0)
+    assert (b.vdirection.x, b.vdirection.y, b.vdirection.z) == (0.0, 0.0, 1.0)
+
+
 def test_bracket_without_parameters_defaults():
     br = _Bracket()
     br.bracket_parameters = None
@@ -104,3 +126,6 @@ def test_bracket_without_parameters_defaults():
     assert b.feature_cope is None
     assert b.flange_width is None
     assert b.flange_radius is None
+    assert b.origin is None
+    assert b.udirection is None
+    assert b.vdirection is None

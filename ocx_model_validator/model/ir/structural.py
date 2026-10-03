@@ -102,6 +102,9 @@ class IrBracket:
     feature_cope: "IrFeatureCope | None" = None
     flange_width: Quantity | None = None
     flange_radius: Quantity | None = None
+    origin: IrPoint3D | None = None
+    udirection: IrVector3D | None = None
+    vdirection: IrVector3D | None = None
 
 
 @dataclass
