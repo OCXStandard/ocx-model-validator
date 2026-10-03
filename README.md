@@ -148,7 +148,7 @@ ocx-model-validator/
 ## CLI
 
 ```bash
-# model reports (rich to stdout, or markdown to a file)
+# model reports (rich to stdout; markdown/html via --format or a .md/.html destination)
 validator report frame-table  model.3docx
 validator report compartments model.3docx
 validator report catalogues   model.3docx --catalogue material
