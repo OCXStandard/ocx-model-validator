@@ -36,6 +36,28 @@ class Quantity:
 
 
 @dataclass(frozen=True)
+class IrVector3D:
+    """A dimensionless 3D direction vector."""
+    x: float
+    y: float
+    z: float
+
+
+@dataclass(frozen=True)
+class IrMassProperties:
+    """Mass properties of a structural part (OCX 3.2.0 ``MassProperties``).
+
+    For 3.0/3.1 models the builder maps the legacy ``PhysicalProperties``
+    ``dry_weight``/``center_of_gravity`` onto the *moulded* fields; the
+    physical fields stay ``None``.
+    """
+    moulded_dry_weight: Quantity | None = None
+    physical_dry_weight: Quantity | None = None
+    moulded_cog: IrCog | None = None
+    physical_cog: IrCog | None = None
+
+
+@dataclass(frozen=True)
 class IrUnit:
     """Schema-neutral representation of a single UnitsML ``<Unit>`` entry.
 
@@ -63,9 +85,15 @@ class IrUnit:
 
 @dataclass(frozen=True)
 class Ref:
-    """A reference to another structural part by XML id and/or GUIDRef."""
+    """A reference to another structural part by XML id and/or GUIDRef.
+
+    ``offset``/``offset_direction`` carry the OCX 3.2.0 ref offset; ``None``
+    for 3.0/3.1 models and refs without an offset.
+    """
     local_ref: str
     guidref: str | None = None
+    offset: Quantity | None = None
+    offset_direction: IrVector3D | None = None
 
     def __repr__(self) -> str:
         if self.guidref:

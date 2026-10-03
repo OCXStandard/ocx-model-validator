@@ -7,7 +7,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
-from ocx_model_validator.model.ir.base import Quantity
+from ocx_model_validator.model.ir.base import IrVector3D, Quantity
 
 # --- primitive value types ---
 
@@ -18,14 +18,6 @@ class IrPoint3D:
     y: float
     z: float
     unit: str  # OCX unit id, e.g. 'Um', 'Umm'
-
-
-@dataclass(frozen=True)
-class IrVector3D:
-    """A dimensionless 3D direction vector."""
-    x: float
-    y: float
-    z: float
 
 
 # --- curve hierarchy ---

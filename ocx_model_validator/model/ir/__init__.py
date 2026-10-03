@@ -29,6 +29,7 @@ from ocx_model_validator.model.ir.arrangement import (
 )
 from ocx_model_validator.model.ir.base import (
     IrCog,
+    IrMassProperties,
     IrUnit,
     ParentKind,
     ParentRef,
@@ -114,7 +115,7 @@ from ocx_model_validator.model.ir.structural import (
 
 __all__ = [
     # base
-    "IrCog", "Quantity", "IrUnit", "Ref", "ParentKind", "ParentRef",
+    "IrCog", "IrMassProperties", "Quantity", "IrUnit", "Ref", "ParentKind", "ParentRef",
     # catalogues
     "IrMaterial", "IrHole2D", "IrHoleShapeCatalogue",
     # sections
