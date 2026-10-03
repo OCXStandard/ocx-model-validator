@@ -112,3 +112,56 @@ def test_build_materials_legacy_material_fallback():
     m = ir.materials["M9"]
     assert m.material_type is None
     assert m.yield_stress.value == 235.0
+
+
+def test_plate_material_renewal_thickness():
+    raw = NS(id="PL2", name=None, guidref=None,
+             plate_material=NS(local_ref="M1", guidref=None,
+                               thickness=_qty(12.0, "Umm"),
+                               renewal_thickness=_qty(10.5, "Umm"),
+                               voluntary_thickness_addition=_qty(1.0, "Umm")),
+             net_area=None, function_type=None, outer_contour=None)
+    plate = _b()._build_plate(raw, PARENT)
+    assert plate.thickness.value == 12.0
+    assert plate.renewal_thickness.value == 10.5
+    assert plate.voluntary_thickness_addition.value == 1.0
+
+
+def test_stiffener_section_ref_scantlings():
+    raw = NS(id="ST2", name=None, guidref=None, material_ref=None,
+             function_type=None, end_cut_end1=None, end_cut_end2=None,
+             trace_line=None, inclination=None,
+             section_ref=NS(local_ref="SEC1", guidref=None,
+                            web_renewal_thickness=_qty(6.0, "Umm"),
+                            flange_renewal_thickness=_qty(7.0, "Umm"),
+                            voluntary_web_thickness_addition=_qty(0.5, "Umm"),
+                            voluntary_flange_thickness_addition=_qty(0.7, "Umm")))
+    st = _b()._build_stiffener(raw, PARENT)
+    assert st.section_ref.local_ref == "SEC1"
+    assert st.web_renewal_thickness.value == 6.0
+    assert st.flange_renewal_thickness.value == 7.0
+    assert st.voluntary_web_thickness_addition.value == 0.5
+    assert st.voluntary_flange_thickness_addition.value == 0.7
+
+
+def test_round_bar_height_fallback():
+    class RoundBar(NS):
+        pass
+    sec = RoundBar(id="S_RB", name=None, guidref=None,
+                   height=_qty(30.0, "Umm"))
+    ir_sec = _b()._build_section(sec)
+    assert ir_sec.diameter.value == 30.0
+
+
+def test_bar_section_catalogue_reference():
+    class FlatBar(NS):
+        pass
+    class BarSection(NS):
+        pass
+    bar = BarSection(id="S_FB", name="FB100", guidref=None,
+                     catalogue_reference="EN10058-FB100x10",
+                     flat_bar=FlatBar(height=_qty(100.0, "Umm"),
+                                      width=_qty(10.0, "Umm")))
+    ir_sec = _b()._build_section(bar)
+    assert ir_sec.catalogue_reference == "EN10058-FB100x10"
+    assert ir_sec.height.value == 100.0

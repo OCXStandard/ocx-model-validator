@@ -69,6 +69,8 @@ class IrPlate:
     guidref: str | None = None
     material_ref: Ref | None = None
     thickness: Quantity | None = None
+    renewal_thickness: Quantity | None = None
+    voluntary_thickness_addition: Quantity | None = None
     mass_properties: IrMassProperties | None = None
     net_area: Quantity | None = None
     function_type: str | None = None
@@ -84,6 +86,8 @@ class IrBracket:
     guidref: str | None = None
     material_ref: Ref | None = None
     thickness: Quantity | None = None
+    renewal_thickness: Quantity | None = None
+    voluntary_thickness_addition: Quantity | None = None
     mass_properties: IrMassProperties | None = None
     arm_length_u: Quantity | None = None
     arm_length_v: Quantity | None = None
@@ -100,6 +104,10 @@ class IrStiffener:
     guidref: str | None = None
     material_ref: Ref | None = None
     section_ref: Ref | None = None
+    web_renewal_thickness: Quantity | None = None
+    flange_renewal_thickness: Quantity | None = None
+    voluntary_web_thickness_addition: Quantity | None = None
+    voluntary_flange_thickness_addition: Quantity | None = None
     mass_properties: IrMassProperties | None = None
     function_type: str | None = None
     end_cut_end1: IrEndCut | None = None
@@ -118,6 +126,10 @@ class IrPillar:
     guidref: str | None = None
     material_ref: Ref | None = None
     section_ref: Ref | None = None
+    web_renewal_thickness: Quantity | None = None
+    flange_renewal_thickness: Quantity | None = None
+    voluntary_web_thickness_addition: Quantity | None = None
+    voluntary_flange_thickness_addition: Quantity | None = None
     mass_properties: IrMassProperties | None = None
     function_type: str | None = None
 
@@ -131,6 +143,10 @@ class IrEdgeReinforcement:
     guidref: str | None = None
     material_ref: Ref | None = None
     section_ref: Ref | None = None
+    web_renewal_thickness: Quantity | None = None
+    flange_renewal_thickness: Quantity | None = None
+    voluntary_web_thickness_addition: Quantity | None = None
+    voluntary_flange_thickness_addition: Quantity | None = None
     mass_properties: IrMassProperties | None = None
     function_type: str | None = None
 
