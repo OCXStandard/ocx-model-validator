@@ -8,7 +8,7 @@ from typer.testing import CliRunner
 from ocx_model_validator.cli import app
 
 MODEL = Path(os.environ.get("OCX_VLCC_MODEL",
-                            r"C:\PythonDev\models\D-VLCC_1-HOLD-OCX-simple_v3.3docx"))
+                            r"models\D-VLCC_1-HOLD-OCX-simple_v3.3docx"))
 
 pytestmark = [
     pytest.mark.integration,
@@ -32,3 +32,20 @@ def test_bom_report_on_reference_model(tmp_path: Path):
     total_line = next(ln for ln in text.splitlines() if "Grand total" in ln)
     weight = float(total_line.split("|")[5].strip().strip("*"))
     assert weight > 0
+
+
+TR05_MODEL = Path("models/TR05/tr05_tc04a_mbrh.3docx")
+
+
+@pytest.mark.skipif(not TR05_MODEL.exists(),
+                    reason="TR05 reference model not present")
+def test_report_all_html_links_resolve_on_tr05(tmp_path: Path):
+    dest = tmp_path / "all.html"
+    result = runner.invoke(
+        app, ["report", "all", str(TR05_MODEL), "--destination", str(dest)])
+    assert result.exit_code == 0
+    text = dest.read_text(encoding="utf-8")
+    assert text.startswith("<!DOCTYPE html>")
+    # BOM material links resolve to materials-catalogue row anchors
+    assert 'href="#material-' in text
+    assert 'id="material-' in text
