@@ -10,6 +10,7 @@ from ocx_model_validator.model.ir.structural import (
     IrVessel,
 )
 from ocx_model_validator.reporting.generators import bom as bom_gen
+from ocx_model_validator.reporting.model import Link
 
 _PARENT = ParentRef(kind=ParentKind.VESSEL, id="V1")
 
@@ -57,9 +58,9 @@ def test_bom_summary_grouping_and_totals():
     assert table.rows == [
         ["(no material)", "Plate", "t=12.0 mm", 1, 2.0, 0],
         ["Subtotal — (no material)", None, None, 1, 2.0, 0],
-        ["NV A36", "Pillar", "FB200x20", 1, 0.3, 0],
-        ["NV A36", "Plate", "t=10.0 mm", 3, 1.5, 1],
-        ["NV A36", "Stiffener", "FB200x20", 1, 0.25, 0],
+        [Link("NV A36", "material-M1"), "Pillar", Link("FB200x20", "section-S1"), 1, 0.3, 0],
+        [Link("NV A36", "material-M1"), "Plate", "t=10.0 mm", 3, 1.5, 1],
+        [Link("NV A36", "material-M1"), "Stiffener", Link("FB200x20", "section-S1"), 1, 0.25, 0],
         ["Subtotal — NV A36", None, None, 5, 2.05, 1],
     ]
     assert table.footer_rows == [["Grand total", None, None, 6, 4.05, 1]]
