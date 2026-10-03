@@ -400,6 +400,7 @@ _FALLBACK_SI = {
     "Um": 1.0,
     "Umm": 1e-3,
     "Ucm": 1e-2,
+    "Um2": 1.0,
     "Um3": 1.0,
     "UPa": 1.0,
     "UMPa": 1e6,

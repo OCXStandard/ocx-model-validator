@@ -93,8 +93,18 @@ class IrBracket:
     mass_properties: IrMassProperties | None = None
     arm_length_u: Quantity | None = None
     arm_length_v: Quantity | None = None
+    unose: Quantity | None = None
+    vnose: Quantity | None = None
+    free_edge_radius: Quantity | None = None
     has_edge_reinforcement: bool = False
     number_of_supports: int | None = None
+    reinforcement_type: str | None = None
+    feature_cope: "IrFeatureCope | None" = None
+    flange_width: Quantity | None = None
+    flange_radius: Quantity | None = None
+    origin: IrPoint3D | None = None
+    udirection: IrVector3D | None = None
+    vdirection: IrVector3D | None = None
 
 
 @dataclass
@@ -136,6 +146,9 @@ class IrPillar:
     voluntary_flange_thickness_addition: Quantity | None = None
     mass_properties: IrMassProperties | None = None
     function_type: str | None = None
+    trace: IrCurve3D | None = None
+    inclinations: list[IrInclination] = field(default_factory=list)
+    penetrations: list[IrPenetration] = field(default_factory=list)
 
 
 @dataclass

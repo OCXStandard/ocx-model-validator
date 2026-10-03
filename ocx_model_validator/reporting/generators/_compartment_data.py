@@ -40,6 +40,7 @@ def _compartment_row(
 ) -> dict[str, Any]:
     name = compartment.name or compartment.id
     return {
+        "id": compartment.id,
         "name": name,
         "tank_type": _tank_type(compartment, name, warnings),
         "cog_mm": _cog_mm(compartment.cog, vessel, name, warnings),

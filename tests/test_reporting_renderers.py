@@ -1,7 +1,7 @@
 """Tests for report renderers."""
 import pytest
 
-from ocx_model_validator.reporting.model import Report, ReportSection, ReportTable
+from ocx_model_validator.reporting.model import Link, Report, ReportSection, ReportTable
 from ocx_model_validator.reporting.renderers import get_renderer
 from ocx_model_validator.reporting.renderers.markdown import MarkdownRenderer
 from ocx_model_validator.reporting.renderers.rich import RichRenderer
@@ -38,7 +38,7 @@ def test_markdown_full_document():
         "| Id | Weight (t) |\n"
         "|---|---|\n"
         "| P1 | 1.5 |\n"
-        "| P2 | N/A |\n"
+        "| P2 |  |\n"
         "| **Total** | **1.5** |\n"
         "\n"
         "> 1 item missing weight\n"
@@ -87,7 +87,7 @@ def test_rich_renderer_smoke():
     out = RichRenderer().render(_sample_report())
     assert "Test report" in out
     assert "P1" in out
-    assert "N/A" in out
+    assert "N/A" not in out
     assert "Total" in out
 
 
@@ -111,3 +111,49 @@ def test_rich_renderer_escapes_markup_in_titles_and_notes():
     )
     out = RichRenderer().render(report)  # must not raise MarkupError
     assert "weird" in out
+
+
+def _link_report() -> Report:
+    return Report(title="R", sections=[
+        ReportSection(title="S", tables=[
+            ReportTable("T", ["Material"],
+                        [[Link("NV A36", "material-M1")]])
+        ])
+    ])
+
+
+def test_markdown_link_renders_as_plain_text():
+    out = MarkdownRenderer().render(_link_report())
+    assert "| NV A36 |" in out
+    assert "material-M1" not in out
+
+
+def test_rich_link_renders_as_plain_text():
+    out = RichRenderer().render(_link_report())
+    assert "NV A36" in out
+    assert "material-M1" not in out
+
+
+def _grouped_report() -> Report:
+    table = ReportTable(
+        title="T",
+        columns=["Group", "Count"],
+        rows=[["G1", 2], ["Subtotal", 2]],
+        row_children=[[["item-a", None], ["item-b", None]], []],
+    )
+    return Report(title="R", sections=[ReportSection(title="S", tables=[table])])
+
+
+def test_markdown_child_rows_follow_parent():
+    out = MarkdownRenderer().render(_grouped_report())
+    lines = [ln for ln in out.splitlines() if ln.startswith("|")]
+    assert lines[2] == "| **G1** | **2** |"  # group rows are bold
+    assert lines[3] == "| item-a |  |"
+    assert lines[4] == "| item-b |  |"
+    assert lines[5] == "| Subtotal | 2 |"
+
+
+def test_rich_child_rows_render():
+    out = RichRenderer().render(_grouped_report())
+    assert "item-a" in out
+    assert "item-b" in out

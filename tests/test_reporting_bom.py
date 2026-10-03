@@ -10,6 +10,7 @@ from ocx_model_validator.model.ir.structural import (
     IrVessel,
 )
 from ocx_model_validator.reporting.generators import bom as bom_gen
+from ocx_model_validator.reporting.model import Link
 
 _PARENT = ParentRef(kind=ParentKind.VESSEL, id="V1")
 
@@ -57,9 +58,9 @@ def test_bom_summary_grouping_and_totals():
     assert table.rows == [
         ["(no material)", "Plate", "t=12.0 mm", 1, 2.0, 0],
         ["Subtotal — (no material)", None, None, 1, 2.0, 0],
-        ["NV A36", "Pillar", "FB200x20", 1, 0.3, 0],
-        ["NV A36", "Plate", "t=10.0 mm", 3, 1.5, 1],
-        ["NV A36", "Stiffener", "FB200x20", 1, 0.25, 0],
+        [Link("NV A36", "material-M1"), "Pillar", Link("FB200x20", "section-S1"), 1, 0.3, 0],
+        [Link("NV A36", "material-M1"), "Plate", "t=10.0 mm", 3, 1.5, 1],
+        [Link("NV A36", "material-M1"), "Stiffener", Link("FB200x20", "section-S1"), 1, 0.25, 0],
         ["Subtotal — NV A36", None, None, 5, 2.05, 1],
     ]
     assert table.footer_rows == [["Grand total", None, None, 6, 4.05, 1]]
@@ -110,16 +111,42 @@ def test_bom_notes_deduplicated():
     assert len(notes) == len(set(notes))
 
 
-def test_bom_detailed_items_table():
-    report = bom_gen.build(_vessel(), detailed=True)
-    tables = report.sections[0].tables
-    assert [t.title for t in tables] == ["Summary", "Items"]
-    items = tables[1]
-    assert items.columns == ["Material", "Part type", "Group", "Id", "Name", "Weight (t)"]
-    p3_row = next(r for r in items.rows if r[3] == "P3")
-    assert p3_row[5] is None  # missing weight renders None
+def test_bom_expandable_group_items():
+    report = bom_gen.build(_vessel())
+    table = report.sections[0].tables[0]
+    assert len(table.row_children) == len(table.rows)
+    # Subtotal rows have no children
+    for row, children in zip(table.rows, table.row_children):
+        if isinstance(row[0], str) and row[0].startswith("Subtotal"):
+            assert children == []
+        else:
+            assert children  # every group row expands into its items
+    # NV A36 / Plate / t=10.0 mm group → P1, P2, P3 (sorted by id)
+    idx = next(i for i, r in enumerate(table.rows)
+               if r[1] == "Plate" and r[2] == "t=10.0 mm")
+    children = table.row_children[idx]
+    assert children == [
+        [None, None, "P1", None, 1.0, None],
+        [None, None, "P2", None, 0.5, None],
+        [None, None, "P3", None, None, None],  # missing weight renders None
+    ]
 
 
-def test_bom_detailed_item_count():
-    report = bom_gen.build(_vessel(), detailed=True)
-    assert len(report.sections[0].tables[1].rows) == 6
+def test_bom_item_count_across_groups():
+    report = bom_gen.build(_vessel())
+    table = report.sections[0].tables[0]
+    assert sum(len(c) for c in table.row_children) == 6
+
+
+def test_bom_item_rows_show_name_not_id():
+    v = _vessel()
+    v.plates["P9"] = IrPlate(id="P9", parent_ref=_PARENT, name="Deck plate",
+                             material_ref=Ref("M1"),
+                             thickness=Quantity(10.0, "Umm"),
+                             mass_properties=IrMassProperties(
+                                 moulded_dry_weight=Quantity(100.0, "UKg")))
+    report = bom_gen.build(v)
+    table = report.sections[0].tables[0]
+    labels = [c[2] for children in table.row_children for c in children]
+    assert "Deck plate" in labels
+    assert "P9" not in labels

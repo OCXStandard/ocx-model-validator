@@ -50,10 +50,16 @@ uv run pytest tests/test_builders.py::TestBuilderFactory::test_get_builder_310_r
 Two equivalent entrypoints are registered (`validator` and `ocx-validate`):
 
 ```bash
-# Model reports (rich to stdout, or markdown via --destination)
+# Model reports (rich to stdout; markdown or html via --destination / --format)
 validator report frame-table  model.3docx
 validator report compartments model.3docx
+validator report panels       model.3docx
+validator report plates       model.3docx
+validator report stiffeners   model.3docx
+validator report brackets     model.3docx
+validator report pillars      model.3docx
 validator report all          model.3docx --destination report.md
+validator report all          model.3docx --destination report.html
 
 # Generate XML test stubs from .3docx models in ./models/
 validator generate-stubs

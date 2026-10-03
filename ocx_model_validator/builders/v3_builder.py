@@ -1205,6 +1205,7 @@ class OcxV3Builder(IOcxBuilder):
         pm = getattr(raw, "plate_material", None)
         mat_ref, thickness = self._material_ref(pm)
         bp = getattr(raw, "bracket_parameters", None)
+        fer = getattr(bp, "flange_edge_reinforcement", None) if bp else None
         return IrBracket(
             id=bid,
             parent_ref=parent,
@@ -1219,8 +1220,30 @@ class OcxV3Builder(IOcxBuilder):
             mass_properties=self._mass_properties(raw),
             arm_length_u=self._qty(getattr(bp, "arm_length_u", None) if bp else None),
             arm_length_v=self._qty(getattr(bp, "arm_length_v", None) if bp else None),
+            unose=self._qty(getattr(bp, "unose", None) if bp else None),
+            vnose=self._qty(getattr(bp, "vnose", None) if bp else None),
+            free_edge_radius=self._qty(getattr(bp, "free_edge_radius", None) if bp else None),
             has_edge_reinforcement=bool(getattr(bp, "has_edge_reinforcement", False) if bp else False),
             number_of_supports=getattr(bp, "number_of_supports", None) if bp else None,
+            reinforcement_type=self._enum(getattr(bp, "reinforcement_type", None) if bp else None),
+            feature_cope=self._build_feature_cope(getattr(bp, "feature_cope", None) if bp else None),
+            flange_width=self._qty(getattr(fer, "flange_width", None) if fer else None),
+            flange_radius=self._qty(getattr(fer, "radius", None) if fer else None),
+            origin=self._pt(getattr(bp, "origin", None) if bp else None),
+            udirection=self._vec(getattr(bp, "udirection", None) if bp else None),
+            vdirection=self._vec(getattr(bp, "vdirection", None) if bp else None),
+        )
+
+    def _build_feature_cope(self, fc) -> IrFeatureCope | None:
+        if fc is None:
+            return None
+        return IrFeatureCope(
+            id=getattr(fc, "id", None) or "",
+            name=getattr(fc, "name", None),
+            guidref=getattr(fc, "guidref", None),
+            cope_height=self._qty(getattr(fc, "cope_height", None)),
+            cope_length=self._qty(getattr(fc, "cope_length", None)),
+            cope_radius=self._qty(getattr(fc, "cope_radius", None)),
         )
 
     def _build_stiffener(self, raw, parent: ParentRef) -> IrStiffener | None:
@@ -1261,6 +1284,8 @@ class OcxV3Builder(IOcxBuilder):
             **self._section_scantlings(raw_sec),
             mass_properties=self._mass_properties(raw),
             function_type=self._enum(getattr(raw, "function_type", None)),
+            trace=self._build_contour(getattr(raw, "trace_line", None)),
+            inclinations=self._build_inclinations(getattr(raw, "inclination", None)),
         )
 
     def _build_edge_reinforcement(self, raw, parent: ParentRef) -> IrEdgeReinforcement | None:

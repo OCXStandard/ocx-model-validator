@@ -1,9 +1,9 @@
 """Markdown renderer for Report objects."""
 from __future__ import annotations
 
-from ocx_model_validator.reporting.model import Cell, Report, ReportSection, ReportTable
+from ocx_model_validator.reporting.model import Cell, Link, Report, ReportSection, ReportTable
 
-_NA = "N/A"
+_NA = ""
 
 
 def _escape(text: str) -> str:
@@ -11,6 +11,8 @@ def _escape(text: str) -> str:
 
 
 def _cell(c: Cell) -> str:
+    if isinstance(c, Link):
+        c = c.text
     return _NA if c is None else _escape(str(c))
 
 
@@ -21,8 +23,14 @@ def _table_lines(t: ReportTable) -> list[str]:
     if not t.rows and not t.footer_rows:
         cells = ["(empty)"] + [""] * (len(t.columns) - 1)
         lines.append("| " + " | ".join(cells) + " |")
-    for row in t.rows:
-        lines.append("| " + " | ".join(_cell(c) for c in row) + " |")
+    for i, row in enumerate(t.rows):
+        children = t.row_children[i] if i < len(t.row_children) else []
+        cells = [_cell(c) for c in row]
+        if children:  # group rows stand out in bold
+            cells = [f"**{c}**" if c and c != _NA else c for c in cells]
+        lines.append("| " + " | ".join(cells) + " |")
+        for child in children:
+            lines.append("| " + " | ".join(_cell(c) for c in child) + " |")
     for row in t.footer_rows:
         cells = []
         for c in row:

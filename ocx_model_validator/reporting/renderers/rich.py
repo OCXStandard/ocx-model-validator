@@ -5,12 +5,14 @@ from rich.console import Console
 from rich.markup import escape
 from rich.table import Table
 
-from ocx_model_validator.reporting.model import Cell, Report, ReportSection
+from ocx_model_validator.reporting.model import Cell, Link, Report, ReportSection
 
-_NA = "N/A"
+_NA = ""
 
 
 def _cell(c: Cell) -> str:
+    if isinstance(c, Link):
+        c = c.text
     return _NA if c is None else str(c)
 
 
@@ -39,8 +41,14 @@ class RichRenderer:
                 table.add_column(escape(col))
             if not t.rows and not t.footer_rows:
                 table.add_row("(empty)", *[""] * (len(t.columns) - 1))
-            for row in t.rows:
-                table.add_row(*[escape(_cell(c)) for c in row])
+            for i, row in enumerate(t.rows):
+                children = t.row_children[i] if i < len(t.row_children) else []
+                if children:  # group rows stand out in bold
+                    table.add_row(*[f"[bold]{escape(_cell(c))}[/]" for c in row])
+                else:
+                    table.add_row(*[escape(_cell(c)) for c in row])
+                for child in children:
+                    table.add_row(*[f"[dim]{escape(_cell(c))}[/]" for c in child])
             for row in t.footer_rows:
                 table.add_row(*[f"[bold]{escape(_cell(c))}[/]" for c in row])
             console.print(table)

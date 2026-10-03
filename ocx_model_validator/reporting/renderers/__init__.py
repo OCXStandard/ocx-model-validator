@@ -2,12 +2,14 @@
 from __future__ import annotations
 
 from ocx_model_validator.reporting.renderers.base import ReportRenderer
+from ocx_model_validator.reporting.renderers.html import HtmlRenderer
 from ocx_model_validator.reporting.renderers.markdown import MarkdownRenderer
 from ocx_model_validator.reporting.renderers.rich import RichRenderer
 
 _RENDERERS: dict[str, type[ReportRenderer]] = {
     "markdown": MarkdownRenderer,
     "rich": RichRenderer,
+    "html": HtmlRenderer,
 }
 
 
@@ -20,5 +22,5 @@ def get_renderer(fmt: str) -> ReportRenderer:
         raise ValueError(f"Unknown report format {fmt!r}; supported: {supported}") from None
 
 
-__all__ = ["ReportRenderer", "MarkdownRenderer", "RichRenderer", "get_renderer"]
-
+__all__ = ["HtmlRenderer", "MarkdownRenderer", "ReportRenderer", "RichRenderer",
+           "get_renderer"]

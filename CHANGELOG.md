@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.5.0 — 2026-10-03
+
+### Added
+
+- HTML report renderer: `--format html` (auto-inferred from a `.html`
+  destination), tabbed multi-section documents, in-document links from
+  BOM groups and part rows to catalogue entries.
+- New reports: `report panels`, `report plates`, `report stiffeners`,
+  `report brackets`, `report pillars` — attributes, physical properties
+  and unit-converted scantlings; geometry intentionally excluded.
+  All included in `report all`.
+- Compartments report: `Cargo type` column and a `Cargoes` table with
+  cargo attributes and properties (density, carriage pressure, liquid
+  state, stowage factor, permeability, angle of repose).
+- Bill of material: groups are expandable rows with per-group totals
+  (click-to-toggle in HTML; inline child rows in markdown/rich).
+- Panel children (plates, stiffeners, pillars) inherit the panel
+  `functionType`; inherited values shown in parentheses.
+- IR: full `BracketParameters` on `IrBracket` (noses, free edge radius,
+  reinforcement type, origin, U/V directions, `FeatureCope`,
+  `FlangeEdgeReinforcement`); `IrPillar` trace, inclinations and
+  penetrations.
+
+### Changed
+
+- Cross-section catalogue reports list unique bar sections only.
+- BOM item rows show the part name (id as fallback) without the id.
+- Group rows render in bold; missing values render as empty cells
+  instead of `N/A`.
+- `report bom --detailed` flag removed — superseded by expandable
+  groups.
+
 ## 0.4.0 — 2026-10-01
 
 ### Removed (breaking)

@@ -2,8 +2,10 @@
 
 Grouping hierarchy: material → part type → sub-group (thickness for plates
 and brackets, cross-section for stiffeners, pillars and edge
-reinforcements). Items without a moulded dry weight show N/A, are excluded from
-totals, and are counted per group in the "Missing weight" column.
+reinforcements). Each group row carries the group totals and expands into
+its individual items (``ReportTable.row_children``). Items without a
+moulded dry weight render an empty weight cell, are excluded from totals,
+and are counted per group in the "Missing weight" column.
 """
 from __future__ import annotations
 
@@ -16,7 +18,7 @@ from ocx_model_validator.reporting.generators._common import (
     qty_mm_cell,
     report_metadata,
 )
-from ocx_model_validator.reporting.model import Cell, Report, ReportSection, ReportTable
+from ocx_model_validator.reporting.model import Cell, Link, Report, ReportSection, ReportTable
 
 _NO_MATERIAL = "(no material)"
 _NO_SECTION = "(no section)"
@@ -77,7 +79,37 @@ def _weight_tonnes(part, vessel: IrVessel, notes: list[str]) -> float | None:
         return None
 
 
-def build(vessel: IrVessel, detailed: bool = False, source_file: str = "") -> Report:
+def _anchor_maps(vessel: IrVessel) -> tuple[dict[str, str], dict[str, str]]:
+    """Display name → anchor id for materials and sections.
+
+    Grouping keys stay plain strings (sortable); cells get wrapped in Link
+    at emission time via these maps. On duplicate display names the first
+    id wins — the link then points at one representative catalogue row.
+    """
+    material_anchor: dict[str, str] = {}
+    for mid, m in vessel.materials.items():
+        material_anchor.setdefault(m.name or m.grade or mid, f"material-{mid}")
+    section_anchor: dict[str, str] = {}
+    for sid, s in vessel.sections.items():
+        section_anchor.setdefault(s.name or sid, f"section-{sid}")
+    return material_anchor, section_anchor
+
+
+def _link(name: str, anchors: dict[str, str]) -> Cell:
+    target = anchors.get(name)
+    return Link(name, target) if target else name
+
+
+def _item_rows(g: _Group) -> list[list[Cell]]:
+    """Child rows for a group: item name under Group, weight under Weight (t)."""
+    children: list[list[Cell]] = []
+    for item_id, name, w in sorted(g.items, key=lambda it: it[0]):
+        children.append([None, None, name or item_id, None,
+                         round(w, 3) if w is not None else None, None])
+    return children
+
+
+def build(vessel: IrVessel, source_file: str = "") -> Report:
     notes: list[str] = []
     groups: dict[tuple[str, str, str], _Group] = {}
 
@@ -94,7 +126,9 @@ def build(vessel: IrVessel, detailed: bool = False, source_file: str = "") -> Re
                 g.weight_t += w
             g.items.append((part.id, part.name, w))
 
+    material_anchor, section_anchor = _anchor_maps(vessel)
     rows: list[list[Cell]] = []
+    row_children: list[list[list[Cell]]] = []
     total_count = total_missing = 0
     total_weight = 0.0
     current_material: str | None = None
@@ -105,6 +139,7 @@ def build(vessel: IrVessel, detailed: bool = False, source_file: str = "") -> Re
         if current_material is not None:
             rows.append([f"Subtotal — {current_material}", None, None,
                          sub_count, round(sub_weight, 3), sub_missing])
+            row_children.append([])
 
     for (material, part_type, group), g in sorted(groups.items()):
         if material != current_material:
@@ -112,8 +147,10 @@ def build(vessel: IrVessel, detailed: bool = False, source_file: str = "") -> Re
             current_material = material
             sub_count = sub_missing = 0
             sub_weight = 0.0
-        rows.append([material, part_type, group,
+        rows.append([_link(material, material_anchor), part_type,
+                     _link(group, section_anchor),
                      g.count, round(g.weight_t, 3), g.missing])
+        row_children.append(_item_rows(g))
         sub_count += g.count
         sub_weight += g.weight_t
         sub_missing += g.missing
@@ -133,20 +170,9 @@ def build(vessel: IrVessel, detailed: bool = False, source_file: str = "") -> Re
         rows=rows,
         footer_rows=[["Grand total", None, None,
                       total_count, round(total_weight, 3), total_missing]],
+        row_children=row_children,
     )
     tables = [summary]
-
-    if detailed:
-        item_rows: list[list[Cell]] = []
-        for (material, part_type, group), g in sorted(groups.items()):
-            for item_id, name, w in sorted(g.items, key=lambda it: it[0]):
-                item_rows.append([material, part_type, group, item_id, name,
-                                  round(w, 3) if w is not None else None])
-        tables.append(ReportTable(
-            title="Items",
-            columns=["Material", "Part type", "Group", "Id", "Name", "Weight (t)"],
-            rows=item_rows,
-        ))
 
     notes[:] = list(dict.fromkeys(notes))
     section = ReportSection(title="Bill of material", tables=tables, notes=notes)

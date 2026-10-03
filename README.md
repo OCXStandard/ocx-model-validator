@@ -148,11 +148,16 @@ ocx-model-validator/
 ## CLI
 
 ```bash
-# model reports (rich to stdout, or markdown to a file)
+# model reports (rich to stdout; markdown/html via --format or a .md/.html destination)
 validator report frame-table  model.3docx
 validator report compartments model.3docx
 validator report catalogues   model.3docx --catalogue material
-validator report bom          model.3docx --detailed
+validator report bom          model.3docx
+validator report panels       model.3docx
+validator report plates       model.3docx
+validator report stiffeners   model.3docx
+validator report brackets     model.3docx
+validator report pillars      model.3docx
 validator report all          model.3docx --destination report.md
 
 # generate xsdata stubs from .3docx models in ./models/

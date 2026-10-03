@@ -2,10 +2,15 @@
 
 Usage::
 
-    validator report frame-table MODEL.3docx [--format rich|markdown] [--destination FILE]
+    validator report frame-table MODEL.3docx [--format rich|markdown|html] [--destination FILE]
     validator report compartments MODEL.3docx ...
     validator report catalogues MODEL.3docx [--catalogue material|section|opening|all] ...
-    validator report bom MODEL.3docx [--detailed] ...
+    validator report panels MODEL.3docx ...
+    validator report plates MODEL.3docx ...
+    validator report stiffeners MODEL.3docx ...
+    validator report brackets MODEL.3docx ...
+    validator report pillars MODEL.3docx ...
+    validator report bom MODEL.3docx ...
     validator report all MODEL.3docx ...
     validator generate-stubs [--force]
 """
@@ -36,15 +41,18 @@ app.add_typer(report_app, name="report")
 class ReportFormat(str, Enum):
     rich = "rich"
     markdown = "markdown"
+    html = "html"
 
 
 _MODEL_ARG = typer.Argument(..., exists=True, readable=True,
                             help="Path to a .3docx model file.")
 _FORMAT_OPT = typer.Option(None, "--format", "-f",
-                           help="Output format (default: rich to stdout, "
-                                "markdown with --destination).")
+                           help="Output format (default: rich to stdout; "
+                                "markdown with --destination, or html when "
+                                "the destination ends in .html/.htm).")
 _DEST_OPT = typer.Option(None, "--destination", "-d",
-                         help="Write the report to this file (Markdown).")
+                         help="Write the report to this file "
+                              "(markdown, or html for .html/.htm).")
 
 
 def _load_vessel(model: Path):
@@ -90,13 +98,20 @@ def _detect_schema_version(model: Path) -> str | None:
     return None
 
 
+_HTML_SUFFIXES = {".html", ".htm"}
+
+
 def _emit(report: Report, fmt: ReportFormat | None, destination: Path | None) -> None:
     if destination is not None:
         if fmt == ReportFormat.rich:
             raise typer.BadParameter(
                 "--destination cannot be combined with --format rich")
+        if fmt is None:
+            fmt = (ReportFormat.html
+                   if destination.suffix.lower() in _HTML_SUFFIXES
+                   else ReportFormat.markdown)
         try:
-            destination.write_text(get_renderer("markdown").render(report),
+            destination.write_text(get_renderer(fmt.value).render(report),
                                    encoding="utf-8")
         except OSError as exc:
             logger.error("Cannot write {}: {}", destination, exc)
@@ -106,7 +121,7 @@ def _emit(report: Report, fmt: ReportFormat | None, destination: Path | None) ->
     if fmt is None or fmt == ReportFormat.rich:
         RichRenderer().render_to_console(report, Console())
     else:
-        typer.echo(get_renderer("markdown").render(report), nl=False)
+        typer.echo(get_renderer(fmt.value).render(report), nl=False)
 
 
 @report_app.command("frame-table")
@@ -159,12 +174,74 @@ def catalogues_cmd(
                            source_file=str(model)), fmt, destination)
 
 
+@report_app.command("panels")
+def panels_cmd(
+    model: Path = _MODEL_ARG,
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """Panels: attributes, physical properties and child counts."""
+    from ocx_model_validator.reporting.generators import panels
+
+    vessel = _load_vessel(model)
+    _emit(panels.build(vessel, source_file=str(model)), fmt, destination)
+
+
+@report_app.command("plates")
+def plates_cmd(
+    model: Path = _MODEL_ARG,
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """Plates: attributes, thicknesses, net area and opening counts."""
+    from ocx_model_validator.reporting.generators import plates
+
+    vessel = _load_vessel(model)
+    _emit(plates.build(vessel, source_file=str(model)), fmt, destination)
+
+
+@report_app.command("stiffeners")
+def stiffeners_cmd(
+    model: Path = _MODEL_ARG,
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """Stiffeners: attributes, profile, trace length and connection counts."""
+    from ocx_model_validator.reporting.generators import stiffeners
+
+    vessel = _load_vessel(model)
+    _emit(stiffeners.build(vessel, source_file=str(model)), fmt, destination)
+
+
+@report_app.command("brackets")
+def brackets_cmd(
+    model: Path = _MODEL_ARG,
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """Brackets: attributes, thicknesses and all bracket parameters."""
+    from ocx_model_validator.reporting.generators import brackets
+
+    vessel = _load_vessel(model)
+    _emit(brackets.build(vessel, source_file=str(model)), fmt, destination)
+
+
+@report_app.command("pillars")
+def pillars_cmd(
+    model: Path = _MODEL_ARG,
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """Pillars: attributes, profile, trace length and counts."""
+    from ocx_model_validator.reporting.generators import pillars
+
+    vessel = _load_vessel(model)
+    _emit(pillars.build(vessel, source_file=str(model)), fmt, destination)
+
+
 @report_app.command("bom")
 def bom_cmd(
     model: Path = _MODEL_ARG,
-    detailed: bool = typer.Option(
-        False, "--detailed",
-        help="Add per-item rows below the summary.", is_flag=True),
     fmt: ReportFormat | None = _FORMAT_OPT,
     destination: Path | None = _DEST_OPT,
 ) -> None:
@@ -172,8 +249,7 @@ def bom_cmd(
     from ocx_model_validator.reporting.generators import bom
 
     vessel = _load_vessel(model)
-    _emit(bom.build(vessel, detailed=detailed, source_file=str(model)),
-          fmt, destination)
+    _emit(bom.build(vessel, source_file=str(model)), fmt, destination)
 
 
 @report_app.command("all")
@@ -185,10 +261,15 @@ def all_cmd(
     """All reports merged into one document (report defaults; no per-report flags)."""
     from ocx_model_validator.reporting.generators import (
         bom,
+        brackets,
         catalogues,
         compartments,
         frame_table,
         model_extent,
+        panels,
+        pillars,
+        plates,
+        stiffeners,
     )
 
     vessel = _load_vessel(model)
@@ -197,6 +278,11 @@ def all_cmd(
         model_extent.build(vessel, source_file=source),
         frame_table.build(vessel, source_file=source),
         compartments.build(vessel, source_file=source),
+        panels.build(vessel, source_file=source),
+        plates.build(vessel, source_file=source),
+        stiffeners.build(vessel, source_file=source),
+        brackets.build(vessel, source_file=source),
+        pillars.build(vessel, source_file=source),
         catalogues.build(vessel, source_file=source),
         bom.build(vessel, source_file=source),
     ]
