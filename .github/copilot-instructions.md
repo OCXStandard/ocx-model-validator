@@ -101,7 +101,8 @@ IOcxBuilder.build(root) → IrVessel   ← schema-neutral IR
 - To support a new schema version family, add a new `IOcxBuilder` subclass and register it in `_BUILDER_REGISTRY` in `factory.py`.
 - The `_MAJOR_FALLBACK` dict in `factory.py` handles unknown minor versions within a known major family.
 - Section type detection in `OcxV3Builder` uses `_SECTION_TYPE_MAP` (substring matching on lowercased class names). More-specific keys must precede any key that is a substring of them.
-- Geometry extraction uses `_pt`/`_vec` (unpack OCX `Point3D.coordinates`/`Vector3D.direction` lists into `IrPoint3D`/`IrVector3D`) and `_build_curve`/`_build_surface`, which dispatch on the lowercased OCX class name. The IR mirrors OCX field *semantics* but stays shallow — OCX wrapper elements (`SplitBy`, `TraceLine`, `PhysicalProperties`, `XRefPlanes`, …) are flattened onto the parent IR object; deep sub-trees collapse to scalars/`Ref`s/id-lists/flat dicts.
+- Geometry extraction uses `_pt`/`_vec` (unpack OCX `Point3D.coordinates`/`Vector3D.direction` lists into `IrPoint3D`/`IrVector3D`) and `_build_curve`/`_build_surface`, which dispatch on the lowercased OCX class name. The IR mirrors OCX field *semantics* but stays shallow — OCX wrapper elements (`SplitBy`, `TraceLine`, `MassProperties`, `XRefPlanes`, …) are flattened onto the parent IR object; deep sub-trees collapse to scalars/`Ref`s/id-lists/flat dicts.
+- OCX 3.2.0 renamed/restructured several elements (`PhysicalProperties`→`MassProperties`, `Material`→`Steel`/`Aluminium`, `Origin`→`PointOnSurface` on `Plane3D`, `Occurrence` `str_*Ref` names, `UnboundedGridRef`/`UnboundedSurfaceRef`). The builder always reads the 3.2.0 name first and falls back to the 3.1.0 name; the IR follows 3.2.0 shapes (`IrMassProperties`, `IrMaterial.material_type`, `IrPlane3D.point_on_surface`).
 
 ## Test fixtures and stubs
 
