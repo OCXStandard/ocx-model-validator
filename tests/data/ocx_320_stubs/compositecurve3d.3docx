@@ -1,22 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
-<ocx:CompositeCurve3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid9496" ocx:GUIDRef="85b6018d-a517-4230-9704-f47c0757aa9f" is2D="false">
-    <ocx:CurveLength numericvalue="11.19362" unit="Um"/>
-    <ocx:NURBS3D id="nplcid9497" ocx:GUIDRef="59880a79-226c-4844-9cf3-a8b1fe1b6f42" is2D="false">
-        <ocx:CurveLength numericvalue="11.19362" unit="Um"/>
-        <ocx:NURBSproperties degree="3" numCtrlPts="10" numKnots="14" form="Open" isRational="false"/>
-        <ocx:KnotVector value="0.0 0.0 0.0 0.0 1.0 1.0 1.0 2.0 2.0 2.0 3.0 3.0 3.0 3.0"/>
-        <ocx:ControlPtList>
-            <ocx:ControlPoint coordinates="43.285 2.46 2.5" unit="Um" weight="1.0"/>
-            <ocx:ControlPoint coordinates="44.08 2.46 2.5" unit="Um" weight="1.0"/>
-            <ocx:ControlPoint coordinates="44.875 2.46 2.5" unit="Um" weight="1.0"/>
-            <ocx:ControlPoint coordinates="45.67 2.46 2.5" unit="Um" weight="1.0"/>
-            <ocx:ControlPoint coordinates="47.905 2.46 2.33333" unit="Um" weight="1.0"/>
-            <ocx:ControlPoint coordinates="50.14 2.46 2.16667" unit="Um" weight="1.0"/>
-            <ocx:ControlPoint coordinates="52.375 2.46 2.0" unit="Um" weight="1.0"/>
-            <ocx:ControlPoint coordinates="53.07 2.46 2.0" unit="Um" weight="1.0"/>
-            <ocx:ControlPoint coordinates="53.765 2.46 2.0" unit="Um" weight="1.0"/>
-            <ocx:ControlPoint coordinates="54.46 2.46 2.0" unit="Um" weight="1.0"/>
-        </ocx:ControlPtList>
-    </ocx:NURBS3D>
+<!-- Source: tr05_tc04a_aitac.3docx -->
+<ocx:CompositeCurve3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid40" ocx:GUIDRef="a91dc115-eb88-464e-bddf-d913b7fec91c" is2D="false">
+    <ocx:CurveLength numericvalue="18.3999884" unit="Um"/>
+    <ocx:Line3D id="nplcid41" is2D="false">
+        <ocx:CurveLength numericvalue="3.9191836" unit="Um"/>
+        <ocx:StartPoint coordinates="1.0 0.0 0.0" unit="Um"/>
+        <ocx:EndPoint coordinates="1.0 3.9191836 0.0" unit="Um"/>
+    </ocx:Line3D>
+    <ocx:Line3D id="nplcid43" is2D="false">
+        <ocx:CurveLength numericvalue="2.8" unit="Um"/>
+        <ocx:StartPoint coordinates="1.0 10.0 9.2" unit="Um"/>
+        <ocx:EndPoint coordinates="1.0 10.0 12.0" unit="Um"/>
+    </ocx:Line3D>
+    <ocx:CircumArc3D id="nplcid42" is2D="false">
+        <ocx:CurveLength numericvalue="11.6808049" unit="Um"/>
+        <ocx:StartPoint coordinates="1.0 3.9191836 0.0" unit="Um"/>
+        <ocx:IntermediatePoint coordinates="1.0 8.3424168 3.6860103" unit="Um"/>
+        <ocx:EndPoint coordinates="1.0 10.0 9.2" unit="Um"/>
+    </ocx:CircumArc3D>
 </ocx:CompositeCurve3D>

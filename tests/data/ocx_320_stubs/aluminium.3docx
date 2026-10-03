@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: TR5TC04A-NAST.3docx -->
-<ocx:Aluminium xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid4" name="ALU" ocx:GUIDRef="d1bf866c-52e8-4e1c-b89a-f4851d583782" alloyDesignation="6061-T6">
+<!-- Source: tr05_tc04a_aitac.3docx -->
+<ocx:Aluminium xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid21" name="Aluminum" ocx:GUIDRef="1ec84366-868e-4b93-9c6a-4f36709eeaee" alloyDesignation="6061-T6">
     <ocx:Density numericvalue="2700.0" unit="UKgOverm3"/>
-    <ocx:YoungsModulus numericvalue="69000.0" unit="UNOvermm2"/>
+    <ocx:YoungsModulus numericvalue="0.0" unit="UNOverm2"/>
     <ocx:PoissonRatio numericvalue="0.0" unit="UDimless"/>
-    <ocx:UnweldedYieldStrength numericvalue="276.0" unit="UNOvermm2"/>
-    <ocx:WeldedYieldStrength numericvalue="0.0" unit="UNOvermm2"/>
-    <ocx:UnweldedTensileStrength numericvalue="310.0" unit="UNOvermm2"/>
-    <ocx:WeldedTensileStrength numericvalue="0.0" unit="UNOvermm2"/>
+    <ocx:UnweldedYieldStrength numericvalue="276000000.0" unit="UNOverm2"/>
+    <ocx:WeldedYieldStrength numericvalue="276000000.0" unit="UNOverm2"/>
+    <ocx:UnweldedTensileStrength numericvalue="310000000.0" unit="UNOverm2"/>
+    <ocx:WeldedTensileStrength numericvalue="310000000.0" unit="UNOverm2"/>
 </ocx:Aluminium>

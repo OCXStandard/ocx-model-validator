@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: TR05TC09-NAST.3docx -->
+<!-- Source: tr05_tc04a_aitac.3docx -->
 <ocx:LBar xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd">
-    <ocx:Height numericvalue="0.25" unit="Um"/>
-    <ocx:Width numericvalue="0.09" unit="Um"/>
+    <ocx:Height numericvalue="0.2" unit="Um"/>
+    <ocx:Width numericvalue="0.1" unit="Um"/>
     <ocx:WebThickness numericvalue="0.01" unit="Um"/>
-    <ocx:FlangeThickness numericvalue="0.01" unit="Um"/>
+    <ocx:FlangeThickness numericvalue="0.012" unit="Um"/>
 </ocx:LBar>

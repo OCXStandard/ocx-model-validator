@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:LugPlateRef xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" localRef="id_9195" ocx:GUIDRef="33b3424c-45ec-4881-b5bc-b60e04fbf8c7" ocx:refType="ocx:Plate">
+    <ocx:ConnectionLength numericvalue="0.283238" unit="Um"/>
+    <ocx:DistanceAbove numericvalue="0.0" unit="Um"/>
+</ocx:LugPlateRef>

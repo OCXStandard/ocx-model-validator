@@ -5,6 +5,7 @@ from ocx_model_validator.model.ir import (
     IrCog,
     IrEndCut,
     IrFeatureCope,
+    IrMassProperties,
     IrMember,
     IrPanel,
     IrPenetration,
@@ -22,17 +23,17 @@ def test_seam_defaults_and_trace_line():
     assert s.trace_line is None
 
 
-def test_member_uses_cog_and_external_geometry():
+def test_member_uses_mass_properties_and_external_geometry():
     parent = ParentRef(kind=ParentKind.VESSEL, id="v1")
     m = IrMember(id="m1", parent_ref=parent)
     assert m.parent_ref is parent
-    assert m.dry_weight is None and m.external_geometry_ref is None
+    assert m.mass_properties is None and m.external_geometry_ref is None
     m2 = IrMember(
         id="m2",
         parent_ref=parent,
-        cog=IrCog(1.0, 2.0, 3.0, "Um"),
+        mass_properties=IrMassProperties(moulded_cog=IrCog(1.0, 2.0, 3.0, "Um")),
     )
-    assert isinstance(m2.cog, IrCog)
+    assert isinstance(m2.mass_properties.moulded_cog, IrCog)
 
 
 def test_end_cut_defaults():

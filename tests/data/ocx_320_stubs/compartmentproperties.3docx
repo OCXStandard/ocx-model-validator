@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: TR05TC09-NAST.3docx -->
+<!-- Source: tr05_tc09_mbrh.3docx -->
 <ocx:CompartmentProperties xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd">
-    <ocx:CenterOfGravity coordinates="5.03188 7.43997 0.8276" unit="Um"/>
-    <ocx:Volume numericvalue="37.954" unit="Um3"/>
+    <ocx:CenterOfGravity coordinates="4.9997128 2.901606 0.75" unit="Um"/>
+    <ocx:Volume numericvalue="84.672375" unit="Um3"/>
 </ocx:CompartmentProperties>

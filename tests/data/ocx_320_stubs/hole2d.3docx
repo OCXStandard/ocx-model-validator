@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
-<ocx:Hole2D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid28" name="400X600" ocx:GUIDRef="4b66ef64-00c8-0dad-72ef-5ae78998843c">
-    <ocx:SymmetricalHole id="nplcid27">
-        <ocx:Height numericvalue="0.6" unit="Um"/>
-        <ocx:Width numericvalue="0.4" unit="Um"/>
-    </ocx:SymmetricalHole>
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:Hole2D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid41" name="1800X2000R150" ocx:GUIDRef="43df492f-6975-931a-66ed-ae0cf54637a2">
+    <ocx:RectangularHole id="nplcid41_shape">
+        <ocx:Height numericvalue="2.0" unit="Um"/>
+        <ocx:Width numericvalue="1.8" unit="Um"/>
+        <ocx:FilletRadius numericvalue="0.15" unit="Um"/>
+    </ocx:RectangularHole>
 </ocx:Hole2D>

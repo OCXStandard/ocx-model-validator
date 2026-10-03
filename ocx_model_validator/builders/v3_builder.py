@@ -50,6 +50,7 @@ from ocx_model_validator.model.ir import (
     IrLSection,
     IrLSectionOvershootFlange,
     IrLSectionOvershootWeb,
+    IrMassProperties,
     IrMaterial,
     IrNurbs3D,
     IrNurbsSurface,
@@ -148,6 +149,13 @@ def _children(value: Any) -> list[Any]:
     if isinstance(value, list | tuple):
         return list(value)
     return [value]
+
+
+def _first(value: Any) -> Any:
+    """Return the first element of a list/tuple, or the value itself."""
+    if isinstance(value, list | tuple):
+        return value[0] if value else None
+    return value
 
 
 def _bar_section_choice(raw_section: Any) -> Any:
@@ -279,7 +287,12 @@ class OcxV3Builder(IOcxBuilder):
             return None
         local = getattr(obj, "local_ref", None) or ""
         guid = getattr(obj, "guidref", None)
-        return Ref(local_ref=local, guidref=guid)
+        return Ref(
+            local_ref=local,
+            guidref=guid,
+            offset=OcxV3Builder._qty(getattr(obj, "offset", None)),
+            offset_direction=OcxV3Builder._vec(getattr(obj, "offset_direction", None)),
+        )
 
     @staticmethod
     def _material_ref(plate_material_obj) -> tuple[Ref | None, Quantity | None]:
@@ -294,11 +307,20 @@ class OcxV3Builder(IOcxBuilder):
         return mat_ref, thickness
 
     @staticmethod
-    def _cog(physical_properties) -> IrCog | None:
-        """Extract centre of gravity from a PhysicalPropertiesT."""
-        if physical_properties is None:
-            return None
-        cog_raw = getattr(physical_properties, "center_of_gravity", None)
+    def _section_scantlings(section_ref_obj) -> dict[str, Quantity | None]:
+        """Extract 3.2.0 renewal/voluntary-addition quantities from a SectionRef."""
+        q = OcxV3Builder._qty
+        s = section_ref_obj
+        return {
+            "web_renewal_thickness": q(getattr(s, "web_renewal_thickness", None)) if s else None,
+            "flange_renewal_thickness": q(getattr(s, "flange_renewal_thickness", None)) if s else None,
+            "voluntary_web_thickness_addition": q(getattr(s, "voluntary_web_thickness_addition", None)) if s else None,
+            "voluntary_flange_thickness_addition": q(getattr(s, "voluntary_flange_thickness_addition", None)) if s else None,
+        }
+
+    @staticmethod
+    def _cog_point(cog_raw) -> IrCog | None:
+        """Extract an IrCog from a CoG-style element (coordinates + unit)."""
         if cog_raw is None:
             return None
         coords = getattr(cog_raw, "coordinates", None)
@@ -314,6 +336,35 @@ class OcxV3Builder(IOcxBuilder):
             )
         except (TypeError, ValueError):
             return None
+
+    @staticmethod
+    def _cog(physical_properties) -> IrCog | None:
+        """Extract centre of gravity from a legacy PhysicalPropertiesT."""
+        if physical_properties is None:
+            return None
+        return OcxV3Builder._cog_point(
+            getattr(physical_properties, "center_of_gravity", None))
+
+    @classmethod
+    def _mass_properties(cls, raw) -> IrMassProperties | None:
+        """Extract IrMassProperties: 3.2.0 MassProperties first, legacy
+        3.0/3.1 PhysicalProperties fallback (mapped onto moulded fields)."""
+        mp = getattr(raw, "mass_properties", None)
+        if mp is not None:
+            return IrMassProperties(
+                moulded_dry_weight=cls._qty(getattr(mp, "moulded_dry_weight", None)),
+                physical_dry_weight=cls._qty(getattr(mp, "physical_dry_weight", None)),
+                moulded_cog=cls._cog_point(getattr(mp, "moulded_center_of_gravity", None)),
+                physical_cog=cls._cog_point(getattr(mp, "physical_center_of_gravity", None)),
+            )
+        pp = getattr(raw, "physical_properties", None)
+        if pp is None:
+            return None
+        dw = cls._qty(getattr(pp, "dry_weight", None))
+        cog = cls._cog(pp)
+        if dw is None and cog is None:
+            return None
+        return IrMassProperties(moulded_dry_weight=dw, moulded_cog=cog)
 
     @staticmethod
     def _register(ir_dict: dict, obj_id: str, obj, duplicates: list[str]) -> None:
@@ -431,6 +482,8 @@ class OcxV3Builder(IOcxBuilder):
 
     def _build_contour(self, container):
         """Build one IR curve from a TraceLine/OuterContour container."""
+        if isinstance(container, (list, tuple)):
+            container = container[0] if container else None
         if container is None:
             return None
         curves = []
@@ -449,38 +502,75 @@ class OcxV3Builder(IOcxBuilder):
             return curves[0]
         return IrCompositeCurve3D(curve_length=None, segments=curves)
 
+    _TRACE_REF_ATTRS = ("edge_curve_ref", "edge_reinforcement_ref", "grid_ref",
+                        "panel_ref", "seam_ref", "stiffener_ref", "surface_ref")
+
+    def _trace_refs(self, trace_line) -> list[Ref]:
+        """Extract 3.2.0 TraceLine child refs (empty for 3.0/3.1 models)."""
+        refs: list[Ref] = []
+        if trace_line is None:
+            return refs
+        for attr in self._TRACE_REF_ATTRS:
+            r = self._ref(_first(getattr(trace_line, attr, None)))
+            if r is not None and (r.local_ref or r.guidref):
+                refs.append(r)
+        return refs
+
+    def _cut_by_contours(self, pcb) -> list[Any]:
+        """Extract PlateCutBy contours from 3.2.0 inner_contour or 3.1.0 outer_contour."""
+        if pcb is None:
+            return []
+        contours = []
+        raw_list = (
+            getattr(pcb, "inner_contour", None)
+            or getattr(pcb, "outer_contour", None)
+            or []
+        )
+        for c in _children(raw_list):
+            built = self._build_contour(c)
+            if built is not None:
+                contours.append(built)
+        return contours
+
     def _build_surface(self, elem):
         """Dispatch a raw OCX surface element to its IR surface type."""
         if elem is None:
             return None
         name = type(elem).__name__.lower()
         sid = getattr(elem, "id", None)
+        pos = self._pt(getattr(elem, "point_on_surface", None))
+        normal = self._vec(getattr(elem, "normal", None))
         if "plane" in name:
-            return IrPlane3D(id=sid, origin=self._pt(getattr(elem, "origin", None)),
-                             normal=self._vec(getattr(elem, "normal", None)),
+            return IrPlane3D(id=sid,
+                             point_on_surface=pos or self._pt(getattr(elem, "origin", None)),
+                             normal=normal,
                              udirection=self._vec(getattr(elem, "udirection", None)))
         if "sphere" in name:
             return IrSphere3D(id=sid, origin=self._pt(getattr(elem, "origin", None)),
-                              radius=self._qty(getattr(elem, "radius", None)))
+                              radius=self._qty(getattr(elem, "radius", None)),
+                              normal=normal, point_on_surface=pos)
         if "cone" in name:
             return IrCone3D(id=sid, origin=self._pt(getattr(elem, "origin", None)),
                             tip=self._pt(getattr(elem, "tip", None)),
                             base_radius=self._qty(getattr(elem, "base_radius", None)),
-                            tip_radius=self._qty(getattr(elem, "tip_radius", None)))
+                            tip_radius=self._qty(getattr(elem, "tip_radius", None)),
+                            normal=normal, point_on_surface=pos)
         if "cylinder" in name:
             return IrCylinder3D(id=sid, origin=self._pt(getattr(elem, "origin", None)),
                                 axis=self._vec(getattr(elem, "axis", None)),
                                 radius=self._qty(getattr(elem, "radius", None)),
-                                height=self._qty(getattr(elem, "height", None)))
+                                height=self._qty(getattr(elem, "height", None)),
+                                normal=normal, point_on_surface=pos)
         if "extruded" in name:
             return IrExtrudedSurface(
                 id=sid,
                 base_curve=self._build_curve(getattr(elem, "base_curve", None)),
                 sweep=self._vec(getattr(elem, "sweep", None)),
                 sweep_curve=self._build_curve(getattr(elem, "sweep_curve", None)),
-                face_boundary_curve=self._build_curve(getattr(elem, "face_boundary_curve", None)))
+                face_boundary_curve=self._build_curve(getattr(elem, "face_boundary_curve", None)),
+                normal=normal, point_on_surface=pos)
         if "nurbssurface" in name or "nurbs" in name:
-            return IrNurbsSurface(id=sid)
+            return IrNurbsSurface(id=sid, normal=normal, point_on_surface=pos)
         logger.debug("Unknown surface type: {}", type(elem).__name__)
         return None
 
@@ -507,8 +597,8 @@ class OcxV3Builder(IOcxBuilder):
                     break
             if surface is not None:
                 break
-        grid = getattr(ug, "grid_ref", None)
-        sref = getattr(ug, "surface_ref", None)
+        grid = _first(getattr(ug, "unbounded_grid_ref", None)) or getattr(ug, "grid_ref", None)
+        sref = _first(getattr(ug, "unbounded_surface_ref", None)) or getattr(ug, "surface_ref", None)
         return IrUnboundedGeometry(
             surface=surface,
             surface_ref=(getattr(sref, "local_ref", None) or None) if sref else None,
@@ -623,7 +713,9 @@ class OcxV3Builder(IOcxBuilder):
             curve = self._build_curve(getattr(tl, "composite_curve3_d", None)) if tl else None
             self._register(ir.seams, sid, IrSeam(
                 id=sid, name=getattr(seam, "name", None),
-                guidref=getattr(seam, "guidref", None), trace_line=curve), ir.duplicate_ids)
+                guidref=getattr(seam, "guidref", None),
+                trace_line=curve,
+                trace_refs=self._trace_refs(tl)), ir.duplicate_ids)
             seam_ids.append(sid)
         return seam_ids
 
@@ -650,6 +742,7 @@ class OcxV3Builder(IOcxBuilder):
             self._register(ir.bulk_cargoes, cargo_id, IrBulkCargo(
                 id=cargo_id, compartment_ref=ref,
                 cargo_type=self._enum(getattr(bc, "bulk_cargo_type", None)),
+                density=self._qty(getattr(bc, "density", None)),
                 stowage_factor=self._qty(getattr(bc, "stowage_factor", None)),
                 permeability=self._qty(getattr(bc, "permeability", None)),
                 angle_of_repose=self._qty(getattr(bc, "angle_of_repose", None))), ir.duplicate_ids)
@@ -659,12 +752,26 @@ class OcxV3Builder(IOcxBuilder):
                 id=cargo_id, compartment_ref=ref,
                 cargo_type=self._enum(getattr(uc, "unit_cargo_type", None))), ir.duplicate_ids)
 
-    _OCC_REF_ATTRS = ("plate_ref", "stiffener_ref", "seam_ref", "bracket_ref",
-                      "pillar_ref", "hole_contour_ref", "edge_reinforcement_ref",
-                      "lug_plate_ref", "connected_bracket_ref")
+    # (3.2.0 attr, 3.1.0 fallback attr, IrOccurrence field)
+    _OCC_REF_ATTRS = (
+        ("plate_ref", None, "plate_ref"),
+        ("str_stiffener_ref", "stiffener_ref", "stiffener_ref"),
+        ("str_seam_ref", "seam_ref", "seam_ref"),
+        ("bracket_ref", None, "bracket_ref"),
+        ("pillar_ref", None, "pillar_ref"),
+        ("hole_contour_ref", None, "hole_contour_ref"),
+        ("str_edge_reinforcement_ref", "edge_reinforcement_ref", "edge_reinforcement_ref"),
+        ("lug_plate_ref", None, "lug_plate_ref"),
+        ("connected_bracket_ref", None, "connected_bracket_ref"),
+    )
 
     def _build_occurrence(self, occ) -> IrOccurrence:
-        kwargs = {attr: self._ref(getattr(occ, attr, None)) for attr in self._OCC_REF_ATTRS}
+        kwargs = {}
+        for new_attr, old_attr, field_name in self._OCC_REF_ATTRS:
+            raw = _first(getattr(occ, new_attr, None))
+            if raw is None and old_attr:
+                raw = _first(getattr(occ, old_attr, None))
+            kwargs[field_name] = self._ref(raw)
         return IrOccurrence(id=getattr(occ, "id", None) or "",
                             name=getattr(occ, "name", None),
                             type_value=getattr(occ, "type_value", None), **kwargs)
@@ -713,7 +820,8 @@ class OcxV3Builder(IOcxBuilder):
                         if curve is not None:
                             break
             parametric = None
-            for attr in ("rectangular_hole", "super_elliptical",
+            for attr in ("ellipse", "rectangular_mickey_mouse_ears",
+                         "rectangular_hole", "super_elliptical",
                          "symmetrical_hole", "parametric_circle"):
                 if getattr(h, attr, None) is not None:
                     parametric = {"variant": attr}
@@ -784,6 +892,7 @@ class OcxV3Builder(IOcxBuilder):
                 freeboard_length=self._qty(getattr(pp, "freeboard_length", None)),
                 normal_ballast_draught=self._qty(getattr(pp, "normal_ballast_draught", None)),
                 heavy_ballast_draught=self._qty(getattr(pp, "heavy_ballast_draught", None)),
+                minimum_ballast_draught=self._qty(getattr(pp, "minimum_ballast_draught", None)),
                 length_of_waterline=self._qty(getattr(pp, "length_of_waterline", None)),
                 upper_deck_area=self._qty(getattr(pp, "upper_deck_area", None)),
                 freeboard_type=self._enum(getattr(pp, "freeboard_type", None)))
@@ -808,22 +917,60 @@ class OcxV3Builder(IOcxBuilder):
         mc = getattr(cc, "material_catalogue", None)
         if mc is None:
             return
-        for m in getattr(mc, "material", []):
-            mid = getattr(m, "id", None) or getattr(m, "guidref", None)
-            if not mid:
-                continue
-            ir_mat = IrMaterial(
+
+        def _common(m, mid: str, material_type: str | None) -> IrMaterial:
+            return IrMaterial(
                 id=mid,
                 name=getattr(m, "name", None),
                 guidref=getattr(m, "guidref", None),
-                grade=self._enum(getattr(m, "grade", None)),
+                material_type=material_type,
                 density=self._qty(getattr(m, "density", None)),
-                yield_stress=self._qty(getattr(m, "yield_stress", None)),
-                ultimate_stress=self._qty(getattr(m, "ultimate_stress", None)),
                 youngs_modulus=self._qty(getattr(m, "youngs_modulus", None)),
                 poisson_ratio=self._qty(getattr(m, "poisson_ratio", None)),
-                thermal_expansion=self._qty(getattr(m, "thermal_expansion", None)),
+                thermal_expansion=self._qty(
+                    getattr(m, "thermal_expansion", None)
+                    or getattr(m, "thermal_expansion_coefficient", None)
+                ),
             )
+
+        for m in getattr(mc, "steel", None) or []:
+            mid = getattr(m, "id", None) or getattr(m, "guidref", None)
+            if not mid:
+                continue
+            ir_mat = _common(m, mid, "steel")
+            ir_mat.grade = self._enum(getattr(m, "grade", None))
+            ir_mat.yield_stress = self._qty(getattr(m, "yield_stress", None))
+            ir_mat.ultimate_stress = self._qty(getattr(m, "ultimate_stress", None))
+            self._register(ir.materials, mid, ir_mat, ir.duplicate_ids)
+
+        for m in getattr(mc, "aluminium", None) or []:
+            mid = getattr(m, "id", None) or getattr(m, "guidref", None)
+            if not mid:
+                continue
+            ir_mat = _common(m, mid, "aluminium")
+            ir_mat.unwelded_yield_strength = self._qty(
+                getattr(m, "unwelded_yield_strength", None)
+            )
+            ir_mat.welded_yield_strength = self._qty(
+                getattr(m, "welded_yield_strength", None)
+            )
+            ir_mat.unwelded_tensile_strength = self._qty(
+                getattr(m, "unwelded_tensile_strength", None)
+            )
+            ir_mat.welded_tensile_strength = self._qty(
+                getattr(m, "welded_tensile_strength", None)
+            )
+            ir_mat.alloy_designation = getattr(m, "alloy_designation", None)
+            self._register(ir.materials, mid, ir_mat, ir.duplicate_ids)
+
+        for m in getattr(mc, "material", None) or []:
+            mid = getattr(m, "id", None) or getattr(m, "guidref", None)
+            if not mid:
+                continue
+            ir_mat = _common(m, mid, None)
+            ir_mat.grade = self._enum(getattr(m, "grade", None))
+            ir_mat.yield_stress = self._qty(getattr(m, "yield_stress", None))
+            ir_mat.ultimate_stress = self._qty(getattr(m, "ultimate_stress", None))
             self._register(ir.materials, mid, ir_mat, ir.duplicate_ids)
 
     # ------------------------------------------------------------------
@@ -854,6 +1001,7 @@ class OcxV3Builder(IOcxBuilder):
         sid = getattr(raw_section, "id", None) or getattr(raw_section, "guidref", None) or ""
         name = getattr(raw_section, "name", None)
         guid = getattr(raw_section, "guidref", None)
+        catalogue_reference = getattr(raw_section, "catalogue_reference", None)
         data = raw_section
         stype = self._detect_section_type(raw_section)
         if stype == "Generic":
@@ -862,7 +1010,7 @@ class OcxV3Builder(IOcxBuilder):
 
         if stype == "RectangularTube":
             return IrRectangularTubeSection(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 height=self._qty(getattr(data, "height", None)),
                 width=self._qty(getattr(data, "width", None)),
                 thickness=self._qty(getattr(data, "thickness", None)),
@@ -870,19 +1018,19 @@ class OcxV3Builder(IOcxBuilder):
 
         if stype == "OctagonBar":
             return IrOctagonSection(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 height=self._qty(getattr(data, "height", None)),
             )
 
         if stype == "SquareBar":
             return IrSquareSection(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 height=self._qty(getattr(data, "height", None)),
             )
 
         if stype == "BulbFlat":
             return IrBulbFlatSection(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 height=self._qty(getattr(data, "height", None)),
                 web_thickness=self._qty(getattr(data, "web_thickness", None)),
                 flange_width=self._qty(getattr(data, "flange_width", None)),
@@ -895,14 +1043,14 @@ class OcxV3Builder(IOcxBuilder):
 
         if stype == "FlatBar":
             return IrFlatBarSection(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 height=self._qty(getattr(data, "height", None)),
                 width=self._qty(getattr(data, "width", None)),
             )
 
         if stype == "UBar":
             return IrUSection(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 height=self._qty(getattr(data, "height", None)),
                 width=self._qty(getattr(data, "width", None)),
                 web_thickness=self._qty(getattr(data, "web_thickness", None)),
@@ -911,7 +1059,7 @@ class OcxV3Builder(IOcxBuilder):
 
         if stype == "IBar":
             return IrISection(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 height=self._qty(getattr(data, "height", None)),
                 width=self._qty(getattr(data, "width", None)),
                 web_thickness=self._qty(getattr(data, "web_thickness", None)),
@@ -920,7 +1068,7 @@ class OcxV3Builder(IOcxBuilder):
 
         if stype == "LBarOF":
             return IrLSectionOvershootFlange(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 height=self._qty(getattr(data, "height", None)),
                 width=self._qty(getattr(data, "width", None)),
                 web_thickness=self._qty(getattr(data, "web_thickness", None)),
@@ -929,7 +1077,7 @@ class OcxV3Builder(IOcxBuilder):
             )
         if stype == "ZBar":
             return IrZSection(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 height=self._qty(getattr(data, "height", None)),
                 width=self._qty(getattr(data, "width", None)),
                 web_thickness=self._qty(getattr(data, "web_thickness", None)),
@@ -937,12 +1085,14 @@ class OcxV3Builder(IOcxBuilder):
             )
         if stype == "RoundBar":
             return IrRoundSection(
-                id=sid, name=name, guidref=guid, section_type=stype,
-                diameter=self._qty(getattr(data, "diameter", None)),
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
+                diameter=self._qty(
+                    getattr(data, "diameter", None) or getattr(data, "height", None)
+                ),
             )
         if stype == "LBar":
             return IrLSection(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 height=self._qty(getattr(data, "height", None)),
                 width=self._qty(getattr(data, "width", None)),
                 web_thickness=self._qty(getattr(data, "web_thickness", None)),
@@ -951,7 +1101,7 @@ class OcxV3Builder(IOcxBuilder):
 
         if stype == "TBar":
             return IrTSection(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 height=self._qty(getattr(data, "height", None)),
                 width=self._qty(getattr(data, "width", None)),
                 web_thickness=self._qty(getattr(data, "web_thickness", None)),
@@ -960,7 +1110,7 @@ class OcxV3Builder(IOcxBuilder):
 
         if stype == "LBarOW":
             return IrLSectionOvershootWeb(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 height=self._qty(getattr(data, "height", None)),
                 width=self._qty(getattr(data, "width", None)),
                 web_thickness=self._qty(getattr(data, "web_thickness", None)),
@@ -970,18 +1120,18 @@ class OcxV3Builder(IOcxBuilder):
 
         if stype == "HalfRoundBar":
             return IrHalfRoundSection(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 diameter=self._qty(getattr(data, "diameter", None)),
             )
         if stype == "HexagonBar":
             return IrHexagonSection(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 height=self._qty(getattr(data, "height", None)),
             )
 
         if stype == "Tube":
             return IrTubeSection(
-                id=sid, name=name, guidref=guid, section_type=stype,
+                id=sid, name=name, guidref=guid, section_type=stype, catalogue_reference=catalogue_reference,
                 diameter=self._qty(getattr(data, "diameter", None)),
                 thickness=self._qty(getattr(data, "thickness", None)),
             )
@@ -994,7 +1144,14 @@ class OcxV3Builder(IOcxBuilder):
                     continue
                 extra[f.name] = val.value if hasattr(val, "value") else val
         logger.warning(f'Not mapped section type detected: {type(raw_section).__name__!r}, defaulting to "GenericSection".')
-        return IrGenericSection(id=sid, name=name, guidref=guid, section_type="Generic", extra=extra)
+        return IrGenericSection(
+            id=sid,
+            name=name,
+            guidref=guid,
+            section_type="Generic",
+            catalogue_reference=catalogue_reference,
+            extra=extra,
+        )
 
     def _build_sections(self, root, ir: IrVessel) -> None:
         cc = getattr(root, "class_catalogue", None)
@@ -1022,7 +1179,6 @@ class OcxV3Builder(IOcxBuilder):
             return None
         pm = getattr(raw, "plate_material", None)
         mat_ref, thickness = self._material_ref(pm)
-        pp = getattr(raw, "physical_properties", None)
         return IrPlate(
             id=pid,
             parent_ref=parent,
@@ -1030,11 +1186,16 @@ class OcxV3Builder(IOcxBuilder):
             guidref=getattr(raw, "guidref", None),
             material_ref=mat_ref,
             thickness=thickness,
-            dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
-            cog=self._cog(pp),
+            renewal_thickness=self._qty(getattr(pm, "renewal_thickness", None) if pm else None),
+            voluntary_thickness_addition=self._qty(
+                getattr(pm, "voluntary_thickness_addition", None) if pm else None
+            ),
+            mass_properties=self._mass_properties(raw),
             net_area=self._qty(getattr(raw, "net_area", None)),
             function_type=self._enum(getattr(raw, "function_type", None)),
             outer_contour=self._build_contour(getattr(raw, "outer_contour", None)),
+            point_on_surface=self._pt(getattr(raw, "point_on_surface", None)),
+            cut_by_contours=self._cut_by_contours(getattr(raw, "plate_cut_by", None)),
         )
 
     def _build_bracket(self, raw, parent: ParentRef) -> IrBracket | None:
@@ -1043,7 +1204,6 @@ class OcxV3Builder(IOcxBuilder):
             return None
         pm = getattr(raw, "plate_material", None)
         mat_ref, thickness = self._material_ref(pm)
-        pp = getattr(raw, "physical_properties", None)
         bp = getattr(raw, "bracket_parameters", None)
         return IrBracket(
             id=bid,
@@ -1052,8 +1212,11 @@ class OcxV3Builder(IOcxBuilder):
             guidref=getattr(raw, "guidref", None),
             material_ref=mat_ref,
             thickness=thickness,
-            dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
-            cog=self._cog(pp),
+            renewal_thickness=self._qty(getattr(pm, "renewal_thickness", None) if pm else None),
+            voluntary_thickness_addition=self._qty(
+                getattr(pm, "voluntary_thickness_addition", None) if pm else None
+            ),
+            mass_properties=self._mass_properties(raw),
             arm_length_u=self._qty(getattr(bp, "arm_length_u", None) if bp else None),
             arm_length_v=self._qty(getattr(bp, "arm_length_v", None) if bp else None),
             has_edge_reinforcement=bool(getattr(bp, "has_edge_reinforcement", False) if bp else False),
@@ -1064,20 +1227,22 @@ class OcxV3Builder(IOcxBuilder):
         sid = getattr(raw, "id", None)
         if not sid:
             return None
-        pp = getattr(raw, "physical_properties", None)
+        raw_sec = getattr(raw, "section_ref", None)
         return IrStiffener(
             id=sid,
             parent_ref=parent,
             name=getattr(raw, "name", None),
             guidref=getattr(raw, "guidref", None),
             material_ref=self._ref(getattr(raw, "material_ref", None)),
-            section_ref=self._ref(getattr(raw, "section_ref", None)),
-            dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
-            cog=self._cog(pp),
+            section_ref=self._ref(raw_sec),
+            **self._section_scantlings(raw_sec),
+            mass_properties=self._mass_properties(raw),
             function_type=self._enum(getattr(raw, "function_type", None)),
             end_cut_end1=self._build_end_cut(getattr(raw, "end_cut_end1", None)),
             end_cut_end2=self._build_end_cut(getattr(raw, "end_cut_end2", None)),
             trace=self._build_contour(getattr(raw, "trace_line", None)),
+            orientation_rule=self._enum(getattr(raw, "orientation_rule", None)),
+            trace_refs=self._trace_refs(getattr(raw, "trace_line", None)),
             inclinations=self._build_inclinations(getattr(raw, "inclination", None)),
         )
 
@@ -1085,16 +1250,16 @@ class OcxV3Builder(IOcxBuilder):
         pid = getattr(raw, "id", None)
         if not pid:
             return None
-        pp = getattr(raw, "physical_properties", None)
+        raw_sec = getattr(raw, "section_ref", None)
         return IrPillar(
             id=pid,
             parent_ref=parent,
             name=getattr(raw, "name", None),
             guidref=getattr(raw, "guidref", None),
             material_ref=self._ref(getattr(raw, "material_ref", None)),
-            section_ref=self._ref(getattr(raw, "section_ref", None)),
-            dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
-            cog=self._cog(pp),
+            section_ref=self._ref(raw_sec),
+            **self._section_scantlings(raw_sec),
+            mass_properties=self._mass_properties(raw),
             function_type=self._enum(getattr(raw, "function_type", None)),
         )
 
@@ -1103,17 +1268,19 @@ class OcxV3Builder(IOcxBuilder):
         eid = getattr(raw, "id", None)
         if not eid:
             return None
-        pp = getattr(raw, "physical_properties", None)
+        raw_sec = getattr(raw, "section_ref", None)
         return IrEdgeReinforcement(
             id=eid,
             parent_ref=parent,
             name=getattr(raw, "name", None),
             guidref=getattr(raw, "guidref", None),
             material_ref=self._ref(getattr(raw, "material_ref", None)),
-            section_ref=self._ref(getattr(raw, "section_ref", None)),
-            dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
-            cog=self._cog(pp),
+            section_ref=self._ref(raw_sec),
+            **self._section_scantlings(raw_sec),
+            mass_properties=self._mass_properties(raw),
             function_type=self._enum(getattr(raw, "function_type", None)),
+            orientation_rule=self._enum(getattr(raw, "orientation_rule", None)),
+            trace_refs=self._trace_refs(_first(getattr(raw, "trace_line", None))),
         )
 
     # ------------------------------------------------------------------
@@ -1220,6 +1387,15 @@ class OcxV3Builder(IOcxBuilder):
                             local_ref=local,
                             guidref=guid,
                             ocx_ref_type=ocx_rt,
+                            offset=self._qty(getattr(ref_raw, "offset", None)),
+                            offset_direction=self._vec(getattr(ref_raw, "offset_direction", None)),
+                            contour_mid_point=self._pt(
+                                getattr(
+                                    getattr(ref_raw, "contour_bounds", None),
+                                    "contour_mid_point",
+                                    None,
+                                )
+                            ),
                         )
                     )
 
@@ -1236,8 +1412,6 @@ class OcxV3Builder(IOcxBuilder):
                     )
                 )
 
-        pp = getattr(raw, "physical_properties", None)
-
         seam_ids = self._build_seams_for_panel(raw, ir)
 
         return IrPanel(
@@ -1246,8 +1420,8 @@ class OcxV3Builder(IOcxBuilder):
             guidref=getattr(raw, "guidref", None),
             function_type=self._enum(getattr(raw, "function_type", None)),
             tightness=self._enum(getattr(raw, "tightness", None)),
-            dry_weight=self._qty(getattr(pp, "dry_weight", None) if pp else None),
-            cog=self._cog(pp),
+            point_on_surface=self._pt(getattr(raw, "point_on_surface", None)),
+            mass_properties=self._mass_properties(raw),
             plate_ids=plate_ids,
             bracket_ids=bracket_ids,
             stiffener_ids=stiffener_ids,

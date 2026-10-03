@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Source: tr04_tc04a_ai3dx.3docx -->
-<ocx:YRefPlanes xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" isMainSystem="true">
-    <ocx:RefPlane id="L.0" name="Long.0" ocx:GUIDRef="e61cd68c-8955-4c75-8ba3-61e4e5bd2b04" displayGrid="true">
-        <ocx:ReferenceLocation numericvalue="0.0" unit="Um"/>
-    </ocx:RefPlane>
-</ocx:YRefPlanes>

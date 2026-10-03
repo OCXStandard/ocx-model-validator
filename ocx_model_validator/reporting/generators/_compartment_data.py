@@ -202,10 +202,13 @@ def _panel_cog_points_mm(
     for panel in panels:
         for plate_id in panel.plate_ids:
             plate = vessel.plates.get(plate_id)
-            if plate is None or plate.cog is None:
+            cog = (plate.mass_properties.moulded_cog
+                   if plate is not None and plate.mass_properties is not None
+                   else None)
+            if cog is None:
                 continue
             try:
-                points.append(point_mm(plate.cog, vessel.unit_registry))  # type: ignore[arg-type]
+                points.append(point_mm(cog, vessel.unit_registry))  # type: ignore[arg-type]
             except GeometryError as exc:
                 warnings.append(f"compartment {name}: plate {plate.name or plate.id}: {exc}")
 

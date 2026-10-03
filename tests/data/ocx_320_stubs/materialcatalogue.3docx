@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
+<!-- Source: tr05_tc04a_aitac.3docx -->
 <ocx:MaterialCatalogue xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid3">
-    <ocx:Steel id="nplcid4" name="A" ocx:GUIDRef="e226cb64-b098-4f97-a043-c0a676cccf66" ocx:grade="A">
+    <ocx:Aluminium id="nplcid21" name="Aluminum" ocx:GUIDRef="1ec84366-868e-4b93-9c6a-4f36709eeaee" alloyDesignation="6061-T6">
+        <ocx:Density numericvalue="2700.0" unit="UKgOverm3"/>
+        <ocx:YoungsModulus numericvalue="0.0" unit="UNOverm2"/>
+        <ocx:PoissonRatio numericvalue="0.0" unit="UDimless"/>
+        <ocx:UnweldedYieldStrength numericvalue="276000000.0" unit="UNOverm2"/>
+        <ocx:WeldedYieldStrength numericvalue="276000000.0" unit="UNOverm2"/>
+        <ocx:UnweldedTensileStrength numericvalue="310000000.0" unit="UNOverm2"/>
+        <ocx:WeldedTensileStrength numericvalue="310000000.0" unit="UNOverm2"/>
+    </ocx:Aluminium>
+    <ocx:Steel id="nplcid39" name="Steel A" ocx:GUIDRef="ca4d7625-1deb-4b34-b572-0a1c2b40ec09" ocx:grade="A">
         <ocx:Density numericvalue="7850.0" unit="UKgOverm3"/>
-        <ocx:YoungsModulus numericvalue="206000.0" unit="UNOvermm2"/>
+        <ocx:YoungsModulus numericvalue="210000000000.0" unit="UNOverm2"/>
         <ocx:PoissonRatio numericvalue="0.3" unit="UDimless"/>
-        <ocx:YieldStress numericvalue="235.0" unit="UNOvermm2"/>
-        <ocx:UltimateStress numericvalue="400.0" unit="UNOvermm2"/>
+        <ocx:YieldStress numericvalue="235000000.0" unit="UNOverm2"/>
+        <ocx:UltimateStress numericvalue="400000000.0" unit="UNOverm2"/>
     </ocx:Steel>
 </ocx:MaterialCatalogue>

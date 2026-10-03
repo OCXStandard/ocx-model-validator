@@ -14,6 +14,7 @@ class IrSection:
     name: str | None = None
     guidref: str | None = None
     section_type: str | None = None  # normalised type string, e.g. "FlatBar"
+    catalogue_reference: str | None = None  # BarSection catalogueReference (3.2.0)
 
 @dataclass
 class IrRectangularTubeSection(IrSection):

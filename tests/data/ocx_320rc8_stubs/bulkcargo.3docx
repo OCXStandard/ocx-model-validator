@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Source: tr04_tc14a_nast.3docx -->
-<ocx:BulkCargo xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" ocx:bulkCargoType="general">
-    <ocx:Density numericvalue="1000.0" unit="UKgOverm3"/>
-    <ocx:StowageFactor numericvalue="1.0" unit="UM3Overt"/>
-    <ocx:Permeability numericvalue="0.0" unit="UDimless"/>
-</ocx:BulkCargo>

@@ -1,187 +1,498 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
-<ocx:HoleShapeCatalogue xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid26">
-    <ocx:Hole2D id="nplcid28" name="400X600" ocx:GUIDRef="4b66ef64-00c8-0dad-72ef-5ae78998843c">
-        <ocx:SymmetricalHole id="nplcid27">
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:HoleShapeCatalogue xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="holes1">
+    <ocx:Hole2D id="nplcid41" name="1800X2000R150" ocx:GUIDRef="43df492f-6975-931a-66ed-ae0cf54637a2">
+        <ocx:RectangularHole id="nplcid41_shape">
+            <ocx:Height numericvalue="2.0" unit="Um"/>
+            <ocx:Width numericvalue="1.8" unit="Um"/>
+            <ocx:FilletRadius numericvalue="0.15" unit="Um"/>
+        </ocx:RectangularHole>
+    </ocx:Hole2D>
+    <ocx:Hole2D id="nplcid43" name="2000X2100R400" ocx:GUIDRef="1a2ab425-e898-2f17-3d37-dce18efee59a">
+        <ocx:RectangularHole id="nplcid43_shape">
+            <ocx:Height numericvalue="2.1" unit="Um"/>
+            <ocx:Width numericvalue="2.0" unit="Um"/>
+            <ocx:FilletRadius numericvalue="0.4" unit="Um"/>
+        </ocx:RectangularHole>
+    </ocx:Hole2D>
+    <ocx:Hole2D id="nplcid45" name="400X800" ocx:GUIDRef="cbbb13e7-e72f-49f4-ce7f-834b6d611bc5">
+        <ocx:SymmetricalHole id="nplcid45_shape">
+            <ocx:Height numericvalue="0.8" unit="Um"/>
+            <ocx:Width numericvalue="0.4" unit="Um"/>
+        </ocx:SymmetricalHole>
+    </ocx:Hole2D>
+    <ocx:Hole2D id="nplcid47" name="D450" ocx:GUIDRef="5ce047ec-e7a5-0d1a-c02e-aeb949769b52">
+        <ocx:ParametricCircle id="nplcid47_shape">
+            <ocx:Diameter numericvalue="0.45" unit="Um"/>
+        </ocx:ParametricCircle>
+    </ocx:Hole2D>
+    <ocx:Hole2D id="nplcid49" name="1000X600" ocx:GUIDRef="bfa38df7-f1a3-caf9-b2f7-c3392c53b139">
+        <ocx:SymmetricalHole id="nplcid49_shape">
             <ocx:Height numericvalue="0.6" unit="Um"/>
-            <ocx:Width numericvalue="0.4" unit="Um"/>
+            <ocx:Width numericvalue="1.0" unit="Um"/>
         </ocx:SymmetricalHole>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid30" name="C1000" ocx:GUIDRef="9d7d452d-c07a-eea1-5d9a-a197f294d639">
-        <ocx:ParametricCircle id="nplcid29">
-            <ocx:Diameter numericvalue="1.0" unit="Um"/>
-        </ocx:ParametricCircle>
-    </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid32" name="D500" ocx:GUIDRef="821fd3ef-0b1f-365d-d778-2089065ff25d">
-        <ocx:ParametricCircle id="nplcid31">
-            <ocx:Diameter numericvalue="0.5" unit="Um"/>
-        </ocx:ParametricCircle>
-    </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid34" name="400X500" ocx:GUIDRef="76de7413-f45b-9a4c-8c36-1c0a6ed3e529">
-        <ocx:SymmetricalHole id="nplcid33">
-            <ocx:Height numericvalue="0.5" unit="Um"/>
-            <ocx:Width numericvalue="0.4" unit="Um"/>
+    <ocx:Hole2D id="nplcid51" name="800X400" ocx:GUIDRef="71b738ef-bd06-ec0c-d29d-d11e0da2c19b">
+        <ocx:SymmetricalHole id="nplcid51_shape">
+            <ocx:Height numericvalue="0.4" unit="Um"/>
+            <ocx:Width numericvalue="0.8" unit="Um"/>
         </ocx:SymmetricalHole>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid36" name="D220" ocx:GUIDRef="4042d08a-652b-ae7d-0be0-b86e91bbcc44">
-        <ocx:ParametricCircle id="nplcid35">
-            <ocx:Diameter numericvalue="0.22" unit="Um"/>
-        </ocx:ParametricCircle>
-    </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid38" name="D400" ocx:GUIDRef="aed1037e-633a-f93f-5858-123ac7013245">
-        <ocx:ParametricCircle id="nplcid37">
+    <ocx:Hole2D id="nplcid53" name="D400" ocx:GUIDRef="aed1037e-633a-f93f-5858-123ac7013245">
+        <ocx:ParametricCircle id="nplcid53_shape">
             <ocx:Diameter numericvalue="0.4" unit="Um"/>
         </ocx:ParametricCircle>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid40" name="400X800" ocx:GUIDRef="cbbb13e7-e72f-49f4-ce7f-834b6d611bc5">
-        <ocx:SymmetricalHole id="nplcid39">
-            <ocx:Height numericvalue="0.8" unit="Um"/>
+    <ocx:Hole2D id="nplcid55" name="600X400" ocx:GUIDRef="f4598c82-d56a-bb62-cbd0-d5b7a81a21cc">
+        <ocx:SymmetricalHole id="nplcid55_shape">
+            <ocx:Height numericvalue="0.4" unit="Um"/>
+            <ocx:Width numericvalue="0.6" unit="Um"/>
+        </ocx:SymmetricalHole>
+    </ocx:Hole2D>
+    <ocx:Hole2D id="nplcid57" name="600X1000" ocx:GUIDRef="c76f509f-836f-0928-1fe4-2421110116d5">
+        <ocx:SymmetricalHole id="nplcid57_shape">
+            <ocx:Height numericvalue="1.0" unit="Um"/>
+            <ocx:Width numericvalue="0.6" unit="Um"/>
+        </ocx:SymmetricalHole>
+    </ocx:Hole2D>
+    <ocx:Hole2D id="nplcid59" name="400X600" ocx:GUIDRef="4b66ef64-00c8-0dad-72ef-5ae78998843c">
+        <ocx:SymmetricalHole id="nplcid59_shape">
+            <ocx:Height numericvalue="0.6" unit="Um"/>
             <ocx:Width numericvalue="0.4" unit="Um"/>
         </ocx:SymmetricalHole>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid42" name="500X1200" ocx:GUIDRef="4280cb90-f725-0542-14c3-f8fdda1d8815">
-        <ocx:SymmetricalHole id="nplcid41">
-            <ocx:Height numericvalue="1.2" unit="Um"/>
-            <ocx:Width numericvalue="0.5" unit="Um"/>
-        </ocx:SymmetricalHole>
+    <ocx:Hole2D id="nplcid73" name="D500" ocx:GUIDRef="821fd3ef-0b1f-365d-d778-2089065ff25d">
+        <ocx:ParametricCircle id="nplcid73_shape">
+            <ocx:Diameter numericvalue="0.5" unit="Um"/>
+        </ocx:ParametricCircle>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid44" name="500X800" ocx:GUIDRef="b7a30c75-4181-8e67-2425-9d0378da9296">
-        <ocx:SymmetricalHole id="nplcid43">
-            <ocx:Height numericvalue="0.8" unit="Um"/>
-            <ocx:Width numericvalue="0.5" unit="Um"/>
-        </ocx:SymmetricalHole>
+    <ocx:Hole2D id="nplcid81" name="D300" ocx:GUIDRef="bc9d64d8-a27e-7f0c-299c-f712003ccf9e">
+        <ocx:ParametricCircle id="nplcid81_shape">
+            <ocx:Diameter numericvalue="0.3" unit="Um"/>
+        </ocx:ParametricCircle>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid46" name="RR900X900X150" ocx:GUIDRef="d02e2aa7-715a-8987-d5de-de49e0c95ed5">
-        <ocx:RectangularHole id="nplcid45">
-            <ocx:Height numericvalue="0.9" unit="Um"/>
-            <ocx:Width numericvalue="0.9" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.15" unit="Um"/>
-        </ocx:RectangularHole>
-    </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid48" name="600X600R150" ocx:GUIDRef="83d94a38-844a-655b-4ff6-e4e7908a4dff">
-        <ocx:RectangularHole id="nplcid47">
-            <ocx:Height numericvalue="0.6" unit="Um"/>
+    <ocx:Hole2D id="nplcid83" name="600X500" ocx:GUIDRef="20ee72b5-2e51-5f23-a3ca-13a19358f3ed">
+        <ocx:SymmetricalHole id="nplcid83_shape">
+            <ocx:Height numericvalue="0.5" unit="Um"/>
             <ocx:Width numericvalue="0.6" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.15" unit="Um"/>
-        </ocx:RectangularHole>
-    </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid50" name="500X400" ocx:GUIDRef="d7827fe8-7842-8e29-975d-8e9a7c21e202">
-        <ocx:SymmetricalHole id="nplcid49">
-            <ocx:Height numericvalue="0.4" unit="Um"/>
-            <ocx:Width numericvalue="0.5" unit="Um"/>
         </ocx:SymmetricalHole>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid52" name="RR800X800X100" ocx:GUIDRef="7e25b9f6-a353-f7da-b3f3-a3adef1ba3f9">
-        <ocx:RectangularHole id="nplcid51">
+    <ocx:Hole2D id="nplcid85" name="1300X2250R200" ocx:GUIDRef="229f3e9d-0897-366d-5d4d-52994ab865d6">
+        <ocx:RectangularHole id="nplcid85_shape">
+            <ocx:Height numericvalue="2.25" unit="Um"/>
+            <ocx:Width numericvalue="1.3" unit="Um"/>
+            <ocx:FilletRadius numericvalue="0.2" unit="Um"/>
+        </ocx:RectangularHole>
+    </ocx:Hole2D>
+    <ocx:Hole2D id="nplcid87" name="600X800R100" ocx:GUIDRef="a2188833-540d-4995-2cc1-12d4e38845bf">
+        <ocx:RectangularHole id="nplcid87_shape">
             <ocx:Height numericvalue="0.8" unit="Um"/>
-            <ocx:Width numericvalue="0.8" unit="Um"/>
+            <ocx:Width numericvalue="0.6" unit="Um"/>
             <ocx:FilletRadius numericvalue="0.1" unit="Um"/>
         </ocx:RectangularHole>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid54" name="RR1600X2000X100" ocx:GUIDRef="201e2cf4-2f5c-ffb0-b3f7-18eb49ebec67">
-        <ocx:RectangularHole id="nplcid53">
-            <ocx:Height numericvalue="2.0" unit="Um"/>
-            <ocx:Width numericvalue="1.6" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.1" unit="Um"/>
+    <ocx:Hole2D id="nplcid89" name="1300X2050R200" ocx:GUIDRef="9361196f-7cd2-c7e4-1a94-68aac08bc591">
+        <ocx:RectangularHole id="nplcid89_shape">
+            <ocx:Height numericvalue="2.05" unit="Um"/>
+            <ocx:Width numericvalue="1.3" unit="Um"/>
+            <ocx:FilletRadius numericvalue="0.2" unit="Um"/>
         </ocx:RectangularHole>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid56" name="RR1600X1600X100" ocx:GUIDRef="cf09ebcd-80db-3a8b-c4be-7d951d0ccefa">
-        <ocx:RectangularHole id="nplcid55">
-            <ocx:Height numericvalue="1.6" unit="Um"/>
-            <ocx:Width numericvalue="1.6" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.1" unit="Um"/>
-        </ocx:RectangularHole>
-    </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid58" name="C1380" ocx:GUIDRef="97754dbc-d715-9121-707e-f1e5d6f9f2fa">
-        <ocx:ParametricCircle id="nplcid57">
-            <ocx:Diameter numericvalue="1.38" unit="Um"/>
-        </ocx:ParametricCircle>
-    </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid60" name="C1230" ocx:GUIDRef="4893c651-d5b6-3c3c-7d9f-e8ba1f09ad65">
-        <ocx:ParametricCircle id="nplcid59">
-            <ocx:Diameter numericvalue="1.23" unit="Um"/>
-        </ocx:ParametricCircle>
-    </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid62" name="RR2000X1100X100" ocx:GUIDRef="2827bc4a-07ca-d13c-0075-38d4b1e2e89d">
-        <ocx:RectangularHole id="nplcid61">
-            <ocx:Height numericvalue="1.1" unit="Um"/>
-            <ocx:Width numericvalue="2.0" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.1" unit="Um"/>
-        </ocx:RectangularHole>
-    </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid64" name="RR2000X1600X100" ocx:GUIDRef="e91b50d4-36e0-6fcd-8fb4-3b69931f2a90">
-        <ocx:RectangularHole id="nplcid63">
-            <ocx:Height numericvalue="1.6" unit="Um"/>
-            <ocx:Width numericvalue="2.0" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.1" unit="Um"/>
-        </ocx:RectangularHole>
-    </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid66" name="C1800" ocx:GUIDRef="6d398f19-350c-d443-9219-bc37a9e66890">
-        <ocx:ParametricCircle id="nplcid65">
-            <ocx:Diameter numericvalue="1.8" unit="Um"/>
-        </ocx:ParametricCircle>
-    </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid68" name="RR1100X1100X100" ocx:GUIDRef="a14aac10-9977-433c-fe21-f9f6f80dbfb7">
-        <ocx:RectangularHole id="nplcid67">
-            <ocx:Height numericvalue="1.1" unit="Um"/>
-            <ocx:Width numericvalue="1.1" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.1" unit="Um"/>
-        </ocx:RectangularHole>
-    </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid70" name="RR900X2000X100" ocx:GUIDRef="d944e63d-7b76-738f-785f-5c0c3d34cb88">
-        <ocx:RectangularHole id="nplcid69">
-            <ocx:Height numericvalue="2.0" unit="Um"/>
+    <ocx:Hole2D id="nplcid91" name="900X2250R200" ocx:GUIDRef="6a37d991-8ec4-c1d2-74b4-84821b438123">
+        <ocx:RectangularHole id="nplcid91_shape">
+            <ocx:Height numericvalue="2.25" unit="Um"/>
             <ocx:Width numericvalue="0.9" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.1" unit="Um"/>
+            <ocx:FilletRadius numericvalue="0.2" unit="Um"/>
         </ocx:RectangularHole>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid72" name="RR1200X2000X100" ocx:GUIDRef="28d7cecb-4b53-a621-7d1f-2317b80ca962">
-        <ocx:RectangularHole id="nplcid71">
-            <ocx:Height numericvalue="2.0" unit="Um"/>
-            <ocx:Width numericvalue="1.2" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.1" unit="Um"/>
-        </ocx:RectangularHole>
+    <ocx:Hole2D id="nplcid103" name="400X1000" ocx:GUIDRef="077a5922-3365-10bc-a97d-4a75a7a653bd">
+        <ocx:SymmetricalHole id="nplcid103_shape">
+            <ocx:Height numericvalue="1.0" unit="Um"/>
+            <ocx:Width numericvalue="0.4" unit="Um"/>
+        </ocx:SymmetricalHole>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid74" name="RR2000X2000X100" ocx:GUIDRef="50d1a134-17a7-2602-db32-85ffa437e84d">
-        <ocx:RectangularHole id="nplcid73">
-            <ocx:Height numericvalue="2.0" unit="Um"/>
-            <ocx:Width numericvalue="2.0" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.1" unit="Um"/>
-        </ocx:RectangularHole>
+    <ocx:Hole2D id="id_3996" name="D150" ocx:GUIDRef="4e9e096f-271a-47e6-858d-00a04f23539a">
+        <ocx:ParametricCircle id="id_3996_shape">
+            <ocx:Diameter numericvalue="0.15" unit="Um"/>
+        </ocx:ParametricCircle>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid76" name="RR900X1100X100" ocx:GUIDRef="1fc8e7f0-5c86-ec20-a4ef-b0cd747e165a">
-        <ocx:RectangularHole id="nplcid75">
-            <ocx:Height numericvalue="1.1" unit="Um"/>
-            <ocx:Width numericvalue="0.9" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.1" unit="Um"/>
-        </ocx:RectangularHole>
+    <ocx:Hole2D id="id_8229" name="SL_WN_A1_000 / HP300x12" ocx:GUIDRef="829aa299-c113-4299-a03d-6936384ab235">
+        <ocx:Contour>
+            <ocx:CompositeCurve3D id="id_8229_c" is2D="false">
+                <ocx:CurveLength numericvalue="1.0520132" unit="Um"/>
+                <ocx:Line3D id="line_3841" is2D="false">
+                    <ocx:CurveLength numericvalue="0.165" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.01 0.025 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.01 0.19 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3843" is2D="false">
+                    <ocx:CurveLength numericvalue="0.065" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.01 0.31 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.055 0.31 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3845" is2D="false">
+                    <ocx:CurveLength numericvalue="0.3" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.115 0.25 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.115 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3846" is2D="false">
+                    <ocx:CurveLength numericvalue="0.15" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.115 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.035 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3847" is2D="false">
+                    <ocx:CurveLength numericvalue="0.05" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.035 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.035 0.0 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:CircumArc3D id="arc_3840" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0392699" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.035 0.0 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="-0.0276777 0.0176777 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.01 0.025 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+                <ocx:CircumArc3D id="arc_3842" is2D="false">
+                    <ocx:CurveLength numericvalue="0.1884956" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.01 0.19 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="-0.07 0.25 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.01 0.31 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+                <ocx:CircumArc3D id="arc_3844" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0942478" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.055 0.31 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="0.0974264 0.2924264 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.115 0.25 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+            </ocx:CompositeCurve3D>
+        </ocx:Contour>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid78" name="RR1800X1200X100" ocx:GUIDRef="35437592-1ecd-31f7-113a-a2531f0440b1">
-        <ocx:RectangularHole id="nplcid77">
-            <ocx:Height numericvalue="1.2" unit="Um"/>
-            <ocx:Width numericvalue="1.8" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.1" unit="Um"/>
-        </ocx:RectangularHole>
+    <ocx:Hole2D id="id_8428" name="SL_WN_A1_000 / HP160X8" ocx:GUIDRef="6097ea41-7739-4ac2-9df1-193450ad8f47">
+        <ocx:Contour>
+            <ocx:CompositeCurve3D id="id_8428_c" is2D="false">
+                <ocx:CurveLength numericvalue="0.6204016" unit="Um"/>
+                <ocx:Line3D id="line_3849" is2D="false">
+                    <ocx:CurveLength numericvalue="0.08" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.005 0.025 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.005 0.105 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3851" is2D="false">
+                    <ocx:CurveLength numericvalue="0.03488" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.005 0.165 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.02988 0.165 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3853" is2D="false">
+                    <ocx:CurveLength numericvalue="0.185" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.05988 0.135 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.05988 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3854" is2D="false">
+                    <ocx:CurveLength numericvalue="0.08988" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.05988 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.03 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3855" is2D="false">
+                    <ocx:CurveLength numericvalue="0.05" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.03 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.03 0.0 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:CircumArc3D id="arc_3848" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0392699" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.03 0.0 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="-0.0226777 0.0176777 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.005 0.025 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+                <ocx:CircumArc3D id="arc_3850" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0942478" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.005 0.105 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="-0.035 0.135 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.005 0.165 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+                <ocx:CircumArc3D id="arc_3852" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0471239" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.02988 0.165 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="0.0510932 0.1562132 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.05988 0.135 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+            </ocx:CompositeCurve3D>
+        </ocx:Contour>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid80" name="RR1800X2400X150" ocx:GUIDRef="090741b7-0a4a-57d3-d26d-6ef3a3946b65">
-        <ocx:RectangularHole id="nplcid79">
-            <ocx:Height numericvalue="2.4" unit="Um"/>
-            <ocx:Width numericvalue="1.8" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.15" unit="Um"/>
-        </ocx:RectangularHole>
+    <ocx:Hole2D id="id_8567" name="SL_WT_AC_000 / HP200X10" ocx:GUIDRef="27c81098-c857-4651-bfff-12d486755ddf">
+        <ocx:Contour>
+            <ocx:CompositeCurve3D id="id_8567_c" is2D="false">
+                <ocx:CurveLength numericvalue="0.6611385" unit="Um"/>
+                <ocx:Line3D id="line_3857" is2D="false">
+                    <ocx:CurveLength numericvalue="0.213" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.07785 0.163 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.07785 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3858" is2D="false">
+                    <ocx:CurveLength numericvalue="0.08835" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.07785 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.0105 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3859" is2D="false">
+                    <ocx:CurveLength numericvalue="0.05" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.0105 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.0105 0.0 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3860" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0106066" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.0105 0.0 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.003 0.0075 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3861" is2D="false">
+                    <ocx:CurveLength numericvalue="0.1955" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.003 0.0075 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.003 0.203 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3862" is2D="false">
+                    <ocx:CurveLength numericvalue="0.04085" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.003 0.203 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.03785 0.203 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:CircumArc3D id="arc_3856" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0628319" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.03785 0.203 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="0.0661343 0.1912843 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.07785 0.163 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+            </ocx:CompositeCurve3D>
+        </ocx:Contour>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid82" name="RR3000X2500X250" ocx:GUIDRef="02da93f3-7af9-5651-4df3-940d4dcf891c">
-        <ocx:RectangularHole id="nplcid81">
-            <ocx:Height numericvalue="2.5" unit="Um"/>
-            <ocx:Width numericvalue="3.0" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.25" unit="Um"/>
-        </ocx:RectangularHole>
+    <ocx:Hole2D id="id_7987" name="SL_WN_A1_000 / HP200X10" ocx:GUIDRef="b2b103b7-f9d9-401b-8332-f4a4bb3e4558">
+        <ocx:Contour>
+            <ocx:CompositeCurve3D id="id_7987_c" is2D="false">
+                <ocx:CurveLength numericvalue="0.7434655" unit="Um"/>
+                <ocx:Line3D id="line_3864" is2D="false">
+                    <ocx:CurveLength numericvalue="0.1" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.005 0.025 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.005 0.125 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3866" is2D="false">
+                    <ocx:CurveLength numericvalue="0.04285" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.005 0.205 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.03785 0.205 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3868" is2D="false">
+                    <ocx:CurveLength numericvalue="0.215" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.07785 0.165 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.07785 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3869" is2D="false">
+                    <ocx:CurveLength numericvalue="0.10785" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.07785 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.03 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3870" is2D="false">
+                    <ocx:CurveLength numericvalue="0.05" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.03 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.03 0.0 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:CircumArc3D id="arc_3863" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0392699" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.03 0.0 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="-0.0226777 0.0176777 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.005 0.025 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+                <ocx:CircumArc3D id="arc_3865" is2D="false">
+                    <ocx:CurveLength numericvalue="0.1256637" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.005 0.125 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="-0.045 0.165 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.005 0.205 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+                <ocx:CircumArc3D id="arc_3867" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0628319" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.03785 0.205 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="0.0661343 0.1932843 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.07785 0.165 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+            </ocx:CompositeCurve3D>
+        </ocx:Contour>
     </ocx:Hole2D>
-    <ocx:Hole2D id="nplcid84" name="RR1450X1150X150" ocx:GUIDRef="a737748f-7289-2897-b1ea-cac7eba66b15">
-        <ocx:RectangularHole id="nplcid83">
-            <ocx:Height numericvalue="1.15" unit="Um"/>
-            <ocx:Width numericvalue="1.45" unit="Um"/>
-            <ocx:FilletRadius numericvalue="0.15" unit="Um"/>
-        </ocx:RectangularHole>
+    <ocx:Hole2D id="id_8718" name="SL_WT_AC_000 / HP260X12" ocx:GUIDRef="a93a0116-ccaf-452a-b626-93ec4ec5458f">
+        <ocx:Contour>
+            <ocx:CompositeCurve3D id="id_8718_c" is2D="false">
+                <ocx:CurveLength numericvalue="0.8187664" unit="Um"/>
+                <ocx:Line3D id="line_3872" is2D="false">
+                    <ocx:CurveLength numericvalue="0.263" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.09881 0.213 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.09881 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3873" is2D="false">
+                    <ocx:CurveLength numericvalue="0.10931" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.09881 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.0105 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3874" is2D="false">
+                    <ocx:CurveLength numericvalue="0.05" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.0105 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.0105 0.0 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3875" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0106066" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.0105 0.0 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.003 0.0075 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3876" is2D="false">
+                    <ocx:CurveLength numericvalue="0.2555" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.003 0.0075 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.003 0.263 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3877" is2D="false">
+                    <ocx:CurveLength numericvalue="0.05181" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.003 0.263 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.04881 0.263 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:CircumArc3D id="arc_3871" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0785398" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.04881 0.263 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="0.0841653 0.2483553 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.09881 0.213 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+            </ocx:CompositeCurve3D>
+        </ocx:Contour>
+    </ocx:Hole2D>
+    <ocx:Hole2D id="id_8000" name="SL_WN_A1_000 / HP260X12" ocx:GUIDRef="f5f56f2c-8e70-47db-b3a9-44fc2637647e">
+        <ocx:Contour>
+            <ocx:CompositeCurve3D id="id_8000_c" is2D="false">
+                <ocx:CurveLength numericvalue="0.9325094" unit="Um"/>
+                <ocx:Line3D id="line_3879" is2D="false">
+                    <ocx:CurveLength numericvalue="0.145" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.01 0.025 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.01 0.17 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3881" is2D="false">
+                    <ocx:CurveLength numericvalue="0.05881" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.01 0.27 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.04881 0.27 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3883" is2D="false">
+                    <ocx:CurveLength numericvalue="0.27" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.09881 0.22 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.09881 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3884" is2D="false">
+                    <ocx:CurveLength numericvalue="0.13381" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.09881 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.035 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3885" is2D="false">
+                    <ocx:CurveLength numericvalue="0.05" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.035 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.035 0.0 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:CircumArc3D id="arc_3878" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0392699" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.035 0.0 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="-0.0276777 0.0176777 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.01 0.025 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+                <ocx:CircumArc3D id="arc_3880" is2D="false">
+                    <ocx:CurveLength numericvalue="0.1570796" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.01 0.17 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="-0.06 0.22 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.01 0.27 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+                <ocx:CircumArc3D id="arc_3882" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0785398" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.04881 0.27 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="0.0841653 0.2553553 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.09881 0.22 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+            </ocx:CompositeCurve3D>
+        </ocx:Contour>
+    </ocx:Hole2D>
+    <ocx:Hole2D id="id_9229" name="SL_WT_AC_001 / HP200X10" ocx:GUIDRef="a5ced876-53d3-47ae-b5b1-26243f4a2df0">
+        <ocx:Contour>
+            <ocx:CompositeCurve3D id="id_9229_c" is2D="false">
+                <ocx:CurveLength numericvalue="0.6454305" unit="Um"/>
+                <ocx:Line3D id="line_3887" is2D="false">
+                    <ocx:CurveLength numericvalue="0.223" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.06785 0.173 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.06785 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3888" is2D="false">
+                    <ocx:CurveLength numericvalue="0.07835" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.06785 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.0105 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3889" is2D="false">
+                    <ocx:CurveLength numericvalue="0.05" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.0105 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.0105 0.0 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3890" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0106066" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.0105 0.0 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.003 0.0075 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3891" is2D="false">
+                    <ocx:CurveLength numericvalue="0.1955" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.003 0.0075 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.003 0.203 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3892" is2D="false">
+                    <ocx:CurveLength numericvalue="0.04085" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.003 0.203 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.03785 0.203 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:CircumArc3D id="arc_3886" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0471239" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.03785 0.203 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="0.0590632 0.1942132 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.06785 0.173 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+            </ocx:CompositeCurve3D>
+        </ocx:Contour>
+    </ocx:Hole2D>
+    <ocx:Hole2D id="id_9233" name="SL_WN_A1_001 / HP200X10" ocx:GUIDRef="10417a31-ed49-4ee9-a265-5f368e4771fe">
+        <ocx:Contour>
+            <ocx:CompositeCurve3D id="id_9233_c" is2D="false">
+                <ocx:CurveLength numericvalue="0.7163416" unit="Um"/>
+                <ocx:Line3D id="line_3894" is2D="false">
+                    <ocx:CurveLength numericvalue="0.12" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.005 0.025 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.005 0.145 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3896" is2D="false">
+                    <ocx:CurveLength numericvalue="0.04285" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.005 0.205 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.03785 0.205 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3898" is2D="false">
+                    <ocx:CurveLength numericvalue="0.225" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.06785 0.175 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.06785 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3899" is2D="false">
+                    <ocx:CurveLength numericvalue="0.09785" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.06785 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.03 -0.05 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:Line3D id="line_3900" is2D="false">
+                    <ocx:CurveLength numericvalue="0.05" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.03 -0.05 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.03 0.0 0.0" unit="Um"/>
+                </ocx:Line3D>
+                <ocx:CircumArc3D id="arc_3893" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0392699" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.03 0.0 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="-0.0226777 0.0176777 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.005 0.025 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+                <ocx:CircumArc3D id="arc_3895" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0942478" unit="Um"/>
+                    <ocx:StartPoint coordinates="-0.005 0.145 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="-0.035 0.175 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="-0.005 0.205 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+                <ocx:CircumArc3D id="arc_3897" is2D="false">
+                    <ocx:CurveLength numericvalue="0.0471239" unit="Um"/>
+                    <ocx:StartPoint coordinates="0.03785 0.205 0.0" unit="Um"/>
+                    <ocx:IntermediatePoint coordinates="0.0590632 0.1962132 0.0" unit="Um"/>
+                    <ocx:EndPoint coordinates="0.06785 0.175 0.0" unit="Um"/>
+                </ocx:CircumArc3D>
+            </ocx:CompositeCurve3D>
+        </ocx:Contour>
     </ocx:Hole2D>
 </ocx:HoleShapeCatalogue>

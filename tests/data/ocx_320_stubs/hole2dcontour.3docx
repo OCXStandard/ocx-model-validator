@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
-<ocx:Hole2DContour xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="nplcid9190" name="O:3CLURHISI5/TTOP" ocx:GUIDRef="2708b4fd-4337-b8ef-e54b-e1d87123968f">
-    <ocx:HoleRef localRef="nplcid28" ocx:GUIDRef="4b66ef64-00c8-0dad-72ef-5ae78998843c" ocx:refType="ocx:Hole2D"/>
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:Hole2DContour xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="id_482" name="Opn_1P" ocx:GUIDRef="e8661b62-7605-4338-b621-a9ee311c6f6d">
+    <ocx:HoleRef localRef="nplcid59" ocx:GUIDRef="4b66ef64-00c8-0dad-72ef-5ae78998843c" ocx:refType="ocx:Hole2D"/>
     <ocx:Transformation>
-        <ocx:Origin coordinates="39.18752 -3.3825 2.5" unit="Um"/>
-        <ocx:PrimaryAxis direction="0.0 -1.0 0.0"/>
-        <ocx:SecondaryAxis direction="1.0 0.0 0.0"/>
+        <ocx:Origin coordinates="0.0 0.43 0.75" unit="Um"/>
+        <ocx:PrimaryAxis direction="0.0 1.0 0.0"/>
+        <ocx:SecondaryAxis direction="0.0 0.0 1.0"/>
     </ocx:Transformation>
 </ocx:Hole2DContour>

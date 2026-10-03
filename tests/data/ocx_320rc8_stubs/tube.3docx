@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Source: tr04_tc04a_ai3dx.3docx -->
-<ocx:Tube xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd">
-    <ocx:Diameter numericvalue="0.075" unit="Um"/>
-    <ocx:Thickness numericvalue="0.0019" unit="Um"/>
-</ocx:Tube>

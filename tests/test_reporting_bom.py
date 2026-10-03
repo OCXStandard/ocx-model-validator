@@ -1,4 +1,5 @@
 """Tests for the bill-of-material report generator."""
+from ocx_model_validator.model.ir import IrMassProperties
 from ocx_model_validator.model.ir.base import ParentKind, ParentRef, Quantity, Ref
 from ocx_model_validator.model.ir.catalogues import IrMaterial
 from ocx_model_validator.model.ir.sections import IrFlatBarSection
@@ -20,25 +21,30 @@ def _vessel() -> IrVessel:
     v.plates["P1"] = IrPlate(id="P1", parent_ref=_PARENT, name="P1",
                              material_ref=Ref("M1"),
                              thickness=Quantity(10.0, "Umm"),
-                             dry_weight=Quantity(1000.0, "UKg"))
+                             mass_properties=IrMassProperties(
+                                 moulded_dry_weight=Quantity(1000.0, "UKg")))
     v.plates["P2"] = IrPlate(id="P2", parent_ref=_PARENT, name="P2",
                              material_ref=Ref("M1"),
                              thickness=Quantity(10.0, "Umm"),
-                             dry_weight=Quantity(500.0, "UKg"))
+                             mass_properties=IrMassProperties(
+                                 moulded_dry_weight=Quantity(500.0, "UKg")))
     v.plates["P3"] = IrPlate(id="P3", parent_ref=_PARENT, name="P3",
                              material_ref=Ref("M1"),
                              thickness=Quantity(10.0, "Umm"))  # no weight
     v.stiffeners["ST1"] = IrStiffener(id="ST1", parent_ref=_PARENT, name="ST1",
                                       material_ref=Ref("M1"),
                                       section_ref=Ref("S1"),
-                                      dry_weight=Quantity(250.0, "UKg"))
+                                      mass_properties=IrMassProperties(
+                                          moulded_dry_weight=Quantity(250.0, "UKg")))
     v.pillars["PI1"] = IrPillar(id="PI1", parent_ref=_PARENT, name="PI1",
                                 material_ref=Ref("M1"),
                                 section_ref=Ref("S1"),
-                                dry_weight=Quantity(300.0, "UKg"))
+                                mass_properties=IrMassProperties(
+                                    moulded_dry_weight=Quantity(300.0, "UKg")))
     v.plates["P4"] = IrPlate(id="P4", parent_ref=_PARENT, name="P4",
                              thickness=Quantity(12.0, "Umm"),
-                             dry_weight=Quantity(2000.0, "UKg"))  # no material
+                             mass_properties=IrMassProperties(
+                                 moulded_dry_weight=Quantity(2000.0, "UKg")))  # no material
     return v
 
 
@@ -70,7 +76,8 @@ def test_bom_unknown_thickness_unit_group_key():
     v.plates["P5"] = IrPlate(id="P5", parent_ref=_PARENT, name="P5",
                              material_ref=Ref("M1"),
                              thickness=Quantity(12.5, "Ubogus"),
-                             dry_weight=Quantity(100.0, "UKg"))
+                             mass_properties=IrMassProperties(
+                                 moulded_dry_weight=Quantity(100.0, "UKg")))
     report = bom_gen.build(v)
     table = report.sections[0].tables[0]
     keys = [r[2] for r in table.rows]
@@ -83,7 +90,8 @@ def test_bom_unknown_weight_unit_is_noted():
     v.plates["P6"] = IrPlate(id="P6", parent_ref=_PARENT, name="P6",
                              material_ref=Ref("M1"),
                              thickness=Quantity(10.0, "Umm"),
-                             dry_weight=Quantity(3.0, "Ustone"))
+                             mass_properties=IrMassProperties(
+                                 moulded_dry_weight=Quantity(3.0, "Ustone")))
     report = bom_gen.build(v)
     notes = report.sections[0].notes
     assert any("P6" in n and "Ustone" in n for n in notes)
@@ -95,7 +103,8 @@ def test_bom_notes_deduplicated():
         v.plates[f"P{i}"] = IrPlate(id=f"P{i}", parent_ref=_PARENT, name=f"P{i}",
                                     material_ref=Ref("M1"),
                                     thickness=Quantity(12.5, "Ubogus"),
-                                    dry_weight=Quantity(100.0, "UKg"))
+                                    mass_properties=IrMassProperties(
+                                        moulded_dry_weight=Quantity(100.0, "UKg")))
     report = bom_gen.build(v)
     notes = report.sections[0].notes
     assert len(notes) == len(set(notes))

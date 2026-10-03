@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Source: D-ROPAX26-OCX-TR5TC18Re.3docx -->
-<ocx:PanelRef xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" localRef="nplcid1975" ocx:GUIDRef="aae08eef-26e5-f0e1-28ae-d6eb01080cf9" ocx:refType="ocx:Panel">
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:PanelRef xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" localRef="id_10" ocx:GUIDRef="a28e61b0-2668-4ab5-9249-5b8b6b3b7f6a" ocx:refType="ocx:Panel">
     <ocx:ContourBounds>
-        <ocx:ContourStart coordinates="52.225 -12.22964 2.0112" unit="Um"/>
-        <ocx:ContourEnd coordinates="73.085 -12.6422 1.8" unit="Um"/>
+        <ocx:ContourStart coordinates="0.0 5.16 0.0" unit="Um"/>
+        <ocx:ContourEnd coordinates="9.75 6.02 0.0" unit="Um"/>
     </ocx:ContourBounds>
     <ocx:Offset numericvalue="0.0" unit="Um"/>
-    <ocx:OffsetDirection direction="1.0 0.0 0.0"/>
+    <ocx:OffsetDirection direction="0.0 0.0 1.0"/>
 </ocx:PanelRef>

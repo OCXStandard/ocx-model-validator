@@ -1,7 +1,14 @@
 from __future__ import annotations
 
 from ocx_model_validator.model.ir.arrangement import IrCompartment
-from ocx_model_validator.model.ir.base import IrCog, ParentKind, ParentRef, Quantity, Ref
+from ocx_model_validator.model.ir.base import (
+    IrCog,
+    IrMassProperties,
+    ParentKind,
+    ParentRef,
+    Quantity,
+    Ref,
+)
 from ocx_model_validator.model.ir.catalogues import IrMaterial
 from ocx_model_validator.model.ir.geometry import (
     IrCoordinateSystem,
@@ -96,7 +103,7 @@ def make_synthetic_vessel() -> IrVessel:
         guidref="plate-a1-guid",
         material_ref=Ref("mat315"),
         thickness=q(12.5, "Umm"),
-        cog=IrCog(5.0, 0.25, 0.0, "Um"),
+        mass_properties=IrMassProperties(moulded_cog=IrCog(5.0, 0.25, 0.0, "Um")),
         outer_contour=rectangle(0.0, 2.0, 0.0),
     )
     vessel.plates["plate-a2"] = IrPlate(
@@ -105,7 +112,7 @@ def make_synthetic_vessel() -> IrVessel:
         name="Plate A2",
         material_ref=Ref("mat315"),
         thickness=q(10.0, "Umm"),
-        cog=IrCog(5.0, 1.75, 1.0, "Um"),
+        mass_properties=IrMassProperties(moulded_cog=IrCog(5.0, 1.75, 1.0, "Um")),
         outer_contour=rectangle(0.0, 2.0, 1.0),
     )
     vessel.stiffeners["stiff-a1"] = IrStiffener(

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:CellBoundary xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" localRef="id_13" ocx:refType="ocx:Panel">
+    <ocx:ContourBounds>
+        <ocx:ContourStart coordinates="9.75 -6.02 1.5" unit="Um"/>
+        <ocx:ContourEnd coordinates="9.75 -6.02 1.5" unit="Um"/>
+    </ocx:ContourBounds>
+    <ocx:Offset numericvalue="0.0" unit="Um"/>
+    <ocx:OffsetDirection direction="0.0 0.0 1.0"/>
+</ocx:CellBoundary>

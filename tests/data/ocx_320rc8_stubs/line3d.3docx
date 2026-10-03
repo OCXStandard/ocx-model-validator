@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Source: tr04_tc04a_ai3dx.3docx -->
-<ocx:Line3D xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" id="nplcid18" is2D="false">
-    <ocx:CurveLength numericvalue="13.3275751" unit="Um"/>
-    <ocx:StartPoint coordinates="-2.0 -9.4083915 0.0" unit="Um"/>
-    <ocx:EndPoint coordinates="-2.0 3.9191836 0.0" unit="Um"/>
-</ocx:Line3D>

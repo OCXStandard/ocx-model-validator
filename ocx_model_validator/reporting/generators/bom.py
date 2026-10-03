@@ -2,7 +2,7 @@
 
 Grouping hierarchy: material → part type → sub-group (thickness for plates
 and brackets, cross-section for stiffeners, pillars and edge
-reinforcements). Items without dry_weight show N/A, are excluded from
+reinforcements). Items without a moulded dry weight show N/A, are excluded from
 totals, and are counted per group in the "Missing weight" column.
 """
 from __future__ import annotations
@@ -65,13 +65,15 @@ def _group_key(part, kind: str, vessel: IrVessel, notes: list[str]) -> str:
 
 
 def _weight_tonnes(part, vessel: IrVessel, notes: list[str]) -> float | None:
-    if part.dry_weight is None:
+    mp = part.mass_properties
+    dw = mp.moulded_dry_weight if mp is not None else None
+    if dw is None:
         return None
     try:
-        return to_si(part.dry_weight, vessel.unit_registry) / 1000.0
+        return to_si(dw, vessel.unit_registry) / 1000.0
     except GeometryError:
         notes.append(f"{part.id} dry_weight: unknown unit "
-                     f"{part.dry_weight.unit!r}; excluded from totals")
+                     f"{dw.unit!r}; excluded from totals")
         return None
 
 

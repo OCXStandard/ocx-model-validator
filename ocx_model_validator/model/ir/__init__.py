@@ -29,6 +29,7 @@ from ocx_model_validator.model.ir.arrangement import (
 )
 from ocx_model_validator.model.ir.base import (
     IrCog,
+    IrMassProperties,
     IrUnit,
     ParentKind,
     ParentRef,
@@ -65,6 +66,7 @@ from ocx_model_validator.model.ir.geometry import (
     IrSurface,
     IrSurface3D,
     IrSurfaceCollection,
+    IrUnboundedGeometry,
     IrVector3D,
 )
 from ocx_model_validator.model.ir.metadata import (
@@ -114,7 +116,7 @@ from ocx_model_validator.model.ir.structural import (
 
 __all__ = [
     # base
-    "IrCog", "Quantity", "IrUnit", "Ref", "ParentKind", "ParentRef",
+    "IrCog", "IrMassProperties", "Quantity", "IrUnit", "Ref", "ParentKind", "ParentRef",
     # catalogues
     "IrMaterial", "IrHole2D", "IrHoleShapeCatalogue",
     # sections
@@ -129,6 +131,7 @@ __all__ = [
     "IrNurbs3D", "IrSurface3D", "IrPlane3D", "IrSphere3D", "IrCone3D",
     "IrCylinder3D", "IrExtrudedSurface", "IrNurbsSurface",
     "IrCoordinateSystem", "IrRefPlane", "IrSurface", "IrSurfaceCollection",
+    "IrUnboundedGeometry",
     # connections
     "IrConnectionConfiguration", "IrPenetration",
     # structural

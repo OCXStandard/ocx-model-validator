@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:Pillar xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd" id="id_914" name="Pillar Dk3 Frm_12" ocx:GUIDRef="f39d0f79-2433-4ee7-8d4c-1160e7607df2">
+    <ocx:MassProperties>
+        <ocx:MouldedDryWeight numericvalue="348.8" unit="UKg"/>
+        <ocx:MouldedCenterOfGravity coordinates="9.0 0.0 7.575" unit="Um"/>
+        <ocx:PhysicalDryWeight numericvalue="348.8" unit="UKg"/>
+        <ocx:PhysicalCenterOfGravity coordinates="9.0 0.0 7.575" unit="Um"/>
+    </ocx:MassProperties>
+    <ocx:MaterialRef localRef="nplcid4" ocx:GUIDRef="6ba5c742-d643-42bb-8ce3-47578bd074a7" ocx:refType="ocx:Material"/>
+    <ocx:SectionRef localRef="nplcid24" ocx:GUIDRef="22e4132c-dced-5a7c-a762-feb521cfe5e6" ocx:refType="ocx:BarSection">
+        <ocx:OffsetU numericvalue="-0.12225" unit="Um"/>
+        <ocx:OffsetV numericvalue="-0.12225" unit="Um"/>
+    </ocx:SectionRef>
+    <ocx:TraceLine>
+        <ocx:CompositeCurve3D id="axis" is2D="false">
+            <ocx:CurveLength numericvalue="3.15" unit="Um"/>
+            <ocx:Line3D id="line_624" is2D="false">
+                <ocx:CurveLength numericvalue="3.15" unit="Um"/>
+                <ocx:StartPoint coordinates="9.0 0.0 6.0" unit="Um"/>
+                <ocx:EndPoint coordinates="9.0 0.0 9.15" unit="Um"/>
+            </ocx:Line3D>
+        </ocx:CompositeCurve3D>
+    </ocx:TraceLine>
+    <ocx:Inclination>
+        <ocx:WebDirection direction="1.0 0.0 0.0"/>
+        <ocx:FlangeDirection direction="0.0 -1.0 0.0"/>
+        <ocx:Position coordinates="9.0 0.0 6.0" unit="Um"/>
+    </ocx:Inclination>
+    <ocx:ConnectionConfiguration id="id_2741" name="Pillar Dk3 Frm_12/End1">
+        <ocx:PlateRef localRef="id_686" ocx:GUIDRef="a7b450bd-81c5-437a-b443-4c6902eb5172" ocx:refType="ocx:Plate"/>
+        <ocx:Point3D coordinates="9.0 0.0 6.0" unit="Um"/>
+    </ocx:ConnectionConfiguration>
+    <ocx:ConnectionConfiguration id="id_2742" name="Pillar Dk3 Frm_12/End2">
+        <ocx:Point3D coordinates="9.0 0.0 9.15" unit="Um"/>
+    </ocx:ConnectionConfiguration>
+</ocx:Pillar>

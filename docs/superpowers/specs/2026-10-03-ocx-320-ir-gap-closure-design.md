@@ -83,7 +83,7 @@ All additions default to `None` or `[]`; no field access raises.
 - `IrSection` base: add `catalogue_reference: str | None` (from `BarSection.catalogue_reference`), inherited by all typed section classes.
 
 **`connections.py`**
-- `IrConnectionConfiguration` and `IrPenetration`: add `bracket_refs: list[Ref]`.
+- `IrConnectionConfiguration` and `IrPenetration`: add `bracket_ref: Ref | None` (corrected during planning: the 3.2.0 binding models `BracketRef` as a single element, not a list).
 
 **`metadata.py` / `arrangement.py`**
 - `IrPrincipalParticulars`: add `minimum_ballast_draught: Quantity | None`.
@@ -111,7 +111,7 @@ All raw access stays `getattr(obj, "field", None)`. Pattern: **read 3.2.0 name f
 - `_build_contour` dispatch: add `Ellipse` (reuse `IrEllipse3D` semantics) and `RectangularMickeyMouseEars`; `SuperElliptical` reads `major_diameter`/`minor_diameter` with fallback to `height`/`width`; handle `contour_mid_point`.
 - `_build_section`: `RoundBar` reads `diameter` with fallback to `height`.
 - Trace lines: extract the new `TraceLine` child refs into `trace_refs`.
-- Misc: `orientation_rule`, `bracket_ref` lists on penetrations/connection configurations, `minimum_ballast_draught`, `BulkCargo.density`, `PlateCutBy.inner_contour` fallback, `BarSection.catalogue_reference`.
+- Misc: `orientation_rule`, `bracket_ref` (single) on penetrations/connection configurations, `minimum_ballast_draught`, `BulkCargo.density`, `PlateCutBy.inner_contour` fallback, `BarSection.catalogue_reference`.
 
 **No factory changes** — `(3, 2)` is already registered.
 

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Source: tr05_tc09_mbrh.3docx -->
+<ocx:Contour xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320//OCX_Schema.xsd">
+    <ocx:CompositeCurve3D id="id_8229_c" is2D="false">
+        <ocx:CurveLength numericvalue="1.0520132" unit="Um"/>
+        <ocx:Line3D id="line_3841" is2D="false">
+            <ocx:CurveLength numericvalue="0.165" unit="Um"/>
+            <ocx:StartPoint coordinates="-0.01 0.025 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="-0.01 0.19 0.0" unit="Um"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="line_3843" is2D="false">
+            <ocx:CurveLength numericvalue="0.065" unit="Um"/>
+            <ocx:StartPoint coordinates="-0.01 0.31 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="0.055 0.31 0.0" unit="Um"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="line_3845" is2D="false">
+            <ocx:CurveLength numericvalue="0.3" unit="Um"/>
+            <ocx:StartPoint coordinates="0.115 0.25 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="0.115 -0.05 0.0" unit="Um"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="line_3846" is2D="false">
+            <ocx:CurveLength numericvalue="0.15" unit="Um"/>
+            <ocx:StartPoint coordinates="0.115 -0.05 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="-0.035 -0.05 0.0" unit="Um"/>
+        </ocx:Line3D>
+        <ocx:Line3D id="line_3847" is2D="false">
+            <ocx:CurveLength numericvalue="0.05" unit="Um"/>
+            <ocx:StartPoint coordinates="-0.035 -0.05 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="-0.035 0.0 0.0" unit="Um"/>
+        </ocx:Line3D>
+        <ocx:CircumArc3D id="arc_3840" is2D="false">
+            <ocx:CurveLength numericvalue="0.0392699" unit="Um"/>
+            <ocx:StartPoint coordinates="-0.035 0.0 0.0" unit="Um"/>
+            <ocx:IntermediatePoint coordinates="-0.0276777 0.0176777 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="-0.01 0.025 0.0" unit="Um"/>
+        </ocx:CircumArc3D>
+        <ocx:CircumArc3D id="arc_3842" is2D="false">
+            <ocx:CurveLength numericvalue="0.1884956" unit="Um"/>
+            <ocx:StartPoint coordinates="-0.01 0.19 0.0" unit="Um"/>
+            <ocx:IntermediatePoint coordinates="-0.07 0.25 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="-0.01 0.31 0.0" unit="Um"/>
+        </ocx:CircumArc3D>
+        <ocx:CircumArc3D id="arc_3844" is2D="false">
+            <ocx:CurveLength numericvalue="0.0942478" unit="Um"/>
+            <ocx:StartPoint coordinates="0.055 0.31 0.0" unit="Um"/>
+            <ocx:IntermediatePoint coordinates="0.0974264 0.2924264 0.0" unit="Um"/>
+            <ocx:EndPoint coordinates="0.115 0.25 0.0" unit="Um"/>
+        </ocx:CircumArc3D>
+    </ocx:CompositeCurve3D>
+</ocx:Contour>

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Source: tr04_tc13_cadhu.3docx -->
-<ocx:SuperElliptical xmlns:ocx="https://3docx.org/fileadmin//ocx_schema//V320rc8//OCX_Schema.xsd" id="_ch241-fixed3-1200x600definition" exponent="2.0">
-    <ocx:MajorDiameter numericvalue="1.2" unit="uMeter"/>
-    <ocx:MinorDiameter numericvalue="0.6" unit="uMeter"/>
-</ocx:SuperElliptical>
