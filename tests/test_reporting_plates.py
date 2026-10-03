@@ -10,7 +10,9 @@ from ocx_model_validator.reporting.generators import plates as plates_gen
 def _vessel() -> IrVessel:
     v = IrVessel(id="V1", name="MV Test", schema_version="3.2.0")
     v.materials["M1"] = IrMaterial(id="M1", name="NV A36")
-    v.panels["PAN1"] = IrPanel(id="PAN1", name="Deck panel", plate_ids=["P1"])
+    v.panels["PAN1"] = IrPanel(id="PAN1", name="Deck panel",
+                               function_type="DECK PART",
+                               plate_ids=["P1", "P2"])
     v.plates["P1"] = IrPlate(
         id="P1", parent_ref=ParentRef(kind=ParentKind.PANEL, id="PAN1"),
         name="Deck plate", function_type="DECK",
@@ -27,6 +29,10 @@ def _vessel() -> IrVessel:
     v.plates["P0"] = IrPlate(
         id="P0", parent_ref=ParentRef(kind=ParentKind.VESSEL, id="V1"),
         name="Bare plate")
+    # No own function_type → inherits the panel's, shown in parentheses
+    v.plates["P2"] = IrPlate(
+        id="P2", parent_ref=ParentRef(kind=ParentKind.PANEL, id="PAN1"),
+        name="Inner plate")
     return v
 
 
@@ -52,6 +58,8 @@ def test_plates_rows_sorted_with_attributes_and_counts():
          None, None, None, None, None, None, None, 0],
         ["P1", "Deck plate", "Deck panel", "DECK", "NV A36",
          10.0, 8.0, 1.0, 5.0, 12.5, 1.0, "(10.0, 0.5, 8.0)", 2],
+        ["P2", "Inner plate", "Deck panel", "(DECK PART)", None,
+         None, None, None, None, None, None, None, 0],
     ]
 
 

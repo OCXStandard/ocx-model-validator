@@ -9,7 +9,7 @@ from __future__ import annotations
 from datetime import datetime
 
 from ocx_model_validator.exeptions import GeometryError
-from ocx_model_validator.model.ir.base import IrUnit, Quantity
+from ocx_model_validator.model.ir.base import IrUnit, ParentKind, ParentRef, Quantity
 from ocx_model_validator.model.ir.structural import IrVessel
 from ocx_model_validator.model.units import to_si
 from ocx_model_validator.reporting.model import Cell
@@ -69,6 +69,22 @@ def qty_tonnes_cell(qty, registry, notes, context) -> Cell:
 def qty_t_per_m3_cell(qty, registry, notes, context) -> Cell:
     """SI kg/m³ → t/m³, 3 decimals."""
     return _safe_convert(qty, registry, 1e-3, 3, notes, context)
+
+
+def inherited_function_cell(own: str | None, parent_ref: ParentRef | None,
+                            vessel: IrVessel) -> Cell:
+    """Effective functionType of a panel child.
+
+    Panel children inherit the panel's functionType; a child override wins.
+    An inherited value is shown in parentheses, an override plain.
+    """
+    if own:
+        return own
+    if parent_ref is not None and parent_ref.kind == ParentKind.PANEL:
+        panel = vessel.panels.get(parent_ref.id)
+        if panel is not None and panel.function_type:
+            return f"({panel.function_type})"
+    return None
 
 
 def report_metadata(vessel: IrVessel, source_file: str) -> dict[str, str]:

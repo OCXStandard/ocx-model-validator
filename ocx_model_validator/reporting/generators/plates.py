@@ -10,6 +10,7 @@ from __future__ import annotations
 from ocx_model_validator.model.ir.base import ParentKind
 from ocx_model_validator.model.ir.structural import IrPlate, IrVessel
 from ocx_model_validator.reporting.generators._common import (
+    inherited_function_cell,
     qty_m2_cell,
     qty_mm_cell,
     qty_tonnes_cell,
@@ -55,7 +56,8 @@ def build(vessel: IrVessel, source_file: str = "") -> Report:
                                  f"{ctx} point on surface")
             pos_cell = "(" + ", ".join(str(c) for c in coords) + ")"
         rows.append([
-            p.id, p.name, _panel_name(p, vessel), p.function_type,
+            p.id, p.name, _panel_name(p, vessel),
+            inherited_function_cell(p.function_type, p.parent_ref, vessel),
             _material_name(p, vessel),
             qty_mm_cell(p.thickness, reg, notes, f"{ctx} thickness"),
             qty_mm_cell(p.renewal_thickness, reg, notes,
