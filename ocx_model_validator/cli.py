@@ -8,6 +8,7 @@ Usage::
     validator report panels MODEL.3docx ...
     validator report plates MODEL.3docx ...
     validator report stiffeners MODEL.3docx ...
+    validator report brackets MODEL.3docx ...
     validator report bom MODEL.3docx ...
     validator report all MODEL.3docx ...
     validator generate-stubs [--force]
@@ -211,6 +212,19 @@ def stiffeners_cmd(
     _emit(stiffeners.build(vessel, source_file=str(model)), fmt, destination)
 
 
+@report_app.command("brackets")
+def brackets_cmd(
+    model: Path = _MODEL_ARG,
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """Brackets: attributes, thicknesses and all bracket parameters."""
+    from ocx_model_validator.reporting.generators import brackets
+
+    vessel = _load_vessel(model)
+    _emit(brackets.build(vessel, source_file=str(model)), fmt, destination)
+
+
 @report_app.command("bom")
 def bom_cmd(
     model: Path = _MODEL_ARG,
@@ -233,6 +247,7 @@ def all_cmd(
     """All reports merged into one document (report defaults; no per-report flags)."""
     from ocx_model_validator.reporting.generators import (
         bom,
+        brackets,
         catalogues,
         compartments,
         frame_table,
@@ -251,6 +266,7 @@ def all_cmd(
         panels.build(vessel, source_file=source),
         plates.build(vessel, source_file=source),
         stiffeners.build(vessel, source_file=source),
+        brackets.build(vessel, source_file=source),
         catalogues.build(vessel, source_file=source),
         bom.build(vessel, source_file=source),
     ]

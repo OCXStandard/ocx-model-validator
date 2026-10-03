@@ -93,8 +93,15 @@ class IrBracket:
     mass_properties: IrMassProperties | None = None
     arm_length_u: Quantity | None = None
     arm_length_v: Quantity | None = None
+    unose: Quantity | None = None
+    vnose: Quantity | None = None
+    free_edge_radius: Quantity | None = None
     has_edge_reinforcement: bool = False
     number_of_supports: int | None = None
+    reinforcement_type: str | None = None
+    feature_cope: "IrFeatureCope | None" = None
+    flange_width: Quantity | None = None
+    flange_radius: Quantity | None = None
 
 
 @dataclass
