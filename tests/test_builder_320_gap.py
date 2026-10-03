@@ -3,8 +3,18 @@ from __future__ import annotations
 
 from types import SimpleNamespace as NS
 
+import pytest
+
 from ocx_model_validator.builders.v3_builder import OcxV3Builder
-from ocx_model_validator.model.ir import ParentKind, ParentRef
+from ocx_model_validator.model.ir import (
+    IrCone3D,
+    IrCylinder3D,
+    IrExtrudedSurface,
+    IrNurbsSurface,
+    IrSphere3D,
+    ParentKind,
+    ParentRef,
+)
 
 PARENT = ParentRef(kind=ParentKind.VESSEL, id="V1")
 
@@ -165,3 +175,72 @@ def test_bar_section_catalogue_reference():
     ir_sec = _b()._build_section(bar)
     assert ir_sec.catalogue_reference == "EN10058-FB100x10"
     assert ir_sec.height.value == 100.0
+
+
+def _pt3(x, y, z, unit="Um"):
+    return NS(coordinates=[x, y, z], unit=unit)
+
+
+def _dir3(x, y, z):
+    return NS(direction=[x, y, z])
+
+
+def test_plane3d_point_on_surface_320():
+    class Plane3D(NS):
+        pass
+    p = Plane3D(id="P1", point_on_surface=_pt3(4.5, -5.7, 1.5),
+                normal=_dir3(1.0, 0.0, 0.0), udirection=None)
+    ir = _b()._build_surface(p)
+    assert ir.point_on_surface.x == 4.5
+    assert ir.normal.x == 1.0
+
+
+def test_plane3d_origin_fallback_310():
+    class Plane3D(NS):
+        pass
+    p = Plane3D(id="P2", origin=_pt3(0.0, 1.0, 2.0),
+                normal=_dir3(0.0, 0.0, 1.0), udirection=None)
+    ir = _b()._build_surface(p)
+    assert ir.point_on_surface.y == 1.0
+
+
+class Sphere3D(NS):
+    pass
+
+
+class Cone3D(NS):
+    pass
+
+
+class Cylinder3D(NS):
+    pass
+
+
+class ExtrudedSurface(NS):
+    pass
+
+
+class NurbsSurface(NS):
+    pass
+
+
+@pytest.mark.parametrize(
+    ("surface_cls", "ir_cls", "attrs"),
+    [
+        (Sphere3D, IrSphere3D, {"id": "S1", "radius": _qty(2.0, "Um")}),
+        (Cone3D, IrCone3D, {"id": "CO1", "base_radius": _qty(2.0, "Um"), "tip_radius": _qty(0.5, "Um")}),
+        (Cylinder3D, IrCylinder3D, {"id": "C1", "radius": _qty(2.0, "Um"), "height": _qty(10.0, "Um")}),
+        (ExtrudedSurface, IrExtrudedSurface, {"id": "E1"}),
+        (NurbsSurface, IrNurbsSurface, {"id": "N1"}),
+    ],
+)
+def test_surfaces_extract_normal_and_point_on_surface(surface_cls, ir_cls, attrs):
+    surface = surface_cls(
+        normal=_dir3(1.0, 0.0, 0.0),
+        point_on_surface=_pt3(2.0, 0.0, 5.0),
+        **attrs,
+    )
+    ir = _b()._build_surface(surface)
+    assert isinstance(ir, ir_cls)
+    assert ir.normal.x == 1.0
+    assert ir.point_on_surface.z == 5.0

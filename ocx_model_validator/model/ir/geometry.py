@@ -94,7 +94,7 @@ class IrSurface3D:
 
 @dataclass(frozen=True)
 class IrPlane3D(IrSurface3D):
-    origin: IrPoint3D | None = None
+    point_on_surface: IrPoint3D | None = None  # 3.2.0 PointOnSurface / 3.1.0 Origin
     normal: IrVector3D | None = None
     udirection: IrVector3D | None = None
 
@@ -103,6 +103,8 @@ class IrPlane3D(IrSurface3D):
 class IrSphere3D(IrSurface3D):
     origin: IrPoint3D | None = None
     radius: Quantity | None = None
+    normal: IrVector3D | None = None
+    point_on_surface: IrPoint3D | None = None
 
 
 @dataclass(frozen=True)
@@ -111,6 +113,8 @@ class IrCone3D(IrSurface3D):
     tip: IrPoint3D | None = None
     base_radius: Quantity | None = None
     tip_radius: Quantity | None = None
+    normal: IrVector3D | None = None
+    point_on_surface: IrPoint3D | None = None
 
 
 @dataclass(frozen=True)
@@ -119,6 +123,8 @@ class IrCylinder3D(IrSurface3D):
     axis: IrVector3D | None = None
     radius: Quantity | None = None
     height: Quantity | None = None
+    normal: IrVector3D | None = None
+    point_on_surface: IrPoint3D | None = None
 
 
 @dataclass(frozen=True)
@@ -127,6 +133,8 @@ class IrExtrudedSurface(IrSurface3D):
     sweep: IrVector3D | None = None
     sweep_curve: IrCurve3D | None = None
     face_boundary_curve: IrCurve3D | None = None
+    normal: IrVector3D | None = None
+    point_on_surface: IrPoint3D | None = None
 
 
 @dataclass(frozen=True)
@@ -136,6 +144,8 @@ class IrNurbsSurface(IrSurface3D):
     u_knot_vector: list[float] = field(default_factory=list)
     v_knot_vector: list[float] = field(default_factory=list)
     control_points: list[list[IrPoint3D]] = field(default_factory=list)
+    normal: IrVector3D | None = None
+    point_on_surface: IrPoint3D | None = None
 
 
 @dataclass(frozen=True)

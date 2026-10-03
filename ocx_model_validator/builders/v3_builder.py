@@ -494,32 +494,39 @@ class OcxV3Builder(IOcxBuilder):
             return None
         name = type(elem).__name__.lower()
         sid = getattr(elem, "id", None)
+        pos = self._pt(getattr(elem, "point_on_surface", None))
+        normal = self._vec(getattr(elem, "normal", None))
         if "plane" in name:
-            return IrPlane3D(id=sid, origin=self._pt(getattr(elem, "origin", None)),
-                             normal=self._vec(getattr(elem, "normal", None)),
+            return IrPlane3D(id=sid,
+                             point_on_surface=pos or self._pt(getattr(elem, "origin", None)),
+                             normal=normal,
                              udirection=self._vec(getattr(elem, "udirection", None)))
         if "sphere" in name:
             return IrSphere3D(id=sid, origin=self._pt(getattr(elem, "origin", None)),
-                              radius=self._qty(getattr(elem, "radius", None)))
+                              radius=self._qty(getattr(elem, "radius", None)),
+                              normal=normal, point_on_surface=pos)
         if "cone" in name:
             return IrCone3D(id=sid, origin=self._pt(getattr(elem, "origin", None)),
                             tip=self._pt(getattr(elem, "tip", None)),
                             base_radius=self._qty(getattr(elem, "base_radius", None)),
-                            tip_radius=self._qty(getattr(elem, "tip_radius", None)))
+                            tip_radius=self._qty(getattr(elem, "tip_radius", None)),
+                            normal=normal, point_on_surface=pos)
         if "cylinder" in name:
             return IrCylinder3D(id=sid, origin=self._pt(getattr(elem, "origin", None)),
                                 axis=self._vec(getattr(elem, "axis", None)),
                                 radius=self._qty(getattr(elem, "radius", None)),
-                                height=self._qty(getattr(elem, "height", None)))
+                                height=self._qty(getattr(elem, "height", None)),
+                                normal=normal, point_on_surface=pos)
         if "extruded" in name:
             return IrExtrudedSurface(
                 id=sid,
                 base_curve=self._build_curve(getattr(elem, "base_curve", None)),
                 sweep=self._vec(getattr(elem, "sweep", None)),
                 sweep_curve=self._build_curve(getattr(elem, "sweep_curve", None)),
-                face_boundary_curve=self._build_curve(getattr(elem, "face_boundary_curve", None)))
+                face_boundary_curve=self._build_curve(getattr(elem, "face_boundary_curve", None)),
+                normal=normal, point_on_surface=pos)
         if "nurbssurface" in name or "nurbs" in name:
-            return IrNurbsSurface(id=sid)
+            return IrNurbsSurface(id=sid, normal=normal, point_on_surface=pos)
         logger.debug("Unknown surface type: {}", type(elem).__name__)
         return None
 

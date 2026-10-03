@@ -199,6 +199,7 @@ def test_build_plane_udirection():
     p = Plane3D(origin=_pt(0, 0, 0), normal=_vec(0, 0, 1), udirection=_vec(1, 0, 0))
     ir = _b()._build_surface(p)
     assert isinstance(ir, IrPlane3D)
+    assert ir.point_on_surface.x == 0.0
     assert ir.udirection.x == 1.0
 
 
