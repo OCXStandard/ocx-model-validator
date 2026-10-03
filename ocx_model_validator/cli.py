@@ -2,7 +2,7 @@
 
 Usage::
 
-    validator report frame-table MODEL.3docx [--format rich|markdown] [--destination FILE]
+    validator report frame-table MODEL.3docx [--format rich|markdown|html] [--destination FILE]
     validator report compartments MODEL.3docx ...
     validator report catalogues MODEL.3docx [--catalogue material|section|opening|all] ...
     validator report bom MODEL.3docx [--detailed] ...
@@ -36,15 +36,18 @@ app.add_typer(report_app, name="report")
 class ReportFormat(str, Enum):
     rich = "rich"
     markdown = "markdown"
+    html = "html"
 
 
 _MODEL_ARG = typer.Argument(..., exists=True, readable=True,
                             help="Path to a .3docx model file.")
 _FORMAT_OPT = typer.Option(None, "--format", "-f",
-                           help="Output format (default: rich to stdout, "
-                                "markdown with --destination).")
+                           help="Output format (default: rich to stdout; "
+                                "markdown with --destination, or html when "
+                                "the destination ends in .html/.htm).")
 _DEST_OPT = typer.Option(None, "--destination", "-d",
-                         help="Write the report to this file (Markdown).")
+                         help="Write the report to this file "
+                              "(markdown, or html for .html/.htm).")
 
 
 def _load_vessel(model: Path):
@@ -90,13 +93,20 @@ def _detect_schema_version(model: Path) -> str | None:
     return None
 
 
+_HTML_SUFFIXES = {".html", ".htm"}
+
+
 def _emit(report: Report, fmt: ReportFormat | None, destination: Path | None) -> None:
     if destination is not None:
         if fmt == ReportFormat.rich:
             raise typer.BadParameter(
                 "--destination cannot be combined with --format rich")
+        if fmt is None:
+            fmt = (ReportFormat.html
+                   if destination.suffix.lower() in _HTML_SUFFIXES
+                   else ReportFormat.markdown)
         try:
-            destination.write_text(get_renderer("markdown").render(report),
+            destination.write_text(get_renderer(fmt.value).render(report),
                                    encoding="utf-8")
         except OSError as exc:
             logger.error("Cannot write {}: {}", destination, exc)
@@ -106,7 +116,7 @@ def _emit(report: Report, fmt: ReportFormat | None, destination: Path | None) ->
     if fmt is None or fmt == ReportFormat.rich:
         RichRenderer().render_to_console(report, Console())
     else:
-        typer.echo(get_renderer("markdown").render(report), nl=False)
+        typer.echo(get_renderer(fmt.value).render(report), nl=False)
 
 
 @report_app.command("frame-table")

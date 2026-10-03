@@ -89,3 +89,62 @@ def test_report_all(model_310: Path, tmp_path: Path):
         assert heading in text
     # model extent comes first
     assert text.index("## Model extent") < text.index("## Frame table")
+
+
+def test_report_destination_html_suffix_infers_html(model_310: Path, tmp_path: Path):
+    dest = tmp_path / "out.html"
+    result = runner.invoke(app, ["report", "frame-table", str(model_310),
+                                 "--destination", str(dest)])
+    assert result.exit_code == 0
+    text = dest.read_text(encoding="utf-8")
+    assert text.startswith("<!DOCTYPE html>")
+    assert "<title>Frame table report</title>" in text
+
+
+def test_report_destination_htm_uppercase_suffix(model_310: Path, tmp_path: Path):
+    dest = tmp_path / "OUT.HTM"
+    result = runner.invoke(app, ["report", "frame-table", str(model_310),
+                                 "--destination", str(dest)])
+    assert result.exit_code == 0
+    assert dest.read_text(encoding="utf-8").startswith("<!DOCTYPE html>")
+
+
+def test_report_format_html_to_stdout(model_310: Path):
+    result = runner.invoke(app, ["report", "frame-table", str(model_310),
+                                 "--format", "html"])
+    assert result.exit_code == 0
+    assert result.output.startswith("<!DOCTYPE html>")
+
+
+def test_report_explicit_markdown_wins_over_html_suffix(model_310: Path,
+                                                        tmp_path: Path):
+    dest = tmp_path / "out.html"
+    result = runner.invoke(app, ["report", "frame-table", str(model_310),
+                                 "--format", "markdown",
+                                 "--destination", str(dest)])
+    assert result.exit_code == 0
+    assert dest.read_text(encoding="utf-8").startswith("# Frame table report")
+
+
+def test_report_format_html_to_md_destination_writes_html(model_310: Path,
+                                                          tmp_path: Path):
+    dest = tmp_path / "out.md"
+    result = runner.invoke(app, ["report", "frame-table", str(model_310),
+                                 "--format", "html",
+                                 "--destination", str(dest)])
+    assert result.exit_code == 0
+    assert dest.read_text(encoding="utf-8").startswith("<!DOCTYPE html>")
+
+
+def test_report_all_html_has_tabs_and_links(model_310: Path, tmp_path: Path):
+    dest = tmp_path / "all.html"
+    result = runner.invoke(app, ["report", "all", str(model_310),
+                                 "--destination", str(dest)])
+    assert result.exit_code == 0
+    text = dest.read_text(encoding="utf-8")
+    for title in ["Model extent", "Frame table", "Compartments",
+                  "Materials", "Bill of material"]:
+        assert f">{title}</button>" in text
+    # catalogue anchors exist whenever the model declares materials
+    if 'id="material-' in text:
+        assert "tab-panel" in text
