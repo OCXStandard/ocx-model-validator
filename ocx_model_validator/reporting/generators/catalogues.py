@@ -37,8 +37,10 @@ def _materials_section(vessel: IrVessel) -> ReportSection:
     notes: list[str] = []
     reg = vessel.unit_registry
     rows: list[list[Cell]] = []
+    row_anchors: list[str | None] = []
     for m in sorted(vessel.materials.values(), key=lambda m: m.name or m.id):
         ctx = f"material {m.id}"
+        row_anchors.append(f"material-{m.id}")
         rows.append([
             m.id, m.name, m.grade,
             qty_t_per_m3_cell(m.density, reg, notes, f"{ctx} density"),
@@ -49,7 +51,8 @@ def _materials_section(vessel: IrVessel) -> ReportSection:
     columns = ["Id", "Name", "Grade", "Density (t/m³)",
                "Yield (MPa)", "Ultimate (MPa)", "E (MPa)"]
     return ReportSection(title="Materials",
-                         tables=[ReportTable("Materials", columns, rows)],
+                         tables=[ReportTable("Materials", columns, rows,
+                                             row_anchors=row_anchors)],
                          notes=notes)
 
 
@@ -78,7 +81,9 @@ def _sections_section(vessel: IrVessel) -> ReportSection:
                + [f"{n} (mm)" for n in dim_names]
                + [f"{n} (deg)" for n in angle_names])
     rows: list[list[Cell]] = []
+    row_anchors: list[str | None] = []
     for s in secs:
+        row_anchors.append(f"section-{s.id}")
         row: list[Cell] = [s.id, s.name, _section_type_name(s)]
         for n in dim_names:
             value = getattr(s, n, None)
@@ -95,7 +100,8 @@ def _sections_section(vessel: IrVessel) -> ReportSection:
                 row.append(None)
         rows.append(row)
     return ReportSection(title="Cross sections",
-                         tables=[ReportTable("Cross sections", columns, rows)],
+                         tables=[ReportTable("Cross sections", columns, rows,
+                                             row_anchors=row_anchors)],
                          notes=notes)
 
 
