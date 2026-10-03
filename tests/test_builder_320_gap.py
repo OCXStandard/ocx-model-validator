@@ -382,3 +382,34 @@ def test_penetration_bracket_ref_field():
     from ocx_model_validator.model.ir import IrPenetration
     p = IrPenetration(id="PEN1", bracket_ref=Ref(local_ref="BR1"))
     assert p.bracket_ref.local_ref == "BR1"
+
+
+def test_principal_particulars_minimum_ballast_draught():
+    from ocx_model_validator.model.ir import IrVessel
+    pp = NS(lpp=None, rule_length=None, block_coefficient=None,
+            moulded_breadth=None, moulded_depth=None, scantling_draught=None,
+            design_speed=None, freeboard_length=None,
+            normal_ballast_draught=None, heavy_ballast_draught=None,
+            minimum_ballast_draught=_qty(5.2, "Um"),
+            length_of_waterline=None, upper_deck_area=None,
+            freeboard_type=None)
+    vessel_raw = NS(ship_designation=None, tonnage_data=None,
+                    statutory_data=None, builder_information=None,
+                    classification_data=NS(society_name="DNV",
+                                           principal_particulars=pp))
+    ir = IrVessel(id="v1")
+    _b()._build_metadata(vessel_raw, ir)
+    assert ir.principal_particulars.minimum_ballast_draught.value == 5.2
+
+
+def test_bulk_cargo_density():
+    from ocx_model_validator.model.ir import IrVessel
+    comp = NS(id="C1", guidref=None,
+              liquid_cargo=None, gaseous_cargo=None, unit_cargo=None,
+              bulk_cargo=NS(bulk_cargo_type=None,
+                            density=_qty(1600.0, "Ukgoverm3"),
+                            stowage_factor=None, permeability=None,
+                            angle_of_repose=None))
+    ir = IrVessel(id="v1")
+    _b()._build_cargoes_for_compartment(comp, ir)
+    assert ir.bulk_cargoes["C1/bulk/0"].density.value == 1600.0

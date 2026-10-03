@@ -65,6 +65,7 @@ class IrBulkCargo:
     guidref: str | None = None
     compartment_ref: Ref | None = None
     cargo_type: str | None = None
+    density: Quantity | None = None
     stowage_factor: Quantity | None = None
     permeability: Quantity | None = None
     angle_of_repose: Quantity | None = None

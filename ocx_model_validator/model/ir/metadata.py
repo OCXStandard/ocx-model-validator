@@ -44,6 +44,7 @@ class IrPrincipalParticulars:
     freeboard_length: Quantity | None = None
     normal_ballast_draught: Quantity | None = None
     heavy_ballast_draught: Quantity | None = None
+    minimum_ballast_draught: Quantity | None = None
     length_of_waterline: Quantity | None = None
     upper_deck_area: Quantity | None = None
     freeboard_type: str | None = None

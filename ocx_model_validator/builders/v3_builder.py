@@ -742,6 +742,7 @@ class OcxV3Builder(IOcxBuilder):
             self._register(ir.bulk_cargoes, cargo_id, IrBulkCargo(
                 id=cargo_id, compartment_ref=ref,
                 cargo_type=self._enum(getattr(bc, "bulk_cargo_type", None)),
+                density=self._qty(getattr(bc, "density", None)),
                 stowage_factor=self._qty(getattr(bc, "stowage_factor", None)),
                 permeability=self._qty(getattr(bc, "permeability", None)),
                 angle_of_repose=self._qty(getattr(bc, "angle_of_repose", None))), ir.duplicate_ids)
@@ -891,6 +892,7 @@ class OcxV3Builder(IOcxBuilder):
                 freeboard_length=self._qty(getattr(pp, "freeboard_length", None)),
                 normal_ballast_draught=self._qty(getattr(pp, "normal_ballast_draught", None)),
                 heavy_ballast_draught=self._qty(getattr(pp, "heavy_ballast_draught", None)),
+                minimum_ballast_draught=self._qty(getattr(pp, "minimum_ballast_draught", None)),
                 length_of_waterline=self._qty(getattr(pp, "length_of_waterline", None)),
                 upper_deck_area=self._qty(getattr(pp, "upper_deck_area", None)),
                 freeboard_type=self._enum(getattr(pp, "freeboard_type", None)))
