@@ -8,12 +8,15 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
+from ocx_model_validator.model.ir.base import Ref
+
 
 @dataclass
 class IrConnectionConfiguration:
     """Placeholder — full definition in a future design."""
     id: str
     name: str | None = None
+    bracket_ref: Ref | None = None
 
 
 @dataclass

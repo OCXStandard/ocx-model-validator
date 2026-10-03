@@ -151,6 +151,13 @@ def _children(value: Any) -> list[Any]:
     return [value]
 
 
+def _first(value: Any) -> Any:
+    """Return the first element of a list/tuple, or the value itself."""
+    if isinstance(value, list | tuple):
+        return value[0] if value else None
+    return value
+
+
 def _bar_section_choice(raw_section: Any) -> Any:
     for attr in _BAR_SECTION_CHOICE_ATTRS:
         child = getattr(raw_section, attr, None)
@@ -280,7 +287,12 @@ class OcxV3Builder(IOcxBuilder):
             return None
         local = getattr(obj, "local_ref", None) or ""
         guid = getattr(obj, "guidref", None)
-        return Ref(local_ref=local, guidref=guid)
+        return Ref(
+            local_ref=local,
+            guidref=guid,
+            offset=OcxV3Builder._qty(getattr(obj, "offset", None)),
+            offset_direction=OcxV3Builder._vec(getattr(obj, "offset_direction", None)),
+        )
 
     @staticmethod
     def _material_ref(plate_material_obj) -> tuple[Ref | None, Quantity | None]:
@@ -470,6 +482,8 @@ class OcxV3Builder(IOcxBuilder):
 
     def _build_contour(self, container):
         """Build one IR curve from a TraceLine/OuterContour container."""
+        if isinstance(container, (list, tuple)):
+            container = container[0] if container else None
         if container is None:
             return None
         curves = []
@@ -487,6 +501,36 @@ class OcxV3Builder(IOcxBuilder):
         if len(curves) == 1:
             return curves[0]
         return IrCompositeCurve3D(curve_length=None, segments=curves)
+
+    _TRACE_REF_ATTRS = ("edge_curve_ref", "edge_reinforcement_ref", "grid_ref",
+                        "panel_ref", "seam_ref", "stiffener_ref", "surface_ref")
+
+    def _trace_refs(self, trace_line) -> list[Ref]:
+        """Extract 3.2.0 TraceLine child refs (empty for 3.0/3.1 models)."""
+        refs: list[Ref] = []
+        if trace_line is None:
+            return refs
+        for attr in self._TRACE_REF_ATTRS:
+            r = self._ref(_first(getattr(trace_line, attr, None)))
+            if r is not None and (r.local_ref or r.guidref):
+                refs.append(r)
+        return refs
+
+    def _cut_by_contours(self, pcb) -> list[Any]:
+        """Extract PlateCutBy contours from 3.2.0 inner_contour or 3.1.0 outer_contour."""
+        if pcb is None:
+            return []
+        contours = []
+        raw_list = (
+            getattr(pcb, "inner_contour", None)
+            or getattr(pcb, "outer_contour", None)
+            or []
+        )
+        for c in _children(raw_list):
+            built = self._build_contour(c)
+            if built is not None:
+                contours.append(built)
+        return contours
 
     def _build_surface(self, elem):
         """Dispatch a raw OCX surface element to its IR surface type."""
@@ -553,8 +597,8 @@ class OcxV3Builder(IOcxBuilder):
                     break
             if surface is not None:
                 break
-        grid = getattr(ug, "grid_ref", None)
-        sref = getattr(ug, "surface_ref", None)
+        grid = _first(getattr(ug, "unbounded_grid_ref", None)) or getattr(ug, "grid_ref", None)
+        sref = _first(getattr(ug, "unbounded_surface_ref", None)) or getattr(ug, "surface_ref", None)
         return IrUnboundedGeometry(
             surface=surface,
             surface_ref=(getattr(sref, "local_ref", None) or None) if sref else None,
@@ -669,7 +713,9 @@ class OcxV3Builder(IOcxBuilder):
             curve = self._build_curve(getattr(tl, "composite_curve3_d", None)) if tl else None
             self._register(ir.seams, sid, IrSeam(
                 id=sid, name=getattr(seam, "name", None),
-                guidref=getattr(seam, "guidref", None), trace_line=curve), ir.duplicate_ids)
+                guidref=getattr(seam, "guidref", None),
+                trace_line=curve,
+                trace_refs=self._trace_refs(tl)), ir.duplicate_ids)
             seam_ids.append(sid)
         return seam_ids
 
@@ -705,12 +751,26 @@ class OcxV3Builder(IOcxBuilder):
                 id=cargo_id, compartment_ref=ref,
                 cargo_type=self._enum(getattr(uc, "unit_cargo_type", None))), ir.duplicate_ids)
 
-    _OCC_REF_ATTRS = ("plate_ref", "stiffener_ref", "seam_ref", "bracket_ref",
-                      "pillar_ref", "hole_contour_ref", "edge_reinforcement_ref",
-                      "lug_plate_ref", "connected_bracket_ref")
+    # (3.2.0 attr, 3.1.0 fallback attr, IrOccurrence field)
+    _OCC_REF_ATTRS = (
+        ("plate_ref", None, "plate_ref"),
+        ("str_stiffener_ref", "stiffener_ref", "stiffener_ref"),
+        ("str_seam_ref", "seam_ref", "seam_ref"),
+        ("bracket_ref", None, "bracket_ref"),
+        ("pillar_ref", None, "pillar_ref"),
+        ("hole_contour_ref", None, "hole_contour_ref"),
+        ("str_edge_reinforcement_ref", "edge_reinforcement_ref", "edge_reinforcement_ref"),
+        ("lug_plate_ref", None, "lug_plate_ref"),
+        ("connected_bracket_ref", None, "connected_bracket_ref"),
+    )
 
     def _build_occurrence(self, occ) -> IrOccurrence:
-        kwargs = {attr: self._ref(getattr(occ, attr, None)) for attr in self._OCC_REF_ATTRS}
+        kwargs = {}
+        for new_attr, old_attr, field_name in self._OCC_REF_ATTRS:
+            raw = _first(getattr(occ, new_attr, None))
+            if raw is None and old_attr:
+                raw = _first(getattr(occ, old_attr, None))
+            kwargs[field_name] = self._ref(raw)
         return IrOccurrence(id=getattr(occ, "id", None) or "",
                             name=getattr(occ, "name", None),
                             type_value=getattr(occ, "type_value", None), **kwargs)
@@ -759,7 +819,8 @@ class OcxV3Builder(IOcxBuilder):
                         if curve is not None:
                             break
             parametric = None
-            for attr in ("rectangular_hole", "super_elliptical",
+            for attr in ("ellipse", "rectangular_mickey_mouse_ears",
+                         "rectangular_hole", "super_elliptical",
                          "symmetrical_hole", "parametric_circle"):
                 if getattr(h, attr, None) is not None:
                     parametric = {"variant": attr}
@@ -1131,6 +1192,8 @@ class OcxV3Builder(IOcxBuilder):
             net_area=self._qty(getattr(raw, "net_area", None)),
             function_type=self._enum(getattr(raw, "function_type", None)),
             outer_contour=self._build_contour(getattr(raw, "outer_contour", None)),
+            point_on_surface=self._pt(getattr(raw, "point_on_surface", None)),
+            cut_by_contours=self._cut_by_contours(getattr(raw, "plate_cut_by", None)),
         )
 
     def _build_bracket(self, raw, parent: ParentRef) -> IrBracket | None:
@@ -1176,6 +1239,8 @@ class OcxV3Builder(IOcxBuilder):
             end_cut_end1=self._build_end_cut(getattr(raw, "end_cut_end1", None)),
             end_cut_end2=self._build_end_cut(getattr(raw, "end_cut_end2", None)),
             trace=self._build_contour(getattr(raw, "trace_line", None)),
+            orientation_rule=self._enum(getattr(raw, "orientation_rule", None)),
+            trace_refs=self._trace_refs(getattr(raw, "trace_line", None)),
             inclinations=self._build_inclinations(getattr(raw, "inclination", None)),
         )
 
@@ -1212,6 +1277,8 @@ class OcxV3Builder(IOcxBuilder):
             **self._section_scantlings(raw_sec),
             mass_properties=self._mass_properties(raw),
             function_type=self._enum(getattr(raw, "function_type", None)),
+            orientation_rule=self._enum(getattr(raw, "orientation_rule", None)),
+            trace_refs=self._trace_refs(_first(getattr(raw, "trace_line", None))),
         )
 
     # ------------------------------------------------------------------
@@ -1318,6 +1385,15 @@ class OcxV3Builder(IOcxBuilder):
                             local_ref=local,
                             guidref=guid,
                             ocx_ref_type=ocx_rt,
+                            offset=self._qty(getattr(ref_raw, "offset", None)),
+                            offset_direction=self._vec(getattr(ref_raw, "offset_direction", None)),
+                            contour_mid_point=self._pt(
+                                getattr(
+                                    getattr(ref_raw, "contour_bounds", None),
+                                    "contour_mid_point",
+                                    None,
+                                )
+                            ),
                         )
                     )
 
@@ -1342,6 +1418,7 @@ class OcxV3Builder(IOcxBuilder):
             guidref=getattr(raw, "guidref", None),
             function_type=self._enum(getattr(raw, "function_type", None)),
             tightness=self._enum(getattr(raw, "tightness", None)),
+            point_on_surface=self._pt(getattr(raw, "point_on_surface", None)),
             mass_properties=self._mass_properties(raw),
             plate_ids=plate_ids,
             bracket_ids=bracket_ids,

@@ -75,6 +75,8 @@ class IrPlate:
     net_area: Quantity | None = None
     function_type: str | None = None
     outer_contour: IrCurve3D | None = None
+    point_on_surface: IrPoint3D | None = None
+    cut_by_contours: list[IrCurve3D] = field(default_factory=list)
 
 
 @dataclass
@@ -114,6 +116,8 @@ class IrStiffener:
     end_cut_end2: IrEndCut | None = None
     penetrations: list[IrPenetration] = field(default_factory=list)
     trace: IrCurve3D | None = None
+    orientation_rule: str | None = None
+    trace_refs: list[Ref] = field(default_factory=list)
     inclinations: list[IrInclination] = field(default_factory=list)
 
 
@@ -149,6 +153,8 @@ class IrEdgeReinforcement:
     voluntary_flange_thickness_addition: Quantity | None = None
     mass_properties: IrMassProperties | None = None
     function_type: str | None = None
+    orientation_rule: str | None = None
+    trace_refs: list[Ref] = field(default_factory=list)
 
 
 # ---------------------------------------------------------------------------
@@ -162,6 +168,7 @@ class IrSeam:
     name: str | None = None
     guidref: str | None = None
     trace_line: IrCurve3D | None = None
+    trace_refs: list[Ref] = field(default_factory=list)
 
 
 @dataclass
@@ -230,10 +237,18 @@ class IrLimitedByRef:
     local_ref: str         # XML IDREF value (may be empty string)
     guidref: str | None = None
     ocx_ref_type: str | None = None  # raw refType attribute from OCX schema
+    offset: Quantity | None = None
+    offset_direction: IrVector3D | None = None
+    contour_mid_point: IrPoint3D | None = None
 
     def as_ref(self) -> "Ref":
         """Return a plain Ref for backward-compatible look-ups."""
-        return Ref(local_ref=self.local_ref, guidref=self.guidref)
+        return Ref(
+            local_ref=self.local_ref,
+            guidref=self.guidref,
+            offset=self.offset,
+            offset_direction=self.offset_direction,
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -265,6 +280,7 @@ class IrPanel:
     guidref: str | None = None
     function_type: str | None = None
     tightness: str | None = None
+    point_on_surface: IrPoint3D | None = None
     mass_properties: IrMassProperties | None = None
     # Child part id references (into IrVessel dicts)
     plate_ids: list[str] = field(default_factory=list)

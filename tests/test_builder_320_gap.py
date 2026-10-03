@@ -14,6 +14,7 @@ from ocx_model_validator.model.ir import (
     IrSphere3D,
     ParentKind,
     ParentRef,
+    Ref,
 )
 
 PARENT = ParentRef(kind=ParentKind.VESSEL, id="V1")
@@ -224,6 +225,10 @@ class NurbsSurface(NS):
     pass
 
 
+class Line3D(NS):
+    pass
+
+
 @pytest.mark.parametrize(
     ("surface_cls", "ir_cls", "attrs"),
     [
@@ -244,3 +249,136 @@ def test_surfaces_extract_normal_and_point_on_surface(surface_cls, ir_cls, attrs
     assert isinstance(ir, ir_cls)
     assert ir.normal.x == 1.0
     assert ir.point_on_surface.z == 5.0
+
+
+def test_ref_extracts_offset_and_direction():
+    raw = NS(local_ref="X1", guidref="g-1",
+             offset=_qty(50.0, "Umm"), offset_direction=_dir3(0.0, 1.0, 0.0))
+    ref = _b()._ref(raw)
+    assert ref.offset.value == 50.0
+    assert ref.offset_direction.y == 1.0
+
+
+def test_unbounded_geometry_320_ref_names():
+    ug = NS(plane3_d=None, nurbssurface=None, extruded_surface=None,
+            sphere3_d=None, cone3_d=None, cylinder3_d=None,
+            unbounded_grid_ref=[NS(local_ref="GR1", guidref=None)],
+            unbounded_surface_ref=[NS(local_ref="SR1", guidref=None)])
+    ir_ug = _b()._build_unbounded(ug)
+    assert ir_ug.grid_ref == "GR1"
+    assert ir_ug.surface_ref == "SR1"
+
+
+def test_occurrence_320_str_refs_and_lists():
+    occ = NS(id="O1", name="occ", type_value=None,
+             plate_ref=[NS(local_ref="PL1", guidref=None)],
+             str_stiffener_ref=[NS(local_ref="ST1", guidref=None)],
+             str_seam_ref=[NS(local_ref="SM1", guidref=None)],
+             str_edge_reinforcement_ref=[NS(local_ref="ER1", guidref=None)],
+             bracket_ref=[], pillar_ref=[], hole_contour_ref=[],
+             lug_plate_ref=[], connected_bracket_ref=[])
+    ir_occ = _b()._build_occurrence(occ)
+    assert ir_occ.plate_ref.local_ref == "PL1"
+    assert ir_occ.stiffener_ref.local_ref == "ST1"
+    assert ir_occ.seam_ref.local_ref == "SM1"
+    assert ir_occ.edge_reinforcement_ref.local_ref == "ER1"
+
+
+def test_stiffener_trace_refs_and_orientation_rule():
+    tl = NS(composite_curve3_d=None, edge_curve_ref=None,
+            stiffener_ref=None, panel_ref=NS(local_ref="PN1", guidref=None),
+            seam_ref=None, surface_ref=None, grid_ref=None,
+            edge_reinforcement_ref=None)
+    raw = NS(id="ST3", name=None, guidref=None, material_ref=None,
+             section_ref=None, function_type=None, end_cut_end1=None,
+             end_cut_end2=None, inclination=None, trace_line=tl,
+             orientation_rule=NS(value="PERPENDICULAR"))
+    st = _b()._build_stiffener(raw, PARENT)
+    assert st.orientation_rule == "PERPENDICULAR"
+    assert st.trace_refs[0].local_ref == "PN1"
+
+
+def test_edge_reinforcement_trace_refs_and_orientation_rule():
+    tl = NS(composite_curve3_d=None, edge_curve_ref=None,
+            stiffener_ref=None, panel_ref=NS(local_ref="PN2", guidref=None),
+            seam_ref=None, surface_ref=None, grid_ref=None,
+            edge_reinforcement_ref=None)
+    raw = NS(id="ER3", name=None, guidref=None, material_ref=None,
+             section_ref=None, function_type=None, trace_line=[tl],
+             orientation_rule=NS(value="ALIGNED"))
+    er = _b()._build_edge_reinforcement(raw, PARENT)
+    assert er.orientation_rule == "ALIGNED"
+    assert er.trace_refs[0].local_ref == "PN2"
+
+
+def test_plate_point_on_surface_and_outer_contour_list():
+    contour = NS(line3_d=[Line3D(curve_length=None, id=None,
+                                 start_point=_pt3(0, 0, 0),
+                                 end_point=_pt3(1, 0, 0))],
+                 composite_curve3_d=None, nurbs3_d=None, poly_line3_d=None,
+                 circum_arc3_d=None, ellipse3_d=None, circle3_d=None,
+                 circum_circle3_d=None)
+    raw = NS(id="PL3", name=None, guidref=None, plate_material=None,
+             net_area=None, function_type=None,
+             outer_contour=[contour],
+             point_on_surface=_pt3(0.5, 0.0, 0.0))
+    plate = _b()._build_plate(raw, PARENT)
+    assert plate.point_on_surface.x == 0.5
+    assert plate.outer_contour is not None
+
+
+def test_plate_cut_by_inner_contour():
+    hole = NS(line3_d=[Line3D(curve_length=None, id=None,
+                              start_point=_pt3(0, 0, 0),
+                              end_point=_pt3(0, 1, 0))],
+              composite_curve3_d=None, nurbs3_d=None, poly_line3_d=None,
+              circum_arc3_d=None, ellipse3_d=None, circle3_d=None,
+              circum_circle3_d=None)
+    raw = NS(id="PL4", name=None, guidref=None, plate_material=None,
+             net_area=None, function_type=None, outer_contour=None,
+             plate_cut_by=NS(inner_contour=[hole], outer_contour=None,
+                             hole2_dcontour=[], slot_contour=[]))
+    plate = _b()._build_plate(raw, PARENT)
+    assert len(plate.cut_by_contours) == 1
+
+
+def test_limited_by_offset_and_contour_mid_point():
+    from ocx_model_validator.model.ir import IrVessel
+    lb_ref = NS(local_ref="PN9", guidref=None, ref_type="ocx:PanelRef",
+                offset=_qty(10.0, "Umm"),
+                offset_direction=_dir3(0.0, 0.0, 1.0),
+                contour_bounds=NS(contour_start=None, contour_end=None,
+                                  contour_mid_point=_pt3(1.0, 2.0, 3.0)))
+    raw = NS(id="PN10", name=None, guidref=None, function_type=None,
+             tightness=None, composed_of=None, stiffened_by=None,
+             split_by=None, unbounded_geometry=None,
+             limited_by=NS(panel_ref=[lb_ref], stiffener_ref=[],
+                           seam_ref=[], surface_ref=[], edge_curve_ref=[],
+                           grid_ref=[], edge_reinforcement_ref=[],
+                           free_edge_curve3_d=[]))
+    ir = IrVessel(id="v1")
+    panel = _b()._build_panel(raw, ir, "v1")
+    r = panel.limited_by[0]
+    assert r.offset.value == 10.0
+    assert r.offset_direction.z == 1.0
+    assert r.contour_mid_point.y == 2.0
+
+
+def test_hole2d_ellipse_parametric_variant():
+    from ocx_model_validator.model.ir import IrVessel
+    hole = NS(id="H1", name=None, guidref=None, contour=None,
+              ellipse=NS(major_diameter=_qty(100.0, "Umm"),
+                         minor_diameter=_qty(50.0, "Umm")),
+              rectangular_mickey_mouse_ears=None, rectangular_hole=None,
+              super_elliptical=None, symmetrical_hole=None,
+              parametric_circle=None)
+    cat = NS(id="HC1", name=None, hole2_d=[hole])
+    ir = IrVessel(id="v1")
+    _b()._build_hole_catalogue(cat, ir)
+    assert ir.hole_shape_catalogue.holes["H1"].parametric == {"variant": "ellipse"}
+
+
+def test_penetration_bracket_ref_field():
+    from ocx_model_validator.model.ir import IrPenetration
+    p = IrPenetration(id="PEN1", bracket_ref=Ref(local_ref="BR1"))
+    assert p.bracket_ref.local_ref == "BR1"
