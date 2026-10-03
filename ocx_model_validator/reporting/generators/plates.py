@@ -19,10 +19,10 @@ from ocx_model_validator.reporting.generators._common import (
 from ocx_model_validator.reporting.model import Cell, Report, ReportSection, ReportTable
 
 _COLUMNS = [
-    "Id", "Name", "Panel", "Function", "Material",
+    "Id", "Name", "Parent Panel", "Function", "Material",
     "Thickness (mm)", "Renewal thickness (mm)",
     "Voluntary addition (mm)", "Offset (mm)", "Net area (m²)",
-    "Dry weight (t)", "POS x (m)", "POS y (m)", "POS z (m)", "Openings",
+    "Dry weight (t)", "Point on surface (m)", "Openings",
 ]
 
 
@@ -49,9 +49,11 @@ def build(vessel: IrVessel, source_file: str = "") -> Report:
         mp = p.mass_properties
         offset = p.material_ref.offset if p.material_ref is not None else None
         pos = p.point_on_surface
-        pos_cells = (xyz_m_cells(pos.x, pos.y, pos.z, pos.unit, reg, notes,
-                                 f"{ctx} POS")
-                     if pos is not None else [None, None, None])
+        pos_cell: Cell = None
+        if pos is not None:
+            coords = xyz_m_cells(pos.x, pos.y, pos.z, pos.unit, reg, notes,
+                                 f"{ctx} point on surface")
+            pos_cell = "(" + ", ".join(str(c) for c in coords) + ")"
         rows.append([
             p.id, p.name, _panel_name(p, vessel), p.function_type,
             _material_name(p, vessel),
@@ -64,7 +66,7 @@ def build(vessel: IrVessel, source_file: str = "") -> Report:
             qty_m2_cell(p.net_area, reg, notes, f"{ctx} net area"),
             qty_tonnes_cell(mp.moulded_dry_weight if mp is not None else None,
                             reg, notes, f"{ctx} dry weight"),
-            *pos_cells,
+            pos_cell,
             len(p.cut_by_contours),
         ])
     section = ReportSection(title="Plates",

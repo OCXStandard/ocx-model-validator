@@ -37,10 +37,10 @@ def test_plates_report_shape():
     assert section.title == "Plates"
     table = section.tables[0]
     assert table.columns == [
-        "Id", "Name", "Panel", "Function", "Material",
+        "Id", "Name", "Parent Panel", "Function", "Material",
         "Thickness (mm)", "Renewal thickness (mm)",
         "Voluntary addition (mm)", "Offset (mm)", "Net area (m²)",
-        "Dry weight (t)", "POS x (m)", "POS y (m)", "POS z (m)", "Openings",
+        "Dry weight (t)", "Point on surface (m)", "Openings",
     ]
 
 
@@ -49,9 +49,9 @@ def test_plates_rows_sorted_with_attributes_and_counts():
     table = report.sections[0].tables[0]
     assert table.rows == [
         ["P0", "Bare plate", None, None, None,
-         None, None, None, None, None, None, None, None, None, 0],
+         None, None, None, None, None, None, None, 0],
         ["P1", "Deck plate", "Deck panel", "DECK", "NV A36",
-         10.0, 8.0, 1.0, 5.0, 12.5, 1.0, 10.0, 0.5, 8.0, 2],
+         10.0, 8.0, 1.0, 5.0, 12.5, 1.0, "(10.0, 0.5, 8.0)", 2],
     ]
 
 
