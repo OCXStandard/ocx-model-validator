@@ -7,6 +7,7 @@ Usage::
     validator report catalogues MODEL.3docx [--catalogue material|section|opening|all] ...
     validator report panels MODEL.3docx ...
     validator report plates MODEL.3docx ...
+    validator report stiffeners MODEL.3docx ...
     validator report bom MODEL.3docx ...
     validator report all MODEL.3docx ...
     validator generate-stubs [--force]
@@ -197,6 +198,19 @@ def plates_cmd(
     _emit(plates.build(vessel, source_file=str(model)), fmt, destination)
 
 
+@report_app.command("stiffeners")
+def stiffeners_cmd(
+    model: Path = _MODEL_ARG,
+    fmt: ReportFormat | None = _FORMAT_OPT,
+    destination: Path | None = _DEST_OPT,
+) -> None:
+    """Stiffeners: attributes, profile, trace length and connection counts."""
+    from ocx_model_validator.reporting.generators import stiffeners
+
+    vessel = _load_vessel(model)
+    _emit(stiffeners.build(vessel, source_file=str(model)), fmt, destination)
+
+
 @report_app.command("bom")
 def bom_cmd(
     model: Path = _MODEL_ARG,
@@ -225,6 +239,7 @@ def all_cmd(
         model_extent,
         panels,
         plates,
+        stiffeners,
     )
 
     vessel = _load_vessel(model)
@@ -235,6 +250,7 @@ def all_cmd(
         compartments.build(vessel, source_file=source),
         panels.build(vessel, source_file=source),
         plates.build(vessel, source_file=source),
+        stiffeners.build(vessel, source_file=source),
         catalogues.build(vessel, source_file=source),
         bom.build(vessel, source_file=source),
     ]

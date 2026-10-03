@@ -37,6 +37,11 @@ def qty_mm_cell(qty, registry, notes, context) -> Cell:
     return _safe_convert(qty, registry, 1e3, 1, notes, context)
 
 
+def qty_m_cell(qty, registry, notes, context) -> Cell:
+    """SI metres → m, 3 decimals."""
+    return _safe_convert(qty, registry, 1.0, 3, notes, context)
+
+
 def qty_mpa_cell(qty, registry, notes, context) -> Cell:
     """SI Pa → MPa, integer."""
     cell = _safe_convert(qty, registry, 1e-6, 0, notes, context)
